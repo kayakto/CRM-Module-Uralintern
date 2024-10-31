@@ -19,11 +19,11 @@ public class EventStudent {
     private StudentStatus studentStatus;
 
     public enum StudentStatus {
-        sent_personal_info,
-        added_in_chat,
-        started_event,
-        ended_event,
-        deleted_from_event
+        SENT_PERSONAL_INFO,
+        ADDED_IN_CHAT,
+        STARTED_EVENT,
+        ENDED_EVENT,
+        DELETED_FROM_EVENT
     }
 
     public StudentStatusDTO toStudentStatusDTO() {

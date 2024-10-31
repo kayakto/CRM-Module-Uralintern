@@ -20,10 +20,18 @@ public class EventRequest {
     private final OffsetDateTime enrollmentStartDate;
     private final OffsetDateTime enrollmentEndDate;
     private final int numberSeats;
-    private final Event.Condition condition; // Добавляем поле condition
+    private final Event.Condition condition;
 
     public Event toEvent() {
         return new Event(condition != null ? condition : Event.Condition.ACTIVE,
+                descriptionText, title,
+                adminId, managerId, eventStartDate, eventEndDate,
+                enrollmentStartDate, enrollmentEndDate, numberSeats);
+    }
+
+    public Event toEvent(Long eventId) {
+        return new Event(eventId,
+                condition != null ? condition : Event.Condition.ACTIVE,
                 descriptionText, title,
                 adminId, managerId, eventStartDate, eventEndDate,
                 enrollmentStartDate, enrollmentEndDate, numberSeats);

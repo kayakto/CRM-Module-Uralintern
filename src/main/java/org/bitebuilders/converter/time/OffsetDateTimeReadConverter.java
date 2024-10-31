@@ -11,7 +11,7 @@ import java.time.ZoneOffset;
 public class OffsetDateTimeReadConverter implements Converter<Timestamp, OffsetDateTime> {
     @Override
     public OffsetDateTime convert(Timestamp source) {
-        return source != null ? source.toInstant().atOffset(ZoneOffset.UTC) : null;
+        return source.toInstant().atOffset(ZoneOffset.ofHours(5));
     } // работает
 }
 

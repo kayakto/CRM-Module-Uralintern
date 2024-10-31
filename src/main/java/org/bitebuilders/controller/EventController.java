@@ -1,6 +1,5 @@
 package org.bitebuilders.controller;
 
-
 import org.bitebuilders.controller.dto.EventDTO;
 import org.bitebuilders.controller.dto.StudentStatusDTO;
 import org.bitebuilders.controller.requests.EventRequest;
@@ -29,7 +28,9 @@ public class EventController {
                 .stream()
                 .map(Event::toEventDTO)
                 .toList();
-        return ResponseEntity.ok(activeEvents);  // Возвращаем список активных событий
+        if (activeEvents != null)
+            return ResponseEntity.ok(activeEvents);  // Возвращаем список активных событий
+        return ResponseEntity.noContent().build();
     }
 
     // 3. Получение всех мероприятий по adminId
@@ -39,7 +40,9 @@ public class EventController {
                 .stream()
                 .map(Event::toEventDTO)
                 .toList();
-        return ResponseEntity.ok(eventDTOS);  // Возвращаем список событий для конкретного adminId
+        if (eventDTOS != null)
+            return ResponseEntity.ok(eventDTOS);  // Возвращаем список событий для конкретного adminId
+        return ResponseEntity.noContent().build();
     }
 
     // Получение всех студентов, отправивших персональные данные для участия
@@ -49,7 +52,9 @@ public class EventController {
                 .stream()
                 .map(StudentStatusDTO::new)
                 .toList();
-        return ResponseEntity.ok(studentsStatusDTO);  // Возвращаем список студентов и их статусы
+        if (studentsStatusDTO != null)
+            return ResponseEntity.ok(studentsStatusDTO);  // Возвращаем список студентов и их статусы
+        return ResponseEntity.noContent().build();
     }
 
     // Получение мероприятия по его id
@@ -64,13 +69,25 @@ public class EventController {
     @PostMapping("/post")
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventRequest requestedEvent) {
         Event newEvent = requestedEvent.toEvent();
-        EventDTO eventDTO = eventService.createEvent(newEvent).toEventDTO();
-        return ResponseEntity.ok(eventDTO);
+        EventDTO eventDTO = eventService.createOrUpdateEvent(newEvent).toEventDTO();
+        if (eventDTO != null)
+            return ResponseEntity.ok(eventDTO);
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/delete/{eventId}")
     public ResponseEntity<Boolean> deleteEventByID(@PathVariable Long eventId) {
         Boolean result = eventService.deleteEvent(eventId);
         return result ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/update/{eventId}")
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable Long eventId,
+                                             @RequestBody EventRequest requestedEvent) {
+        Event eventToUpdate = requestedEvent.toEvent(eventId);
+        EventDTO eventDTO = eventService.createOrUpdateEvent(eventToUpdate).toEventDTO();
+        if (eventDTO != null)
+            return ResponseEntity.ok(eventDTO);
+        return ResponseEntity.notFound().build();
     }
 }

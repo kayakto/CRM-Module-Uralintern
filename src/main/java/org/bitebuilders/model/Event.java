@@ -1,6 +1,7 @@
 package org.bitebuilders.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bitebuilders.controller.dto.EventDTO;
 import org.springframework.data.annotation.Id;
@@ -8,10 +9,12 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 
 @Getter
 @Table("events")
+@NoArgsConstructor
 public class Event {
     @Id
     private Long id;
@@ -52,10 +55,28 @@ public class Event {
         this.numberSeats = numberSeats;
     }
 
+    public Event(Long id, Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeats) {
+        this.id = id;
+        this.condition = condition;
+        this.descriptionText = descriptionText;
+        this.title = title;
+        this.adminId = adminId;
+        this.managerId = managerId;
+        this.eventStartDate = eventStartDate;
+        this.eventEndDate = eventEndDate;
+        this.enrollmentStartDate = enrollmentStartDate;
+        this.enrollmentEndDate = enrollmentEndDate;
+        this.numberSeats = numberSeats;
+    }
+
     public EventDTO toEventDTO() {
         return new EventDTO(id, condition, descriptionText,
-                title, adminId, managerId, eventStartDate, eventEndDate,
-                chatUrl, enrollmentStartDate, enrollmentEndDate,
+                title, adminId, managerId,
+                eventStartDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
+                eventEndDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
+                chatUrl,
+                enrollmentStartDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
+                enrollmentEndDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
                 numberSeats);
     }
 

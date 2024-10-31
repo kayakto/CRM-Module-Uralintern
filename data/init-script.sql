@@ -1,23 +1,5 @@
 CREATE DATABASE internships;
 \c internships
-\conninfo
--- Создание типа ENUM для роли пользователя
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
-        CREATE TYPE user_role AS ENUM ('admin', 'curator', 'manager', 'student');
-    END IF;
-END $$;
-
--- Создание типа ENUM для статуса студента
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'student_status') THEN
-        CREATE TYPE student_status AS ENUM ('sent_personal_info', 'added_in_chat', 'started_event', 'ended_event', 'deleted_from_event');
-    END IF;
-END $$;
-
-CREATE TYPE event_condition AS ENUM ('HIDDEN', 'ACTIVE', 'DELETED', 'CLOSED');
 
 -- Создание таблицы user
 CREATE TABLE IF NOT EXISTS users_info (
@@ -29,23 +11,23 @@ CREATE TABLE IF NOT EXISTS users_info (
     sign VARCHAR(255) NOT NULL,
     telegram_url VARCHAR(255) NOT NULL,
     vk_url VARCHAR(255),
-    role_enum user_role DEFAULT 'student',
+    role_enum VARCHAR(20) DEFAULT 'STUDENT',
     competencies TEXT NOT NULL
 );
 
 -- Создание таблицы event
 CREATE TABLE IF NOT EXISTS events (
     id SERIAL PRIMARY KEY,
-    condition event_condition NOT NULL DEFAULT 'HIDDEN',
+    condition VARCHAR(20) NOT NULL DEFAULT 'HIDDEN',
     description_text TEXT,
     title VARCHAR(255) NOT NULL,
     admin_id INT REFERENCES users_info(id) ON DELETE SET NULL,
     manager_id INT REFERENCES users_info(id) ON DELETE SET NULL,
-    event_start_date TIMESTAMPTZ NOT NULL,
-    event_end_date TIMESTAMPTZ NOT NULL,
+    event_start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    event_end_date TIMESTAMP WITH TIME ZONE NOT NULL,
     chat_url VARCHAR(255),
-    enrollment_start_date TIMESTAMPTZ NOT NULL,
-    enrollment_end_date TIMESTAMPTZ NOT NULL,
+    enrollment_start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    enrollment_end_date TIMESTAMP WITH TIME ZONE NOT NULL,
     number_seats INT NOT NULL
 );
 
@@ -54,7 +36,7 @@ CREATE TABLE IF NOT EXISTS events_students (
     id SERIAL PRIMARY KEY,
     student_id INT NOT NULL REFERENCES users_info(id) ON DELETE CASCADE,
     event_id INT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-    student_status student_status DEFAULT 'sent_personal_info'
+    student_status VARCHAR(50) DEFAULT 'SENT_PERSONAL_INFO'
 );
 
 -- Создание таблицы event_curator
@@ -69,7 +51,7 @@ CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     event_id INT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
     message_text TEXT NOT NULL,
-    edit_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    edit_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -83,54 +65,50 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO crm_admin;
 
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;
 
--- Добавление 5 пользователей в таблицу users_info
+-- Заполнение таблицы users_info
 INSERT INTO users_info (first_name, last_name, surname, email, sign, telegram_url, vk_url, role_enum, competencies)
 VALUES
-    ('Alexey', 'Ivanov', 'Sergeevich', 'alexey.ivanov@example.com', 'sign1', 'tg://alexey1', 'vk://alexey1', 'admin', 'Java, SQL'),
-    ('Maria', 'Petrova', NULL, 'maria.petrova@example.com', 'sign2', 'tg://maria', 'vk://maria', 'curator', 'Project management, HR'),
-    ('Ivan', 'Sidorov', 'Nikolaevich', 'ivan.sidorov@example.com', 'sign3', 'tg://ivan', NULL, 'student', 'Python, Data Science'),
-    ('Olga', 'Kuznetsova', 'Alexeevna', 'olga.kuznetsova@example.com', 'sign4', 'tg://olga', 'vk://olga', 'manager', 'Marketing, Communication'),
-    ('Sergey', 'Smirnov', NULL, 'sergey.smirnov@example.com', 'sign5', 'tg://sergey', 'vk://sergey', 'student', 'HTML, CSS, JavaScript');
+('John', 'Doe', 'A', 'john.doe@example.com', 'signature1', 'https://t.me/johndoe', 'https://vk.com/johndoe', 'STUDENT', 'Competence1, Competence2'),
+('Jane', 'Smith', 'B', 'jane.smith@example.com', 'signature2', 'https://t.me/janesmith', 'https://vk.com/janesmith', 'CURATOR', 'Competence3, Competence4'),
+('Alice', 'Johnson', 'C', 'alice.j@example.com', 'signature3', 'https://t.me/alicej', 'https://vk.com/alicej', 'MANAGER', 'Competence5'),
+('Bob', 'Williams', 'D', 'bob.w@example.com', 'signature4', 'https://t.me/bobw', 'https://vk.com/bobw', 'ADMIN', 'Competence6, Competence7'),
+('Charlie', 'Brown', 'E', 'charlie.b@example.com', 'signature5', 'https://t.me/charlieb', NULL, 'STUDENT', 'Competence8');
 
--- Добавление 5 мероприятий в таблицу events
+-- Заполнение таблицы events
 INSERT INTO events (condition, description_text, title, admin_id, manager_id, event_start_date, event_end_date, chat_url, enrollment_start_date, enrollment_end_date, number_seats)
 VALUES
-    ('ACTIVE', 'Java programming basics', 'Java Basics Workshop', 1, 4, '2024-11-01 10:00:00+05', '2024-11-01 18:00:00+05', 'chat1', '2024-10-01 10:00:00+05', '2024-10-31 23:59:00+05', 30),
-    ('HIDDEN', 'Introduction to Data Science', 'Data Science Bootcamp', 3, 4, '2024-12-01 10:00:00+05', '2024-12-10 18:00:00+05', 'chat2', '2024-11-01 10:00:00+05', '2024-11-30 23:59:00+05', 25),
-    ('DELETED', 'Marketing and Communication', 'Marketing Strategies', 2, 4, '2024-11-15 09:00:00+05', '2024-11-15 17:00:00+05', 'chat3', '2024-10-15 09:00:00+05', '2024-11-10 23:59:00+05', 50),
-    ('CLOSED', 'Advanced Python', 'Python Advanced Workshop', 3, 4, '2024-12-05 10:00:00+05', '2024-12-05 18:00:00+05', 'chat4', '2024-11-05 10:00:00+05', '2024-11-30 23:59:00+05', 20),
-    ('ACTIVE', 'Web Development Basics', 'Web Dev Workshop', 1, 4, '2024-10-25 10:00:00+05', '2024-10-25 18:00:00+05', 'chat5', '2024-10-01 10:00:00+05', '2024-10-20 23:59:00+05', 40);
+('ACTIVE', 'Description for Event 1', 'Event 1', 4, 3, '2024-11-01T09:00:00+00', '2024-11-01T17:00:00+00', 'https://chat.url/event1', '2024-10-01T09:00:00+00', '2024-10-30T17:00:00+00', 100),
+('HIDDEN', 'Description for Event 2', 'Event 2', 4, 2, '2024-11-05T09:00:00+00', '2024-11-05T17:00:00+00', 'https://chat.url/event2', '2024-10-05T09:00:00+00', '2024-10-29T17:00:00+00', 50),
+('CLOSED', 'Description for Event 3', 'Event 3', 4, 1, '2024-12-01T09:00:00+00', '2024-12-01T17:00:00+00', NULL, '2024-11-01T09:00:00+00', '2024-11-30T17:00:00+00', 30),
+('ACTIVE', 'Description for Event 4', 'Event 4', 4, 1, '2024-12-05T09:00:00+00', '2024-12-05T17:00:00+00', 'https://chat.url/event4', '2024-11-05T09:00:00+00', '2024-11-30T17:00:00+00', 75),
+('HIDDEN', 'Description for Event 5', 'Event 5', 4, 2, '2024-12-10T09:00:00+00', '2024-12-10T17:00:00+00', NULL, '2024-11-10T09:00:00+00', '2024-12-01T17:00:00+00', 60);
 
--- Добавление 5 студентов к мероприятиям в таблицу events_students
+-- Заполнение таблицы events_students
 INSERT INTO events_students (student_id, event_id, student_status)
 VALUES
-    (3, 1, 'sent_personal_info'),
-    (3, 2, 'added_in_chat'),
-    (5, 1, 'started_event'),
-    (5, 3, 'ended_event'),
-    (3, 4, 'deleted_from_event');
+(1, 1, 'SENT_PERSONAL_INFO'),
+(2, 1, 'SENT_PERSONAL_INFO'),
+(3, 2, 'SENT_PERSONAL_INFO'),
+(4, 3, 'SENT_PERSONAL_INFO'),
+(5, 4, 'SENT_PERSONAL_INFO');
 
--- Добавление 5 кураторов к мероприятиям в таблицу events_curators
+-- Заполнение таблицы events_curators
 INSERT INTO events_curators (curator_id, event_id)
 VALUES
-    (2, 1),
-    (2, 2),
-    (2, 3),
-    (2, 4),
-    (2, 5);
+(2, 1),
+(2, 2),
+(2, 3),
+(4, 4),
+(4, 5);
 
--- Добавление 5 сообщений в таблицу messages
-INSERT INTO messages (event_id, message_text)
+-- Заполнение таблицы messages
+INSERT INTO messages (event_id, message_text, edit_date)
 VALUES
-    (1, 'Welcome to the Java Basics Workshop!'),
-    (2, 'The Data Science Bootcamp will start soon.'),
-    (3, 'The Marketing Strategies event is now closed.'),
-    (4, 'Advanced Python Workshop materials are available.'),
-    (5, 'Web Development Basics has started.');
+(1, 'Welcome to Event 1!', '2024-10-01T09:15:00+00'),
+(1, 'Event 1 reminder', '2024-10-01T10:15:00+00'),
+(2, 'Welcome to Event 2!', '2024-10-05T09:15:00+00'),
+(3, 'Event 3 instructions', '2024-11-01T09:15:00+00'),
+(4, 'Details about Event 4', '2024-12-05T09:15:00+00');
 
-ALTER TABLE events ALTER COLUMN event_start_date TYPE TIMESTAMP WITH TIME ZONE;
-ALTER TABLE events ALTER COLUMN event_end_date TYPE TIMESTAMP WITH TIME ZONE;
-ALTER TABLE events ALTER COLUMN enrollment_start_date TYPE TIMESTAMP WITH TIME ZONE;
-ALTER TABLE events ALTER COLUMN enrollment_end_date TYPE TIMESTAMP WITH TIME ZONE;
 
 

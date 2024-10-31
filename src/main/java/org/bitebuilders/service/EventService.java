@@ -48,15 +48,16 @@ public class EventService {
 
     // Метод, который сохраняет Event и возвращает его
     @Transactional
-    public Event createEvent(Event event) {
+    public Event createOrUpdateEvent(Event event) {
         // Сохраняем объект в базе данных
-        return eventRepository.saveAndReturnEvent(event); // Возвращаем его после сохранения
+        return eventRepository.save(event); // Возвращаем его после сохранения
     }
 
     public Boolean deleteEvent(Long eventId) {
         Optional<Event> eventToDelete = getEventById(eventId);
         return eventToDelete.map(event -> {
             event.setCondition(Event.Condition.DELETED);
+            eventRepository.save(event); // Сохраняем изменение статуса в базе данных
             return true;
         }).orElse(false);
     }

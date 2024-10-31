@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 
 
 @Component
+@ReadingConverter
 public class StringToConditionConverter implements Converter<String, Event.Condition> {
     @Override
     public Event.Condition convert(String source) {
         return Event.Condition.valueOf(source);
-    } // не работает
+    }
 }
