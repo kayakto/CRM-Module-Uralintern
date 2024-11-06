@@ -1,7 +1,7 @@
 package org.bitebuilders.model;
 
 import lombok.Getter;
-import org.bitebuilders.controller.dto.StudentStatusDTO;
+import org.bitebuilders.StudentStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -17,16 +17,4 @@ public class EventStudent {
     private Long eventId;
     @Column("student_status")
     private StudentStatus studentStatus;
-
-    public enum StudentStatus {
-        SENT_PERSONAL_INFO,
-        ADDED_IN_CHAT,
-        STARTED_EVENT,
-        ENDED_EVENT,
-        DELETED_FROM_EVENT
-    }
-
-    public StudentStatusDTO toStudentStatusDTO() {
-        return new StudentStatusDTO(studentId, studentStatus);
-    }
 }

@@ -1,9 +1,7 @@
 package org.bitebuilders.service;
 
 import org.bitebuilders.model.Event;
-import org.bitebuilders.model.EventStudent;
 import org.bitebuilders.repository.EventRepository;
-import org.bitebuilders.repository.EventStudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +17,8 @@ public class EventService {
     @Autowired
     private final EventRepository eventRepository;
 
-    @Autowired
-    private final EventStudentRepository eventStudentRepository;
-
-    public EventService(EventRepository eventRepository, EventStudentRepository eventStudentRepository) {
+    public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
-        this.eventStudentRepository = eventStudentRepository;
     }
 
     // Метод, который возвращает все мероприятия со статусом ACTIVE
@@ -35,11 +29,6 @@ public class EventService {
     // Метод, который возвращает все мероприятия, у которых есть переданный admin_id
     public List<Event> getEventsByAdminId(Long adminId) {
         return eventRepository.findAllByAdminId(adminId); // Фильтрация по admin_id
-    }
-
-    // Метод, который возвращает всех студентов, которые отправили персональные данные для участия
-    public List<EventStudent> getEventStudents(Long eventId) {
-        return eventStudentRepository.findByEventId(eventId); // Фильтрация по статусу
     }
 
     public Optional<Event> getEventById(Long eventId) {

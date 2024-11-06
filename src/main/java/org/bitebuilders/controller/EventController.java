@@ -1,7 +1,6 @@
 package org.bitebuilders.controller;
 
 import org.bitebuilders.controller.dto.EventDTO;
-import org.bitebuilders.controller.dto.StudentStatusDTO;
 import org.bitebuilders.controller.requests.EventRequest;
 import org.bitebuilders.model.Event;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/events")
 public class EventController {
-    private final EventService eventService;
 
     @Autowired
+    private final EventService eventService;
+
     public EventController(EventService eventService) {
         this.eventService = eventService;
     }
@@ -42,18 +42,6 @@ public class EventController {
                 .toList();
         if (eventDTOS != null)
             return ResponseEntity.ok(eventDTOS);  // Возвращаем список событий для конкретного adminId
-        return ResponseEntity.noContent().build();
-    }
-
-    // Получение всех студентов, отправивших персональные данные для участия
-    @GetMapping("{eventId}/students")
-    public ResponseEntity<List<StudentStatusDTO>> getStudentsEvent(@PathVariable Long eventId) {
-        List<StudentStatusDTO> studentsStatusDTO = eventService.getEventStudents(eventId)
-                .stream()
-                .map(StudentStatusDTO::new)
-                .toList();
-        if (studentsStatusDTO != null)
-            return ResponseEntity.ok(studentsStatusDTO);  // Возвращаем список студентов и их статусы
         return ResponseEntity.noContent().build();
     }
 
