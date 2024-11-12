@@ -2,6 +2,7 @@ package org.bitebuilders.controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.bitebuilders.enums.StatusRequest;
 
 import java.util.Objects;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 public class EventCuratorInfoDTO {
     private Long eventId;
     private Long curatorId;
+    private StatusRequest curatorStatus;
     private String firstName;
     private String lastName;
     private String surname;
@@ -21,6 +23,7 @@ public class EventCuratorInfoDTO {
         return "EventCuratorInfoDTO{" +
                 "eventId=" + eventId +
                 ", curatorId=" + curatorId +
+                ", curatorStatus='" + curatorStatus + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", surname='" + surname + '\'' +
@@ -34,11 +37,11 @@ public class EventCuratorInfoDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventCuratorInfoDTO that = (EventCuratorInfoDTO) o;
-        return Objects.equals(eventId, that.eventId) && Objects.equals(curatorId, that.curatorId) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(surname, that.surname) && Objects.equals(telegramUrl, that.telegramUrl) && Objects.equals(vkUrl, that.vkUrl);
+        return Objects.equals(eventId, that.eventId) && Objects.equals(curatorId, that.curatorId) && Objects.equals(curatorStatus, that.curatorStatus) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(surname, that.surname) && Objects.equals(telegramUrl, that.telegramUrl) && Objects.equals(vkUrl, that.vkUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventId, curatorId, firstName, lastName, surname, telegramUrl, vkUrl);
+        return Objects.hash(eventId, curatorId, curatorStatus, firstName, lastName, surname, telegramUrl, vkUrl);
     }
 }

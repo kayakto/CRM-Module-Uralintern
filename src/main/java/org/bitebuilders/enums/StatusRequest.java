@@ -1,6 +1,6 @@
-package org.bitebuilders;
+package org.bitebuilders.enums;
 
-public enum StudentStatus {
+public enum StatusRequest {
     SENT_PERSONAL_INFO,
     ADDED_IN_CHAT,
     STARTED_EVENT,

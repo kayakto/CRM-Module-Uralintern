@@ -57,14 +57,6 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE USER crm_admin WITH PASSWORD 'bitrix24';
 
-GRANT ALL PRIVILEGES ON DATABASE internships TO crm_admin;
-
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO crm_admin;
-
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO crm_admin;
-
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;
-
 -- Заполнение таблицы users_info
 INSERT INTO users_info (first_name, last_name, surname, email, sign, telegram_url, vk_url, role_enum, competencies)
 VALUES
@@ -110,5 +102,29 @@ VALUES
 (3, 'Event 3 instructions', '2024-11-01T09:15:00+00'),
 (4, 'Details about Event 4', '2024-12-05T09:15:00+00');
 
+ALTER TABLE events_curators
+ADD COLUMN curator_status VARCHAR(50) DEFAULT 'SENT_PERSONAL_INFO';
+
+ALTER TABLE events_curators
+ADD CONSTRAINT unique_curator_event UNIQUE (curator_id, event_id);
+
+CREATE TABLE IF NOT EXISTS event_groups (
+    id SERIAL PRIMARY KEY,
+    event_id INT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    curator_id INT NOT NULL,
+    FOREIGN KEY (event_id, curator_id) REFERENCES events_curators(event_id, curator_id) ON DELETE CASCADE,
+    UNIQUE(event_id, curator_id)
+);
+
+ALTER TABLE events_students
+ADD COLUMN group_id INT REFERENCES event_groups(id) ON DELETE SET NULL;
+
+GRANT ALL PRIVILEGES ON DATABASE internships TO crm_admin;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO crm_admin;
+
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO crm_admin;
+
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;
 
 

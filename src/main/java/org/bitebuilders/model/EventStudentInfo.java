@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bitebuilders.StudentStatus;
+import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.controller.dto.EventStudentInfoDTO;
 import org.springframework.data.relational.core.mapping.Column;
 
@@ -18,7 +18,7 @@ public class EventStudentInfo {
     @Column("student_id")
     private Long studentId;
     @Column("student_status")
-    private StudentStatus studentStatus;
+    private StatusRequest statusRequest;
     @Column("first_name")
     private String firstName;
     @Column("last_name")
@@ -31,18 +31,27 @@ public class EventStudentInfo {
     private String telegramUrl;
     @Column("vk_url")
     private String vkUrl;
+    @Column("curator_first_name")
+    private String curatorFirstName;
+    @Column("curator_last_name")
+    private String curatorLastName;
+    @Column("curator_surname")
+    private String curatorSurname;
 
     public EventStudentInfoDTO toEventStudentDTO() {
         return new EventStudentInfoDTO(
                 this.getEventId(),
                 this.getStudentId(),
-                this.getStudentStatus(),
+                this.getStatusRequest(),
                 this.getFirstName(),
                 this.getLastName(),
                 this.getSurname(),
                 this.getCompetencies(),
                 this.getTelegramUrl(),
-                this.getVkUrl()
+                this.getVkUrl(),
+                this.getCuratorFirstName(),
+                this.getCuratorLastName(),
+                this.getCuratorSurname()
         );
     }
 }

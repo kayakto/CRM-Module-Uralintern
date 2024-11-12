@@ -1,14 +1,12 @@
 package org.bitebuilders.controller;
 
 import org.bitebuilders.controller.dto.EventStudentInfoDTO;
+import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.model.EventStudentInfo;
 import org.bitebuilders.service.EventStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class EventStudentController {
     }
 
     // Получение всех студентов, отправивших персональные данные для участия
-    @GetMapping("{eventId}/students")
+    @GetMapping("/{eventId}/students")
     public ResponseEntity<List<EventStudentInfoDTO>> getStudentsEvent(@PathVariable Long eventId) {
         List<EventStudentInfoDTO> esInfoDTO = eventStudentService.getEventStudents(eventId)
                 .stream()
@@ -33,5 +31,17 @@ public class EventStudentController {
         if (esInfoDTO != null)
             return ResponseEntity.ok(esInfoDTO);  // Возвращаем список студентов и их статусы
         return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{eventId}/delete/{studentId}")
+    public ResponseEntity<Boolean> deleteStudentFromEvent(
+            @PathVariable Long eventId,
+            @PathVariable Long studentId) {
+        return ResponseEntity.ok(
+                eventStudentService
+                        .updateStudentStatus(
+                                eventId,
+                                studentId,
+                                StatusRequest.DELETED_FROM_EVENT));
     }
 }

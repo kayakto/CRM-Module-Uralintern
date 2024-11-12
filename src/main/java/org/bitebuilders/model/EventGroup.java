@@ -1,24 +1,17 @@
 package org.bitebuilders.model;
 
 import lombok.Getter;
-import lombok.Setter;
-import org.bitebuilders.enums.StatusRequest;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Table("event_groups")
 @Getter
-@Table("events_students")
-public class EventStudent {
+public class EventGroup {
     @Id
     private Long id;
-    @Column("student_id")
-    private Long studentId;
     @Column("event_id")
     private Long eventId;
-    @Column("student_status")
-    @Setter
-    private StatusRequest studentStatus;
-    @Column("group_id")
-    private Long groupId;
+    @Column("curator_id")
+    private Long curatorId;
 }

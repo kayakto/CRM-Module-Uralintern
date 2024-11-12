@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bitebuilders.controller.dto.EventCuratorInfoDTO;
+import org.bitebuilders.enums.StatusRequest;
 import org.springframework.data.relational.core.mapping.Column;
 
 @Data
@@ -16,6 +17,8 @@ public class EventCuratorInfo {
     private Long eventId;
     @Column("curator_id")
     private Long curatorId;
+    @Column("curator_status")
+    private StatusRequest curatorStatus;
     @Column("first_name")
     private String firstName;
     @Column("last_name")
@@ -31,6 +34,7 @@ public class EventCuratorInfo {
         return new EventCuratorInfoDTO(
                 this.getEventId(),
                 this.getCuratorId(),
+                this.getCuratorStatus(),
                 this.getFirstName(),
                 this.getLastName(),
                 this.getSurname(),

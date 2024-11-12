@@ -1,6 +1,6 @@
 package org.bitebuilders.repository;
 
-import org.bitebuilders.StudentStatus;
+import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.model.EventStudent;
 import org.bitebuilders.model.EventStudentInfo;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -13,12 +13,21 @@ import java.util.List;
 public interface EventStudentRepository extends CrudRepository<EventStudent, Long> {
     // Метод для поиска студентов по статусу
     @Query("SELECT * FROM events_students WHERE student_status = :studentStatus::student_status")
-    List<EventStudent> findByStudentStatus(StudentStatus studentStatus);
+    List<EventStudent> findByStudentStatus(StatusRequest statusRequest);
 
     @Query("SELECT es.event_id, es.student_id, es.student_status, " +
-            "ui.first_name, ui.last_name, ui.surname, ui.competencies, ui.telegram_url, ui.vk_url " +
+            "uis.first_name, uis.last_name, uis.surname, uis.competencies, uis.telegram_url, uis.vk_url, " +
+            "ec.curator_id, uic.first_name AS curator_first_name, uic.last_name AS curator_last_name, uic.surname AS curator_surname, " +
+            "eg.id AS group_id " +
             "FROM events_students es " +
-            "JOIN users_info ui ON es.student_id = ui.id " +
-            "WHERE es.event_id = :eventId")
+            "JOIN users_info uis ON es.student_id = uis.id " +
+            "LEFT JOIN event_groups eg ON es.group_id = eg.id " +
+            "LEFT JOIN events_curators ec ON ec.curator_id = eg.curator_id AND ec.event_id = eg.event_id "+
+            "LEFT JOIN users_info uic ON ec.curator_id = uic.id " +
+            "WHERE es.event_id = :eventId AND es.student_status <> 'DELETED_FROM_EVENT'")
     List<EventStudentInfo> findByEventId(Long eventId);
+
+
+    @Query("SELECT * FROM events_students WHERE student_id = :studentId AND event_id = :eventId")
+    EventStudent findStudentEvent(Long studentId, Long eventId);
 }

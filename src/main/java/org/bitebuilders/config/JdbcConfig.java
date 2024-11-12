@@ -2,6 +2,8 @@ package org.bitebuilders.config;
 
 import org.bitebuilders.converter.condition.ConditionToStringConverter;
 import org.bitebuilders.converter.condition.StringToConditionConverter;
+import org.bitebuilders.converter.statusRequest.StatusRequestToStringConverter;
+import org.bitebuilders.converter.statusRequest.StringToStatusRequestConverter;
 import org.bitebuilders.converter.time.OffsetDateTimeReadConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +23,10 @@ public class JdbcConfig extends AbstractJdbcConfiguration {
         return new JdbcCustomConversions(Arrays.asList(
                 new ConditionToStringConverter(),
                 new StringToConditionConverter(),
-                new OffsetDateTimeReadConverter() // converting from type [java.sql.Timestamp] to type [java.time.OffsetDateTime]]
+                // converting from type [java.sql.Timestamp] to type [java.time.OffsetDateTime]]
+                new OffsetDateTimeReadConverter(),
+                new StringToStatusRequestConverter(),
+                new StatusRequestToStringConverter()
         ));
     }
 }

@@ -1,5 +1,7 @@
 package org.bitebuilders.service;
 
+import org.bitebuilders.enums.StatusRequest;
+import org.bitebuilders.model.EventStudent;
 import org.bitebuilders.model.EventStudentInfo;
 import org.bitebuilders.repository.EventStudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +24,11 @@ public class EventStudentService {
         return eventStudentRepository.findByEventId(eventId); // Фильтрация по статусу
     }
 
-    // TODO    EventStudentInfo deleteFromEvent() // find - update status - save
+    // Метод, который меняет статус студента
+    public Boolean updateStudentStatus(Long eventId, Long studentId, StatusRequest newStatus) {
+        EventStudent eventStudent = eventStudentRepository.findStudentEvent(studentId, eventId);
+        eventStudent.setStudentStatus(newStatus);
+        EventStudent savedEventStudent = eventStudentRepository.save(eventStudent);
+        return savedEventStudent.getStudentStatus() == newStatus;
+    }
 }

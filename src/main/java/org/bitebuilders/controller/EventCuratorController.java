@@ -1,14 +1,12 @@
 package org.bitebuilders.controller;
 
 import org.bitebuilders.controller.dto.EventCuratorInfoDTO;
+import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.model.EventCuratorInfo;
 import org.bitebuilders.service.EventCuratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,4 +32,17 @@ public class EventCuratorController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{eventId}/delete/{curatorId}")
+    public ResponseEntity<Boolean> deleteCuratorFromEvent(
+            @PathVariable Long eventId,
+            @PathVariable Long curatorId
+    ) {
+        return ResponseEntity.ok(
+                eventCuratorService.updateCuratorStatus(
+                        eventId,
+                        curatorId,
+                        StatusRequest.DELETED_FROM_EVENT
+                )
+        );
+    }
 }
