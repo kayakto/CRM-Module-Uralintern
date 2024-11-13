@@ -1,4 +1,4 @@
-CREATE DATABASE internships;
+--CREATE DATABASE internships;
 \c internships
 
 -- Создание таблицы user
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 
 
-CREATE USER crm_admin WITH PASSWORD 'bitrix24';
+--CREATE USER crm_admin WITH PASSWORD 'bitrix24';
 
 -- Заполнение таблицы users_info
 INSERT INTO users_info (first_name, last_name, surname, email, sign, telegram_url, vk_url, role_enum, competencies)

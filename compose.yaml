@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: 'java-spring-crm-uralintern'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db-postgres
+    environment:
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-postgres:5432/internships
+      - SPRING_DATASOURCE_USERNAME=crm_admin
+      - SPRING_DATASOURCE_PASSWORD=bitrix24
+    ports:
+      - "8080:8080"
+    restart: always
+    networks:
+      - main-network
+
+  db-postgres:
+    image: postgres:17.0
+    container_name: "database_postgres"
+    environment:
+      POSTGRES_DB: internships
+      POSTGRES_USER: crm_admin
+      POSTGRES_PASSWORD: bitrix24
+    ports:
+      - "5433:5433"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./data/init-script.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    networks:
+      - main-network
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  main-network:
+    driver: bridge
