@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventStudentRepository extends CrudRepository<EventStudent, Long> {
@@ -27,7 +28,14 @@ public interface EventStudentRepository extends CrudRepository<EventStudent, Lon
             "WHERE es.event_id = :eventId AND es.student_status <> 'DELETED_FROM_EVENT'")
     List<EventStudentInfo> findByEventId(Long eventId);
 
+    // тут нет запросов кураторов, потому что их еще не присвоили
+    @Query("SELECT es.event_id, es.student_id, es.student_status, ui.competencies, " +
+            "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
+            "FROM events_students es " +
+            "JOIN users_info ui ON es.student_id = ui.id " +
+            "WHERE es.event_id = :eventId AND es.student_status = 'SENT_PERSONAL_INFO'")
+    List<EventStudentInfo> findWaitingStudents(Long eventId);
 
     @Query("SELECT * FROM events_students WHERE student_id = :studentId AND event_id = :eventId")
-    EventStudent findStudentEvent(Long studentId, Long eventId);
+    Optional<EventStudent> findStudentEvent(Long studentId, Long eventId);
 }

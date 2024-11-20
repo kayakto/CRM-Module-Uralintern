@@ -13,11 +13,11 @@
     ```
 <p>Приложение будет доступно по адресу http://localhost:8080</p>
 <p>Документация расположена по адресу http://localhost:8080/swagger-ui/index.html# </p>
-Чтобы остановить приложение и удалить контейнеры:
+<p>Чтобы остановить приложение и удалить контейнеры:</p>
 ```bash
 docker-compose down
 ```
-или
+<p>или</p>
 ```bash
 docker-compose down --remove-orphans
 ```

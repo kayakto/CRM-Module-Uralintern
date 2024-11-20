@@ -25,6 +25,8 @@ public class EventCuratorInfo {
     private String lastName;
     @Column("surname")
     private String surname;
+    @Column("competencies")
+    private String competencies;
     @Column("telegram_url")
     private String telegramUrl;
     @Column("vk_url")
@@ -38,6 +40,7 @@ public class EventCuratorInfo {
                 this.getFirstName(),
                 this.getLastName(),
                 this.getSurname(),
+                this.getCompetencies(),
                 this.getTelegramUrl(),
                 this.getVkUrl()
         );

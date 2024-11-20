@@ -21,4 +21,10 @@ public class EventStudent {
     private StatusRequest studentStatus;
     @Column("group_id")
     private Long groupId;
+
+    public EventStudent(Long studentId, Long eventId, StatusRequest studentStatus) {
+        this.studentId = studentId;
+        this.eventId = eventId;
+        this.studentStatus = studentStatus;
+    }
 }

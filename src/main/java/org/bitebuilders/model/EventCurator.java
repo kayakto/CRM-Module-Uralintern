@@ -1,5 +1,6 @@
 package org.bitebuilders.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bitebuilders.enums.StatusRequest;
@@ -19,4 +20,10 @@ public class EventCurator {
     @Column("curator_status")
     @Setter
     private StatusRequest curatorStatus;
+
+    public EventCurator(Long curatorId, Long eventId, StatusRequest curatorStatus) {
+        this.curatorId = curatorId;
+        this.eventId = eventId;
+        this.curatorStatus = curatorStatus;
+    }
 }

@@ -15,6 +15,7 @@ public class EventCuratorInfoDTO {
     private String firstName;
     private String lastName;
     private String surname;
+    private String competencies;
     private String telegramUrl;
     private String vkUrl;
 
@@ -23,10 +24,11 @@ public class EventCuratorInfoDTO {
         return "EventCuratorInfoDTO{" +
                 "eventId=" + eventId +
                 ", curatorId=" + curatorId +
-                ", curatorStatus='" + curatorStatus + '\'' +
+                ", curatorStatus=" + curatorStatus +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", surname='" + surname + '\'' +
+                ", competencies='" + competencies + '\'' +
                 ", telegramUrl='" + telegramUrl + '\'' +
                 ", vkUrl='" + vkUrl + '\'' +
                 '}';
@@ -37,11 +39,11 @@ public class EventCuratorInfoDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventCuratorInfoDTO that = (EventCuratorInfoDTO) o;
-        return Objects.equals(eventId, that.eventId) && Objects.equals(curatorId, that.curatorId) && Objects.equals(curatorStatus, that.curatorStatus) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(surname, that.surname) && Objects.equals(telegramUrl, that.telegramUrl) && Objects.equals(vkUrl, that.vkUrl);
+        return Objects.equals(eventId, that.eventId) && Objects.equals(curatorId, that.curatorId) && curatorStatus == that.curatorStatus && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(surname, that.surname) && Objects.equals(competencies, that.competencies) && Objects.equals(telegramUrl, that.telegramUrl) && Objects.equals(vkUrl, that.vkUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventId, curatorId, curatorStatus, firstName, lastName, surname, telegramUrl, vkUrl);
+        return Objects.hash(eventId, curatorId, curatorStatus, firstName, lastName, surname, competencies, telegramUrl, vkUrl);
     }
 }
