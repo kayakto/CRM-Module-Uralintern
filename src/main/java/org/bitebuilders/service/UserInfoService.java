@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class UserInfoService {
@@ -21,4 +22,8 @@ public class UserInfoService {
         return userInfoRepository.findById(id);
     }
     // TODO сделать контроллер для получения данных пользователя
+
+    public List<UserInfo> getAllManagers() {
+        return userInfoRepository.findAllManagers();
+    }
 }

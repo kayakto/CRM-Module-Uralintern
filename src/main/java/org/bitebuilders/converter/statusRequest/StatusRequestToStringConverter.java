@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 public class StatusRequestToStringConverter implements Converter<StatusRequest, String> {
     @Override
     public String convert(StatusRequest statusRequest) {
+        if (statusRequest == null) {
+            throw new IllegalArgumentException("StatusRequest cannot be null");
+        }
         return statusRequest.name();
     }
 }

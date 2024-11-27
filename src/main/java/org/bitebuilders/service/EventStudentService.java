@@ -2,7 +2,6 @@ package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.exception.EventUserNotFoundException;
-import org.bitebuilders.model.EventCuratorInfo;
 import org.bitebuilders.model.EventStudent;
 import org.bitebuilders.model.EventStudentInfo;
 import org.bitebuilders.repository.EventStudentRepository;

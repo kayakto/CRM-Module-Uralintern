@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 public class ConditionToStringConverter implements Converter<Event.Condition, String> {
     @Override
     public String convert(Event.Condition condition) {
+        if (condition == null) {
+            throw new IllegalArgumentException("Condition can`t be null");
+        }
         return condition.name();
     }
 }

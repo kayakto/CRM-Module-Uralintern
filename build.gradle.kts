@@ -13,7 +13,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-web")
     // Spring Data JDBC
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
@@ -22,13 +21,21 @@ dependencies {
     implementation("org.postgresql:postgresql")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+
+    // Тестовые зависимости
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.mockito")
+    }
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks.test {
     useJUnitPlatform()
+    // previous JVM options
+    jvmArgs(
+        "-Djdk.instrument.traceUsage=false",
+        "-XX:+DisableAttachMechanism"
+    )
 }
 
 tasks.jar {

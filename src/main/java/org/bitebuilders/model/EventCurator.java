@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
 @Table("events_curators")
+@Setter
 public class EventCurator {
     @Id
     private Long id;

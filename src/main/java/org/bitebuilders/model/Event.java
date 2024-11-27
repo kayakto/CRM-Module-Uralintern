@@ -15,11 +15,11 @@ import java.util.Objects;
 @Getter
 @Table("events")
 @NoArgsConstructor
+@Setter
 public class Event {
     @Id
     private Long id;
     @Column("condition")
-    @Setter
     private Condition condition; // status
     @Column("description_text")
     private String descriptionText;
