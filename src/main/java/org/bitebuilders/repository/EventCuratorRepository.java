@@ -23,8 +23,13 @@ public interface EventCuratorRepository extends CrudRepository<EventCurator, Lon
             "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
             "FROM events_curators ec " +
             "JOIN users_info ui ON ec.curator_id = ui.id " +
-            "WHERE ec.event_id = :eventId AND curator_status = 'SENT_PERSONAL_INFO'")
-    List<EventCuratorInfo> findWaitingCurators(Long eventId);
+            "WHERE ec.event_id = :eventId AND ec.curator_status = 'SENT_PERSONAL_INFO'")
+    List<EventCuratorInfo> findWaitingCuratorsInfo(Long eventId);
+
+    @Query("SELECT ec.event_id, ec.curator_id, ec.curator_status " +
+            "FROM events_curators ec " +
+            "WHERE ec.event_id = :eventId AND ec.curator_status = 'ADDED_IN_CHAT'")
+    List<EventCurator> findAcceptedEventCurator(Long eventId); // TODO check in chat
 
     @Query("SELECT * FROM events_curators WHERE curator_id = :curatorId AND event_id = :eventId")
     Optional<EventCurator> findCuratorEvent(Long curatorId, Long eventId);

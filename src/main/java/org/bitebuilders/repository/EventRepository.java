@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventRepository extends CrudRepository<Event, Long> {
@@ -26,4 +28,8 @@ public interface EventRepository extends CrudRepository<Event, Long> {
     @Modifying
     @Query("DELETE FROM Event e WHERE e.condition = :condition AND e.updatedAt < :dateTime")
     void deleteByConditionAndUpdatedBefore(Event.Condition condition, LocalDateTime dateTime);
+
+    // Метод для поиска по дате начала мероприятия
+    @Query("SELECT * FROM events WHERE enrollment_start_date = :dateTime")
+    List<Event> findByByEnrollmentStartDate(OffsetDateTime dateTime);
 }

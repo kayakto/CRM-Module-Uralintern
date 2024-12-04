@@ -1,6 +1,7 @@
 package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
+import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.*;
 import org.bitebuilders.repository.EventRepository;
 import org.bitebuilders.repository.EventStudentRepository;
@@ -100,7 +101,7 @@ public class EventStudentServiceTest {
     }
 
     @Test
-    void testGetSentCuratorInfo() {
+    void testGetSentStudentInfo() {
         List<EventStudentInfo> result = eventStudentService.getSentStudentInfo(eventId);
 
         assertNotNull(result);
@@ -116,5 +117,14 @@ public class EventStudentServiceTest {
 
         EventStudent updatedStudent = eventStudentService.getEventStudent(eventId, studentId);
         assertEquals(StatusRequest.ADDED_IN_CHAT, updatedStudent.getStudentStatus());
-    } // TODO еще пару методов
+    }
+
+    @Test
+    void testUpdateCuratorStatusThrowsExceptionWhenCuratorNotFound() {
+        Long newEventId = 228228228228228L; // Несуществующий eventId
+
+        assertThrows(EventUserNotFoundException.class, () ->
+                eventStudentService.updateStudentStatus(newEventId, studentId, StatusRequest.ADDED_IN_CHAT)
+        );
+    }
 }

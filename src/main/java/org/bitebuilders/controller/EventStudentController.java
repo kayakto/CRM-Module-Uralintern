@@ -25,7 +25,7 @@ public class EventStudentController {
 
     // Получение всех студентов, отправивших персональные данные для участия
     @GetMapping("/{eventId}/students")
-    public ResponseEntity<List<EventStudentInfoDTO>> getStudentsEvent(@PathVariable Long eventId) {
+    public ResponseEntity<List<EventStudentInfoDTO>> getStudentsInfo(@PathVariable Long eventId) {
         List<EventStudentInfoDTO> esInfoDTO = eventStudentService.getEventStudents(eventId)
                 .stream()
                 .map(EventStudentInfo::toEventStudentDTO)
@@ -38,7 +38,7 @@ public class EventStudentController {
     }
 
     @GetMapping("/{eventId}/waiting_students")
-    public ResponseEntity<List<EventStudentInfoDTO>> getSentCuratorsInfo(@PathVariable Long eventId) {
+    public ResponseEntity<List<EventStudentInfoDTO>> getSentStudentsInfo(@PathVariable Long eventId) {
         List<EventStudentInfoDTO> esInfoDTO = eventStudentService.getSentStudentInfo(eventId)
                 .stream()
                 .map(EventStudentInfo::toEventStudentDTO)
@@ -82,7 +82,7 @@ public class EventStudentController {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(isUpdated);
+        return ResponseEntity.ok(isUpdated); // todo проверить, не закончились ли места
     }
 
     /**
@@ -132,4 +132,18 @@ public class EventStudentController {
 
         return ResponseEntity.ok(isUpdated);
     }
+
+    @PutMapping("/change-curator/{eventId}/students/{studentId}/curator/{newCuratorId}")
+    public ResponseEntity<String> changeStudentCurator(
+            @PathVariable Long eventId,
+            @PathVariable Long studentId,
+            @RequestParam Long newCuratorId
+    ) {
+        try {
+            eventStudentService.changeCurator(eventId, studentId, newCuratorId);
+            return ResponseEntity.ok("Curator successfully updated for student: " + studentId);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    } // todo еще потестить
 }

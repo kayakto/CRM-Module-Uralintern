@@ -20,6 +20,7 @@ public class EventStudent {
     @Setter
     private StatusRequest studentStatus;
     @Column("group_id")
+    @Setter
     private Long groupId;
 
     public EventStudent(Long studentId, Long eventId, StatusRequest studentStatus) {

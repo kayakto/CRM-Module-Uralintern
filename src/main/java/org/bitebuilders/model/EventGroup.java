@@ -14,4 +14,9 @@ public class EventGroup {
     private Long eventId;
     @Column("curator_id")
     private Long curatorId;
+
+    public EventGroup(Long eventId, Long curatorId) {
+        this.eventId = eventId;
+        this.curatorId = curatorId;
+    }
 }

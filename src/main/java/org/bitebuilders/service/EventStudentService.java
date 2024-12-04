@@ -2,8 +2,11 @@ package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.exception.EventUserNotFoundException;
+import org.bitebuilders.model.EventCurator;
+import org.bitebuilders.model.EventGroup;
 import org.bitebuilders.model.EventStudent;
 import org.bitebuilders.model.EventStudentInfo;
+import org.bitebuilders.repository.EventGroupRepository;
 import org.bitebuilders.repository.EventStudentRepository;
 import org.bitebuilders.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +25,13 @@ public class EventStudentService {
     @Autowired
     private final UserInfoRepository userInfoRepository;
 
-    public EventStudentService(EventStudentRepository eventStudentRepository, UserInfoRepository userInfoRepository) {
+    @Autowired
+    private final EventGroupRepository eventGroupRepository;
+
+    public EventStudentService(EventStudentRepository eventStudentRepository, UserInfoRepository userInfoRepository, EventCuratorService eventCuratorService, EventGroupRepository eventGroupRepository) {
         this.eventStudentRepository = eventStudentRepository;
         this.userInfoRepository = userInfoRepository;
+        this.eventGroupRepository = eventGroupRepository;
     }
 
     /**
@@ -37,7 +44,24 @@ public class EventStudentService {
 
     public EventStudent getEventStudent(Long eventId, Long studentId) {
         Optional<EventStudent> eventStudent = eventStudentRepository.findStudentEvent(studentId, eventId);
-        return eventStudent.orElse(null);
+        return eventStudent.orElse(null); // todo throw exception
+    }
+
+
+    /**
+     * Метод возвращающий список всех заявок студентов на мероприятие.
+     */
+    public List<EventStudentInfo> getSentStudentInfo(Long eventId) {
+        return eventStudentRepository.findWaitingStudentsInfo(eventId);
+    }
+
+    public List<EventStudent> getAcceptedEventStudent(Long eventId) {
+        return eventStudentRepository.findAcceptedEventStudent(eventId);
+    }
+
+    // мб транзактионал
+    public EventStudent save(EventStudent eventStudent) {
+        return eventStudentRepository.save(eventStudent);
     }
 
     /**
@@ -58,7 +82,7 @@ public class EventStudentService {
                         "EventStudent not found for eventId: " + eventId + " and studentId: " + studentId
                 );
             }
-        }
+        } // TODO переделать так, чтобы были методы на проверку существования
 
         eventStudent.setStudentStatus(newStatus);
         EventStudent savedEventStudent = eventStudentRepository.save(eventStudent);
@@ -66,10 +90,22 @@ public class EventStudentService {
         return savedEventStudent.getStudentStatus() == newStatus;
     }
 
-    /**
-     * Метод возвращающий список всех заявок студентов на мероприятие.
-     */
-    public List<EventStudentInfo> getSentStudentInfo(Long eventId) {
-        return eventStudentRepository.findWaitingStudents(eventId);
+    @Transactional
+    public void changeCurator(Long eventId, Long studentId, Long newCuratorId) {
+        // Проверка наличия студента
+        EventStudent student = eventStudentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + studentId));
+
+        // Проверка, что студент принадлежит мероприятию
+        if (!student.getEventId().equals(eventId)) {
+            throw new IllegalArgumentException("Student does not belong to event with ID: " + eventId);
+        }
+
+        // Проверка наличия группы для нового куратора
+        EventGroup newGroup = eventGroupRepository.findByEventIdAndCuratorId(eventId, newCuratorId);
+
+        // Обновление groupId у студента
+        student.setGroupId(newGroup.getId());
+        eventStudentRepository.save(student); // Сохраняем изменения в базе
     }
 }

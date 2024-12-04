@@ -43,6 +43,7 @@ class EventCuratorControllerTest {
         // Очистка базы перед каждым тестом
         eventCuratorRepository.deleteAll();
         eventRepository.deleteAll();
+        userInfoRepository.deleteAll();
 
         // Добавление тестовых данных
         UserInfo curator1 = new UserInfo(

@@ -115,6 +115,7 @@ public class Event {
         HIDDEN,  // Скрыт
         ACTIVE,  // Активный
         DELETED, // Удаленный
-        CLOSED   // Закрытый
-    }
+        CLOSED,   // Закрытый
+        STARTED, // Начался, в прогрессе
+    } // TODO в ближайшее время обновить статусы
 }

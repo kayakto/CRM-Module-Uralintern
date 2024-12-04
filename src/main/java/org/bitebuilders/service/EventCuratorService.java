@@ -32,8 +32,21 @@ public class EventCuratorService {
         return eventCurator.orElse(null);
     }
 
+    // Метод возвращающий список всех заявок на кураторство.
+    public List<EventCuratorInfo> getSentCuratorInfo(Long eventId) {
+        return eventCuratorRepository.findWaitingCuratorsInfo(eventId);
+    }
+
+    public List<EventCurator> getAcceptedEventCurator(Long eventId) {
+        return eventCuratorRepository.findAcceptedEventCurator(eventId);
+    }
+
     public List<EventCuratorInfo> getCuratorsInfo(Long eventId) {
         return eventCuratorRepository.findByEventId(eventId);
+    }
+
+    public EventCurator save(EventCurator curator) {
+        return eventCuratorRepository.save(curator);
     }
 
     /**
@@ -53,7 +66,7 @@ public class EventCuratorService {
             } else {
                 throw new EventUserNotFoundException(
                         "EventCurator not found for eventId: " + eventId + " and curatorId: " + curatorId
-                );
+                ); // TODO переделать так, чтобы были методы на проверку существования
             }
         }
 
@@ -61,10 +74,5 @@ public class EventCuratorService {
         EventCurator savedEventCurator = eventCuratorRepository.save(eventCurator);
 
         return savedEventCurator.getCuratorStatus() == newStatus;
-    }
-
-    // Метод возвращающий список всех заявок на кураторство.
-    public List<EventCuratorInfo> getSentCuratorInfo(Long eventId) {
-        return eventCuratorRepository.findWaitingCurators(eventId);
     }
 }

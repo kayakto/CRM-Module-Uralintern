@@ -1,11 +1,13 @@
 package org.bitebuilders.service;
 
+import org.bitebuilders.exception.EventNotFoundException;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +21,12 @@ public class EventService {
 
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
+    }
+
+    public void isPresentEvent(Long eventId) {
+        Optional<Event> event = eventRepository.findById(eventId);
+        if (event.isEmpty())
+            throw new EventNotFoundException("Event doesn`t exist");
     }
 
     // Метод, который возвращает все мероприятия со статусом ACTIVE
@@ -35,6 +43,10 @@ public class EventService {
         return eventRepository.findById(eventId);
     }
 
+    public Event save(Event event) {
+        return eventRepository.save(event);
+    }
+
     // Метод, который сохраняет Event и возвращает его
     @Transactional
     public Event createOrUpdateEvent(Event event) {
@@ -42,6 +54,7 @@ public class EventService {
         return eventRepository.save(event); // Возвращаем его после сохранения
     }
 
+    @Transactional
     public Boolean deleteEvent(Long eventId) {
         Optional<Event> eventToDelete = getEventById(eventId);
         return eventToDelete.map(event -> {
@@ -49,5 +62,9 @@ public class EventService {
             eventRepository.save(event); // Сохраняем изменение статуса в базе данных
             return true;
         }).orElse(false);
+    }
+
+    public List<Event> getEventsByEnrollmentStartDate(OffsetDateTime dateTime) {
+        return eventRepository.findByByEnrollmentStartDate(dateTime);
     }
 }
