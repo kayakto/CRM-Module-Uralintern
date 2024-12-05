@@ -28,7 +28,7 @@ public class EventManagementController {
      */
     @PostMapping("/start")
     public ResponseEntity<String> manuallyStartEvents() {
-        List<Event> events = eventService.getEventsByEnrollmentStartDate(OffsetDateTime.now());
+        List<Event> events = eventService.getEventsMoreEnrollmentStartDate(OffsetDateTime.now());
         if (events.isEmpty()) {
             return ResponseEntity.ok("No events found to start.");
         }
@@ -36,7 +36,7 @@ public class EventManagementController {
         StringBuilder result = new StringBuilder();
         for (Event event : events) {
             try {
-                eventGroupService.createGroup(event.getId());
+                eventGroupService.createGroups(event.getId());
                 event.setCondition(Event.Condition.STARTED);
                 eventService.save(event);
 

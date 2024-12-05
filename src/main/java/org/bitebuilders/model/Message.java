@@ -17,5 +17,6 @@ public class Message {
     @Column("message_text")
     private String messageText;
     @Column("edit_date")
-    private OffsetDateTime editDate;
+    private OffsetDateTime editDate; // добавим таблицу сообщения когда было отправлено добавить
+    // статус сообщения на accept reject
 }

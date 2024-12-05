@@ -1,7 +1,9 @@
 package org.bitebuilders.service;
 
 import org.bitebuilders.model.Event;
+import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.repository.EventRepository;
+import org.bitebuilders.repository.UserInfoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +24,44 @@ class EventServiceTest {
     private EventRepository eventRepository;
 
     @Autowired
+    private UserInfoRepository userInfoRepository;
+
+    @Autowired
     private EventService eventService;
+
+    private Long adminId;
+
+    private Long eventId;
 
     @BeforeEach
     void setUp() {
         // Очистка базы данных перед каждым тестом
         eventRepository.deleteAll();
-        // Создаем несколько тестовых записей
+        userInfoRepository.deleteAll();
+
+        // Создаем админа
+        UserInfo admin = new UserInfo(
+                "John",
+                "Doe",
+                null,
+                "johndoe@example.com",
+                "John's sign",
+                "vk.com/johndoe",
+                "t.me/johndoe",
+                UserInfo.Role.ADMIN,
+                "Chill guy"
+        );
+
+        // Сохраняем админа в базе данных
+        adminId = userInfoRepository.save(admin).getId();
+
+        // Создаем запись события
         Event event1 = new Event(
                 Event.Condition.ACTIVE,
                 "description",
                 "title",
-                1L,
-                2L,
+                adminId, // Используем сохраненный adminId
+                null,
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
@@ -42,7 +69,8 @@ class EventServiceTest {
                 100
         );
 
-        eventRepository.save(event1);
+        // Сохраняем событие в базе данных
+        eventId = eventRepository.save(event1).getId();
     }
 
     @Test
@@ -58,9 +86,6 @@ class EventServiceTest {
 
     @Test
     void getEventsByAdminId_ShouldReturnEventsForAdmin() {
-        // Arrange
-        Long adminId = 1L;
-
         // Act
         List<Event> events = eventService.getEventsByAdminId(adminId);
 
@@ -72,9 +97,6 @@ class EventServiceTest {
 
     @Test
     void getEventById_ShouldReturnEventWhenExists() {
-        // Arrange
-        Long eventId = eventRepository.findAllByCondition(Event.Condition.ACTIVE).get(0).getId();
-
         // Act
         Optional<Event> result = eventService.getEventById(eventId);
 
@@ -90,8 +112,8 @@ class EventServiceTest {
                 Event.Condition.ACTIVE,
                 "description",
                 "title",
-                1L,
-                2L,
+                adminId,
+                null,
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
@@ -109,9 +131,6 @@ class EventServiceTest {
 
     @Test
     void deleteEvent_ShouldSetConditionToDeletedWhenEventExists() {
-        // Arrange
-        Long eventId = eventRepository.findAllByCondition(Event.Condition.ACTIVE).get(0).getId();
-
         // Act
         Boolean result = eventService.deleteEvent(eventId);
 

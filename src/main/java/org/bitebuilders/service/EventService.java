@@ -34,6 +34,11 @@ public class EventService {
         return eventRepository.findAllByCondition(Event.Condition.ACTIVE); // Используем метод репозитория
     }
 
+    // Метод, который возвращает все мероприятия
+    public List<Event> getAllEvents() {
+        return (List<Event>) eventRepository.findAll(); // Используем метод репозитория
+    }
+
     // Метод, который возвращает все мероприятия, у которых есть переданный admin_id
     public List<Event> getEventsByAdminId(Long adminId) {
         return eventRepository.findAllByAdminId(adminId); // Фильтрация по admin_id
@@ -43,6 +48,11 @@ public class EventService {
         return eventRepository.findById(eventId);
     }
 
+    public List<Event> getEventsMoreEnrollmentStartDate(OffsetDateTime dateTime) {
+        return eventRepository.findStartedEventsByDate(dateTime);
+    }
+
+    @Transactional
     public Event save(Event event) {
         return eventRepository.save(event);
     }
@@ -64,7 +74,7 @@ public class EventService {
         }).orElse(false);
     }
 
-    public List<Event> getEventsByEnrollmentStartDate(OffsetDateTime dateTime) {
-        return eventRepository.findByByEnrollmentStartDate(dateTime);
+    public void deleteAllEvents() {
+        eventRepository.deleteAll();
     }
 }

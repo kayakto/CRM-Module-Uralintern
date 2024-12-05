@@ -19,4 +19,13 @@ public class EventGroup {
         this.eventId = eventId;
         this.curatorId = curatorId;
     }
+
+    @Override
+    public String toString() {
+        return "EventGroup{" +
+                "id=" + id +
+                ", eventId=" + eventId +
+                ", curatorId=" + curatorId +
+                '}';
+    }
 }

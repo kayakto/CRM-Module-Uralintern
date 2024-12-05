@@ -39,8 +39,12 @@ public class EventGroupService {
         return eventGroupRepository.save(eventGroup);
     }
 
+    public List<EventGroup> getEventGroups(Long eventId) {
+        return eventGroupRepository.findByEventId(eventId);
+    }
+
     @Transactional
-    public List<EventGroup> createGroup(Long eventId) {
+    public List<EventGroup> createGroups(Long eventId) {
         eventService.isPresentEvent(eventId); // throws Exception
 
         // Получение кураторов и студентов
@@ -55,6 +59,8 @@ public class EventGroupService {
         if (studentsCount == 0) {
             throw new EventUserNotFoundException("No students available for this event.");
         } // Todo убери ошибки и ставь статус - ошибка создания меро
+
+        System.out.println("есть и ивенты и студенты");
 
         // Определяем размер групп
         int baseGroupSize = studentsCount / curatorsCount;

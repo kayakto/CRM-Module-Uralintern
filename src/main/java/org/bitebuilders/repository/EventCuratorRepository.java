@@ -26,11 +26,15 @@ public interface EventCuratorRepository extends CrudRepository<EventCurator, Lon
             "WHERE ec.event_id = :eventId AND ec.curator_status = 'SENT_PERSONAL_INFO'")
     List<EventCuratorInfo> findWaitingCuratorsInfo(Long eventId);
 
-    @Query("SELECT ec.event_id, ec.curator_id, ec.curator_status " +
+    // Метод для получения кураторов со статусом "ADDED_IN_CHAT" для определённого события
+    @Query("SELECT ec.id, ec.curator_id, ec.event_id, ec.curator_status " +
             "FROM events_curators ec " +
             "WHERE ec.event_id = :eventId AND ec.curator_status = 'ADDED_IN_CHAT'")
-    List<EventCurator> findAcceptedEventCurator(Long eventId); // TODO check in chat
+    List<EventCurator> findAcceptedEventCurator(Long eventId);
 
-    @Query("SELECT * FROM events_curators WHERE curator_id = :curatorId AND event_id = :eventId")
+    // Метод для поиска куратора по ID куратора и ID события
+    @Query("SELECT ec.id, ec.curator_id, ec.event_id, ec.curator_status " +
+            "FROM events_curators ec " +
+            "WHERE ec.curator_id = :curatorId AND ec.event_id = :eventId")
     Optional<EventCurator> findCuratorEvent(Long curatorId, Long eventId);
 }
