@@ -11,6 +11,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db-postgres:5432/internships
       - SPRING_DATASOURCE_USERNAME=crm_admin
       - SPRING_DATASOURCE_PASSWORD=bitrix24
+    command: ["sh", "-c", "while ! nc -z db-postgres 5432; do sleep 1; done; java -jar build/libs/CRM-Module-1.0-SNAPSHOT.jar"]
     ports:
       - "8080:8080"
     restart: always
@@ -18,14 +19,14 @@ services:
       - main-network
 
   db-postgres:
-    image: postgres:17.0
+    image: postgres:latest
     container_name: "database_postgres"
     environment:
       POSTGRES_DB: internships
       POSTGRES_USER: crm_admin
       POSTGRES_PASSWORD: bitrix24
     ports:
-      - "5433:5433"
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./data/init-script.sql:/docker-entrypoint-initdb.d/init.sql
