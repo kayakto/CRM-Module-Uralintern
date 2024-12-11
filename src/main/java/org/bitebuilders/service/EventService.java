@@ -2,6 +2,7 @@ package org.bitebuilders.service;
 
 import org.bitebuilders.exception.EventNotFoundException;
 import org.bitebuilders.model.Event;
+import org.bitebuilders.model.EventGroup;
 import org.bitebuilders.repository.EventRepository;
 import org.bitebuilders.service.schedule.EventGroupCreationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +23,12 @@ public class EventService {
     @Autowired
     private final EventRepository eventRepository;
 
-//    @Autowired
-//    private final EventGroupCreationService eventGroupCreationService;
+    @Autowired
+    private final EventGroupService eventGroupService;
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository, EventGroupService eventGroupService) {
         this.eventRepository = eventRepository;
+        this.eventGroupService = eventGroupService;
     }
 
     public void isPresentEvent(Long eventId) {
@@ -100,20 +103,32 @@ public class EventService {
 
     @Scheduled(fixedRate = 60000) // Обновляем статусы каждую минуту
     @Transactional
-    public void updateEventStatuses() {
+    public void updateEventConditions() {
         List<Event> events = getAllEvents();
 
         for (Event event : events) {
             Event.Condition newCondition = calculateCondition(event);
-            if (newCondition != event.getCondition()) {
-                event.setCondition(newCondition);
-                createOrUpdateEvent(event);
+            Event.Condition currentCondition = event.getCondition();
+
+            if (newCondition != currentCondition) {
+                if (currentCondition == Event.Condition.IN_PROGRESS) {
+                    startEventById(event.getId());
+                } else {
+                    event.setCondition(newCondition);
+                    createOrUpdateEvent(event);
+                }
             }
         }
     } // TODO вынести в отдельный класс
 
     private Event.Condition calculateCondition(Event event) {
         OffsetDateTime now = OffsetDateTime.now();
+        Event.Condition currentCondition = event.getCondition();
+
+        // Не меняем статус для удалённых/скрытых мероприятий
+        if (currentCondition == Event.Condition.HIDDEN || currentCondition == Event.Condition.DELETED) {
+            return currentCondition;
+        }
 
         if (now.isBefore(event.getEnrollmentStartDate())) {
             return Event.Condition.PREPARATION;
@@ -126,13 +141,50 @@ public class EventService {
         } else if (now.isAfter(event.getEnrollmentEndDate()) && now.isBefore(event.getEventStartDate())) {
             return Event.Condition.REGISTRATION_CLOSED;
         } else if (now.isAfter(event.getEventStartDate()) && now.isBefore(event.getEventEndDate())) {
-//            Event startedEvent = eventGroupCreationService.startEventById(event.getId()); // может в методе выше это сделать
-//            return startedEvent.getCondition();
             return Event.Condition.IN_PROGRESS;
         } else if (now.isAfter(event.getEventEndDate())) {
             return Event.Condition.FINISHED; // TODO логика завершения
         }
 
-        return event.getCondition(); // Не меняем статус для удалённых/скрытых мероприятий
+        return currentCondition;
+    }
+
+    public Event startEventById(Long eventId) {
+        Event eventToStart = getEventToStart(eventId);
+
+        // Создание групп для мероприятия
+        List<EventGroup> groups = eventGroupService.createGroups(eventToStart.getId());
+        System.out.println("Groups created for event ID " + eventToStart.getId() + ": " + groups);
+
+        // Установка статуса мероприятия в "IN_PROGRESS"
+        eventToStart.setCondition(Event.Condition.IN_PROGRESS);
+        System.out.println("Event with ID " + eventToStart.getId() + " is now in progress.");
+
+        // Сохранение изменений в мероприятии
+        return createOrUpdateEvent(eventToStart);
+    }
+
+    private Event getEventToStart(Long eventId) {
+        // Получение мероприятия по ID
+        Optional<Event> eventOptional = getEventById(eventId);
+        if (eventOptional.isEmpty()) {
+            throw new EventNotFoundException("Event with ID " + eventId + " not found.");
+        }
+
+        Event eventToStart = eventOptional.get();
+        Event.Condition currentCondition = eventToStart.getCondition();
+
+        // Разрешённые статусы для старта мероприятия
+        List<Event.Condition> canStart = Arrays.asList(
+                Event.Condition.REGISTRATION_OPEN,
+                Event.Condition.NO_SEATS,
+                Event.Condition.REGISTRATION_CLOSED
+        );
+
+        // Проверка, может ли мероприятие быть запущено
+        if (!canStart.contains(currentCondition)) {
+            throw new IllegalStateException("Event cannot be started due to its current condition: " + currentCondition);
+        }
+        return eventToStart;
     }
 }

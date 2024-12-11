@@ -1,4 +1,4 @@
-package org.bitebuilders.service;
+package org.bitebuilders.service; // для теста старта отдельного event в EventServiceStartTest
 
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.UserInfo;

@@ -20,17 +20,13 @@ public class EventGroupService {
     private final EventGroupRepository eventGroupRepository;
 
     @Autowired
-    private final EventService eventService;
-
-    @Autowired
     private final EventCuratorService eventCuratorService;
 
     @Autowired
     private final EventStudentService eventStudentService;
 
-    public EventGroupService(EventGroupRepository eventGroupRepository, EventService eventService, EventCuratorService eventCuratorService, EventStudentService eventStudentService) {
+    public EventGroupService(EventGroupRepository eventGroupRepository, EventCuratorService eventCuratorService, EventStudentService eventStudentService) {
         this.eventGroupRepository = eventGroupRepository;
-        this.eventService = eventService;
         this.eventCuratorService = eventCuratorService;
         this.eventStudentService = eventStudentService;
     }
@@ -45,8 +41,8 @@ public class EventGroupService {
 
     @Transactional
     public List<EventGroup> createGroups(Long eventId) {
-        eventService.isPresentEvent(eventId); // throws Exception
-
+        // проверки на существование event нет, так как ниже не найдет ни кураторов, ни студентов
+        // и проверка event в вызывающих методах должна быть
         // Получение кураторов и студентов
         List<EventCurator> curators = eventCuratorService.getAcceptedEventCurator(eventId);
         int curatorsCount = curators.size();

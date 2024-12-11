@@ -70,6 +70,21 @@ public class EventController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Запускает мероприятие досрочно
+     */
+    @PostMapping("/start-event")
+    public ResponseEntity<EventDTO> startEvent(@RequestBody Long eventId) {
+        Event startedEvent;
+        try {
+            startedEvent = eventService.startEventById(eventId);
+        } catch (IllegalStateException e) {
+            System.err.println(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(startedEvent.toEventDTO());
+    }
+
     @PutMapping("/update/{eventId}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable Long eventId,
                                              @RequestBody EventRequest requestedEvent) {
