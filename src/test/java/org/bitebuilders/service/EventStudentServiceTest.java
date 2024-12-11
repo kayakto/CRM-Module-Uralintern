@@ -60,7 +60,7 @@ public class EventStudentServiceTest {
         studentId = userInfoRepository.save(student).getId();
 
         Event event = new Event(
-                Event.Condition.ACTIVE,
+                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 null,

@@ -64,7 +64,7 @@ class EventCuratorServiceTest {
         curatorId = userInfoRepository.save(curator).getId();
 
         Event event1 = new Event(
-                Event.Condition.ACTIVE,
+                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 null,

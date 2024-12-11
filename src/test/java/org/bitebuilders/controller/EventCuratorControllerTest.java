@@ -75,7 +75,7 @@ class EventCuratorControllerTest {
         curatorIdWithoutEvent = userInfoRepository.save(curatorWithoutEvent).getId();
 
         Event event1 = new Event(
-                Event.Condition.ACTIVE,
+                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 null,

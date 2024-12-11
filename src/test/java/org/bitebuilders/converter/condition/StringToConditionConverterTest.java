@@ -13,13 +13,13 @@ public class StringToConditionConverterTest {
     @Test
     public void testConverter() {
         // Arrange
-        String input = "ACTIVE";
+        String input = "REGISTRATION_OPEN";
 
         // Act
         Condition result = converter.convert(input);
 
         // Assert
-        assertEquals(Condition.ACTIVE, result);
+        assertEquals(Condition.REGISTRATION_OPEN, result);
     }
 
     @Test

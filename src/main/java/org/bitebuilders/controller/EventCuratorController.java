@@ -36,6 +36,13 @@ public class EventCuratorController {
         return ResponseEntity.noContent().build();
     }
 
+    // Получение статуса куратора GET - возвращает текущий статус студента или куратора.
+    @GetMapping("/{eventId}/curator-status/{curatorId}")
+    public ResponseEntity<StatusRequest> getStudentStatus(Long eventId, Long curatorId) {
+        StatusRequest result = eventCuratorService.getCuratorStatus(eventId, curatorId);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/{eventId}/waiting_curators")
     public ResponseEntity<List<EventCuratorInfoDTO>> getSentCuratorsInfo(@PathVariable Long eventId) {
         List<EventCuratorInfoDTO> ecInfoDTO = eventCuratorService.getSentCuratorInfo(eventId)
@@ -50,7 +57,7 @@ public class EventCuratorController {
     }
 
     /**
-     * Метод удаления заявки на кураторство. (reject)
+     * Метод удаления куратора c мероприятия
      */
     @DeleteMapping("/{eventId}/delete/{curatorId}")
     public ResponseEntity<Boolean> deleteCuratorFromEvent(

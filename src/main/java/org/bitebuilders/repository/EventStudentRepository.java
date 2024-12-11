@@ -43,4 +43,7 @@ public interface EventStudentRepository extends CrudRepository<EventStudent, Lon
 
     @Query("SELECT * FROM events_students WHERE student_id = :studentId AND event_id = :eventId")
     Optional<EventStudent> findStudentEvent(Long studentId, Long eventId);
+
+    @Query("SELECT student_status FROM events_students WHERE student_id = :studentId AND event_id = :eventId")
+    StatusRequest findStudentEventStatus(Long studentId, Long eventId);
 }

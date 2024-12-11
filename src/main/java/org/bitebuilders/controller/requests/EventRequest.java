@@ -19,21 +19,22 @@ public class EventRequest {
     private final OffsetDateTime eventEndDate;
     private final OffsetDateTime enrollmentStartDate;
     private final OffsetDateTime enrollmentEndDate;
-    private final int numberSeats;
+    private final int numberSeatsStudent;
+    private final int numberSeatsCurator;
     private final Event.Condition condition;
 
     public Event toEvent() {
-        return new Event(condition != null ? condition : Event.Condition.ACTIVE,
+        return new Event(condition != null ? condition : Event.Condition.REGISTRATION_OPEN,
                 descriptionText, title,
                 adminId, managerId, eventStartDate, eventEndDate,
-                enrollmentStartDate, enrollmentEndDate, numberSeats);
+                enrollmentStartDate, enrollmentEndDate, numberSeatsStudent, numberSeatsCurator);
     }
 
     public Event toEvent(Long eventId) {
         return new Event(eventId,
-                condition != null ? condition : Event.Condition.ACTIVE,
+                condition != null ? condition : Event.Condition.REGISTRATION_OPEN,
                 descriptionText, title,
                 adminId, managerId, eventStartDate, eventEndDate,
-                enrollmentStartDate, enrollmentEndDate, numberSeats);
+                enrollmentStartDate, enrollmentEndDate, numberSeatsStudent, numberSeatsCurator);
     }
 }

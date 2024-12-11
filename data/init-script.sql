@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS users_info (
 -- Создание таблицы event
 CREATE TABLE IF NOT EXISTS events (
     id SERIAL PRIMARY KEY,
-    condition VARCHAR(20) NOT NULL DEFAULT 'HIDDEN',
+    condition VARCHAR(20) NOT NULL DEFAULT 'PREPARATION',
     description_text TEXT,
     title VARCHAR(255) NOT NULL,
     admin_id INT REFERENCES users_info(id) ON DELETE SET NULL,
@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS events (
     chat_url VARCHAR(255),
     enrollment_start_date TIMESTAMP WITH TIME ZONE NOT NULL,
     enrollment_end_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    number_seats INT NOT NULL
+    number_seats_students INT NOT NULL,
+    number_seats_curators INT DEFAULT 10
 );
 
 -- Создание таблицы event_student
@@ -67,13 +68,13 @@ VALUES
 ('Charlie', 'Brown', 'E', 'charlie.b@example.com', 'signature5', 'https://t.me/charlieb', NULL, 'STUDENT', 'Competence8');
 
 -- Заполнение таблицы events
-INSERT INTO events (condition, description_text, title, admin_id, manager_id, event_start_date, event_end_date, chat_url, enrollment_start_date, enrollment_end_date, number_seats)
+INSERT INTO events (condition, description_text, title, admin_id, manager_id, event_start_date, event_end_date, chat_url, enrollment_start_date, enrollment_end_date, number_seats_students)
 VALUES
-('ACTIVE', 'Description for Event 1', 'Event 1', 4, 3, '2024-11-01T09:00:00+00', '2024-11-01T17:00:00+00', 'https://chat.url/event1', '2024-10-01T09:00:00+00', '2024-10-30T17:00:00+00', 100),
-('HIDDEN', 'Description for Event 2', 'Event 2', 4, 2, '2024-11-05T09:00:00+00', '2024-11-05T17:00:00+00', 'https://chat.url/event2', '2024-10-05T09:00:00+00', '2024-10-29T17:00:00+00', 50),
-('CLOSED', 'Description for Event 3', 'Event 3', 4, 1, '2024-12-01T09:00:00+00', '2024-12-01T17:00:00+00', NULL, '2024-11-01T09:00:00+00', '2024-11-30T17:00:00+00', 30),
-('ACTIVE', 'Description for Event 4', 'Event 4', 4, 1, '2024-12-05T09:00:00+00', '2024-12-05T17:00:00+00', 'https://chat.url/event4', '2024-11-05T09:00:00+00', '2024-11-30T17:00:00+00', 75),
-('HIDDEN', 'Description for Event 5', 'Event 5', 4, 2, '2024-12-10T09:00:00+00', '2024-12-10T17:00:00+00', NULL, '2024-11-10T09:00:00+00', '2024-12-01T17:00:00+00', 60);
+    ('PREPARATION', 'Description for Event 1', 'Event 1', 4, 3, '2024-11-01T09:00:00+00', '2024-11-01T17:00:00+00', 'https://chat.url/event1', '2024-10-01T09:00:00+00', '2024-10-30T17:00:00+00', 100),
+    ('REGISTRATION_OPEN', 'Description for Event 2', 'Event 2', 4, 2, '2024-11-05T09:00:00+00', '2024-11-05T17:00:00+00', 'https://chat.url/event2', '2024-10-05T09:00:00+00', '2024-10-29T17:00:00+00', 50),
+    ('NO_SEATS', 'Description for Event 3', 'Event 3', 4, 1, '2024-12-01T09:00:00+00', '2024-12-01T17:00:00+00', NULL, '2024-11-01T09:00:00+00', '2024-11-30T17:00:00+00', 0),
+    ('IN_PROGRESS', 'Description for Event 4', 'Event 4', 4, 1, '2024-12-05T09:00:00+00', '2024-12-05T17:00:00+00', 'https://chat.url/event4', '2024-11-05T09:00:00+00', '2024-11-30T17:00:00+00', 75),
+    ('HIDDEN', 'Description for Event 5', 'Event 5', 4, 2, '2024-12-10T09:00:00+00', '2024-12-10T17:00:00+00', NULL, '2024-11-10T09:00:00+00', '2024-12-01T17:00:00+00', 60);
 
 -- Заполнение таблицы events_students
 INSERT INTO events_students (student_id, event_id, student_status)
@@ -126,5 +127,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO crm_admin;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO crm_admin;
 
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;
+
+ALTER TABLE events ALTER COLUMN number_seats_curators SET NOT NULL;
 
 

@@ -29,6 +29,6 @@ public interface EventRepository extends CrudRepository<Event, Long> {
     void deleteByConditionAndUpdatedBefore(Event.Condition condition, LocalDateTime dateTime);
 
     // Метод для поиска по дате начала мероприятия
-    @Query("SELECT * FROM events WHERE enrollment_start_date <= :dateTime AND condition = 'ACTIVE'")
+    @Query("SELECT * FROM events WHERE enrollment_start_date <= :dateTime AND condition = 'REGISTRATION_OPEN'")
     List<Event> findStartedEventsByDate(OffsetDateTime dateTime);
 }

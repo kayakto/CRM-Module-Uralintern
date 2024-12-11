@@ -23,8 +23,8 @@ public class EventController {
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<EventDTO>> getActiveEvents() {
-        List<EventDTO> activeEvents = eventService.getActiveEvents()
+    public ResponseEntity<List<EventDTO>> getOpenedEvents() {
+        List<EventDTO> activeEvents = eventService.getOpenedEvents()
                 .stream()
                 .map(Event::toEventDTO)
                 .toList();
@@ -54,6 +54,13 @@ public class EventController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Получение статуса мероприятия по его id
+    @GetMapping("/condition/{eventId}")
+    public ResponseEntity<Event.Condition> getEventConditionByID(@PathVariable Long eventId) {
+        Event.Condition result = eventService.getEventCondition(eventId);
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/post")
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventRequest requestedEvent) {
         Event newEvent = requestedEvent.toEvent();
@@ -61,12 +68,6 @@ public class EventController {
         if (eventDTO != null)
             return ResponseEntity.ok(eventDTO);
         return ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping("/delete/{eventId}")
-    public ResponseEntity<Boolean> deleteEventByID(@PathVariable Long eventId) {
-        Boolean result = eventService.deleteEvent(eventId);
-        return result ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/update/{eventId}")
@@ -77,5 +78,17 @@ public class EventController {
         if (eventDTO != null)
             return ResponseEntity.ok(eventDTO);
         return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/hide/{eventId}")
+    public ResponseEntity<Boolean> hideEvent(@PathVariable Long eventId) {
+        Boolean result = eventService.hideEvent(eventId);
+        return result ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/delete/{eventId}")
+    public ResponseEntity<Boolean> deleteEventByID(@PathVariable Long eventId) {
+        Boolean result = eventService.deleteEvent(eventId);
+        return result ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
     }
 }

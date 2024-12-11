@@ -59,6 +59,10 @@ public class EventStudentService {
         return eventStudentRepository.findAcceptedEventStudent(eventId);
     }
 
+    public StatusRequest getStudentStatus(Long eventId, Long studentId) {
+        return eventStudentRepository.findStudentEventStatus(studentId, eventId); // todo throw exception
+    }
+
     // мб транзактионал
     public EventStudent save(EventStudent eventStudent) {
         return eventStudentRepository.save(eventStudent);

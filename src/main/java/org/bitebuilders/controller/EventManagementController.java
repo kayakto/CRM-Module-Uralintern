@@ -1,53 +1,37 @@
 package org.bitebuilders.controller;
 
+import org.bitebuilders.controller.dto.EventDTO;
 import org.bitebuilders.model.Event;
-import org.bitebuilders.service.EventGroupService;
-import org.bitebuilders.service.EventService;
+import org.bitebuilders.service.schedule.EventGroupCreationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.OffsetDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/events-management")
 public class EventManagementController {
 
-    private final EventService eventService;
-    private final EventGroupService eventGroupService;
+    private final EventGroupCreationService eventGroupCreationService;
 
-    public EventManagementController(EventService eventService, EventGroupService eventGroupService) {
-        this.eventService = eventService;
-        this.eventGroupService = eventGroupService;
+    public EventManagementController(EventGroupCreationService eventGroupCreationService) {
+        this.eventGroupCreationService = eventGroupCreationService;
     }
 
     /**
-     * Запуск создания групп для мероприятий с текущей датой начала регистрации.
+     * Запускает мероприятие досрочно
      */
-    @PostMapping("/start")
-    public ResponseEntity<String> manuallyStartEvents() {
-        List<Event> events = eventService.getEventsMoreEnrollmentStartDate(OffsetDateTime.now());
-        if (events.isEmpty()) {
-            return ResponseEntity.ok("No events found to start.");
+    @PostMapping("/start-event")
+    public ResponseEntity<EventDTO> startEvent(@RequestBody Long eventId) {
+        Event startedEvent;
+        try {
+            startedEvent = eventGroupCreationService.startEventById(eventId);
+        } catch (IllegalStateException e) {
+            System.err.println(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
-
-        StringBuilder result = new StringBuilder();
-        for (Event event : events) {
-            try {
-                eventGroupService.createGroups(event.getId());
-                event.setCondition(Event.Condition.STARTED);
-                eventService.save(event);
-
-                result.append("Groups created for event ID: ").append(event.getId()).append("\n");
-            } catch (Exception e) {
-                result.append("Error creating groups for event ID: ").append(event.getId())
-                        .append(". Error: ").append(e.getMessage()).append("\n");
-            }
-        }
-
-        return ResponseEntity.ok(result.toString());
-    } // TODO потестить еще
+        return ResponseEntity.ok(startedEvent.toEventDTO());
+    }
 }
 

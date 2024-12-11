@@ -50,6 +50,14 @@ public class EventStudentController {
         return ResponseEntity.noContent().build();
     }
 
+    // Получение статуса студента GET - возвращает текущий статус студента или куратора.
+    @GetMapping("/{eventId}/student-status/{studentId}")
+    public ResponseEntity<StatusRequest> getStudentStatus(Long eventId, Long studentId) {
+        StatusRequest result = eventStudentService.getStudentStatus(eventId, studentId);
+        return ResponseEntity.ok(result);
+    }
+
+    // Ручное изменение статуса студента - позволяет руководителю вручную изменять статус участника мероприятия (“Удалён(а) с мероприятия“)
     @DeleteMapping("/{eventId}/delete/{studentId}")
     public ResponseEntity<Boolean> deleteStudentFromEvent(
             @PathVariable Long eventId,
@@ -78,7 +86,7 @@ public class EventStudentController {
                     StatusRequest.SENT_PERSONAL_INFO
             );
         } catch (EventUserNotFoundException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
 

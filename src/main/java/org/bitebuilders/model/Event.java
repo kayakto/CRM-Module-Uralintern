@@ -1,8 +1,6 @@
 package org.bitebuilders.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.bitebuilders.controller.dto.EventDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
@@ -16,6 +14,8 @@ import java.util.Objects;
 @Table("events")
 @NoArgsConstructor
 @Setter
+@ToString
+@EqualsAndHashCode
 public class Event {
     @Id
     private Long id;
@@ -39,10 +39,23 @@ public class Event {
     private OffsetDateTime enrollmentStartDate;
     @Column("enrollment_end_date")
     private OffsetDateTime enrollmentEndDate;
-    @Column("number_seats")
-    private int numberSeats;
+    @Column("number_seats_students")
+    private int numberSeatsStudent;
+    @Column("number_seats_curators")
+    private int numberSeatsCurator;
 
-    public Event(Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeats) {
+    public enum Condition {
+        PREPARATION, // Статус "Подготовка" : (текущая дата < enrollment_start_date)
+        REGISTRATION_OPEN, // Статус "Регистрация открыта" : (enrollment_start_date <= текущая дата <= enrollment_end_date, number_seats > 0).
+        NO_SEATS, // Статус "Мест нет" : (enrollment_start_date <= текущая дата <= enrollment_end_date, number_seats=0).
+        REGISTRATION_CLOSED, // Статус "Регистрация закрыта" : (enrollment_end_date < текущая дата < event_start_date)
+        IN_PROGRESS, // Статус "В процессе проведения" : (event_start_date <= текущая дата <= event_end_date)
+        FINISHED, // Статус "Завершено" : (текущая дата > event_end_date)
+        HIDDEN, // Статус "Скрыто" : Мероприятие вручную скрыто администратором
+        DELETED // Статус "Удалено" : Мероприятие вручную удалено администратором
+    }
+
+    public Event(Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeatsStudent, int numberSeatsCurator) {
         this.condition = condition;
         this.descriptionText = descriptionText;
         this.title = title;
@@ -52,10 +65,24 @@ public class Event {
         this.eventEndDate = eventEndDate;
         this.enrollmentStartDate = enrollmentStartDate;
         this.enrollmentEndDate = enrollmentEndDate;
-        this.numberSeats = numberSeats;
+        this.numberSeatsStudent = numberSeatsStudent;
+        this.numberSeatsCurator = numberSeatsCurator;
     }
 
-    public Event(Long id, Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeats) {
+    public Event(Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeatsStudent) {
+        this.condition = condition;
+        this.descriptionText = descriptionText;
+        this.title = title;
+        this.adminId = adminId;
+        this.managerId = managerId;
+        this.eventStartDate = eventStartDate;
+        this.eventEndDate = eventEndDate;
+        this.enrollmentStartDate = enrollmentStartDate;
+        this.enrollmentEndDate = enrollmentEndDate;
+        this.numberSeatsStudent = numberSeatsStudent;
+    }
+
+    public Event(Long id, Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeatsStudent, int numberSeatsCurator) {
         this.id = id;
         this.condition = condition;
         this.descriptionText = descriptionText;
@@ -66,7 +93,8 @@ public class Event {
         this.eventEndDate = eventEndDate;
         this.enrollmentStartDate = enrollmentStartDate;
         this.enrollmentEndDate = enrollmentEndDate;
-        this.numberSeats = numberSeats;
+        this.numberSeatsStudent = numberSeatsStudent;
+        this.numberSeatsCurator = numberSeatsCurator;
     }
 
     public EventDTO toEventDTO() {
@@ -77,45 +105,6 @@ public class Event {
                 chatUrl,
                 enrollmentStartDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
                 enrollmentEndDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
-                numberSeats);
+                numberSeatsStudent, numberSeatsCurator);
     }
-
-    @Override
-    public String toString() {
-        return "Event{" +
-                "id=" + id +
-                ", condition=" + condition +
-                ", descriptionText='" + descriptionText + '\'' +
-                ", title='" + title + '\'' +
-                ", adminId=" + adminId +
-                ", managerId=" + managerId +
-                ", eventStartDate=" + eventStartDate +
-                ", eventEndDate=" + eventEndDate +
-                ", chatUrl='" + chatUrl + '\'' +
-                ", enrollmentStartDate=" + enrollmentStartDate +
-                ", enrollmentEndDate=" + enrollmentEndDate +
-                ", numberSeats=" + numberSeats +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Event event = (Event) o;
-        return numberSeats == event.numberSeats && Objects.equals(id, event.id) && condition == event.condition && Objects.equals(descriptionText, event.descriptionText) && Objects.equals(title, event.title) && Objects.equals(adminId, event.adminId) && Objects.equals(managerId, event.managerId) && Objects.equals(eventStartDate, event.eventStartDate) && Objects.equals(eventEndDate, event.eventEndDate) && Objects.equals(chatUrl, event.chatUrl) && Objects.equals(enrollmentStartDate, event.enrollmentStartDate) && Objects.equals(enrollmentEndDate, event.enrollmentEndDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, condition, descriptionText, title, adminId, managerId, eventStartDate, eventEndDate, chatUrl, enrollmentStartDate, enrollmentEndDate, numberSeats);
-    }
-
-    public enum Condition {
-        HIDDEN,  // Скрыт
-        ACTIVE,  // Активный
-        DELETED, // Удаленный
-        CLOSED,   // Закрытый
-        STARTED, // Начался, в прогрессе
-    } // TODO в ближайшее время обновить статусы
 }

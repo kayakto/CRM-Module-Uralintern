@@ -45,6 +45,10 @@ public class EventCuratorService {
         return eventCuratorRepository.findByEventId(eventId);
     }
 
+    public StatusRequest getCuratorStatus(Long eventId, Long curatorId) {
+        return eventCuratorRepository.findCuratorEventStatus(curatorId, eventId); // todo throw exception
+    }
+
     public EventCurator save(EventCurator curator) {
         return eventCuratorRepository.save(curator);
     }

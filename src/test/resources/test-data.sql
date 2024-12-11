@@ -6,8 +6,8 @@ DELETE FROM events;
 DELETE FROM users_info;
 
 -- Вставка событий
-INSERT INTO events (condition, description_text, title, enrollment_start_date, enrollment_end_date, event_start_date, event_end_date, number_seats)
-VALUES ('ACTIVE', 'descriptionText', 'title', NOW() - INTERVAL '5 days', NOW() - INTERVAL '1 days', NOW() + INTERVAL '1 hours', NOW() + INTERVAL '30 days', 50);
+INSERT INTO events (condition, description_text, title, enrollment_start_date, enrollment_end_date, event_start_date, event_end_date, number_seats_students)
+VALUES ('REGISTRATION_OPEN', 'descriptionText', 'title', NOW() - INTERVAL '5 days', NOW() - INTERVAL '1 days', NOW() + INTERVAL '1 hours', NOW() + INTERVAL '30 days', 50);
 
 -- Проверка вставки пользователя
 INSERT INTO users_info (first_name, last_name, email, sign, telegram_url, vk_url, role_enum, competencies)

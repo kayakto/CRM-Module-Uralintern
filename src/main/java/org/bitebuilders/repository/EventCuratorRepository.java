@@ -1,5 +1,6 @@
 package org.bitebuilders.repository;
 
+import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.model.EventCurator;
 import org.bitebuilders.model.EventCuratorInfo;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -37,4 +38,7 @@ public interface EventCuratorRepository extends CrudRepository<EventCurator, Lon
             "FROM events_curators ec " +
             "WHERE ec.curator_id = :curatorId AND ec.event_id = :eventId")
     Optional<EventCurator> findCuratorEvent(Long curatorId, Long eventId);
+
+    @Query("SELECT curator_status FROM events_curators WHERE curator_id = :curatorId AND event_id = :eventId")
+    StatusRequest findCuratorEventStatus(Long curatorId, Long eventId);
 }

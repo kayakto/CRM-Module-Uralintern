@@ -57,7 +57,7 @@ class EventServiceTest {
 
         // Создаем запись события
         Event event1 = new Event(
-                Event.Condition.ACTIVE,
+                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 adminId, // Используем сохраненный adminId
@@ -74,14 +74,14 @@ class EventServiceTest {
     }
 
     @Test
-    void getActiveEvents_ShouldReturnActiveEvents() {
+    void getOpenedEvents_ShouldReturnOpenedOpenedOpenedEvents() {
         // Act
-        List<Event> activeEvents = eventService.getActiveEvents();
+        List<Event> openedEvents = eventService.getOpenedEvents();
 
         // Assert
-        assertNotNull(activeEvents);
-        assertEquals(1, activeEvents.size());
-        assertEquals(Event.Condition.ACTIVE, activeEvents.get(0).getCondition());
+        assertNotNull(openedEvents);
+        assertEquals(1, openedEvents.size());
+        assertEquals(Event.Condition.REGISTRATION_OPEN, openedEvents.get(0).getCondition());
     }
 
     @Test
@@ -109,7 +109,7 @@ class EventServiceTest {
     void createOrUpdateEvent_ShouldSaveAndReturnEvent() {
         // Arrange
         Event event = new Event(
-                Event.Condition.ACTIVE,
+                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 adminId,

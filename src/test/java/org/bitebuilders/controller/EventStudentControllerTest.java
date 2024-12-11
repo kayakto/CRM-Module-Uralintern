@@ -78,7 +78,7 @@ class EventStudentControllerTest {
         studentIdWithoutEvent = userInfoRepository.save(studentWithoutEvent).getId();
 
         Event event = new Event(
-                Event.Condition.ACTIVE,
+                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 null,
