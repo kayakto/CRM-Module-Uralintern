@@ -25,10 +25,10 @@ public class EventGroupCreationService {
         this.eventGroupService = eventGroupService;
     }
 
-    @Scheduled(fixedRate = 60000) // Проверка каждые 60 секунд
+    @Scheduled(fixedRate = 600000) // Проверка каждые 60 минут
     public void startEvents() {
         List<Event> events;
-        events = eventService.getEventsMoreEnrollmentStartDate(OffsetDateTime.now());
+        events = eventService.getEventsMoreEventStartDate(OffsetDateTime.now());
 
         for (Event event : events) {
             List<EventGroup> groups = eventGroupService.createGroups(event.getId());

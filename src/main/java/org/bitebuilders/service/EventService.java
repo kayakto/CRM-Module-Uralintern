@@ -4,7 +4,6 @@ import org.bitebuilders.exception.EventNotFoundException;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.EventGroup;
 import org.bitebuilders.repository.EventRepository;
-import org.bitebuilders.service.schedule.EventGroupCreationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -56,7 +55,7 @@ public class EventService {
         return eventRepository.findById(eventId);
     }
 
-    public List<Event> getEventsMoreEnrollmentStartDate(OffsetDateTime dateTime) {
+    public List<Event> getEventsMoreEventStartDate(OffsetDateTime dateTime) {
         return eventRepository.findStartedEventsByDate(dateTime);
     }
 
@@ -101,7 +100,7 @@ public class EventService {
         }).orElse(false);
     }
 
-    @Scheduled(fixedRate = 60000) // Обновляем статусы каждую минуту
+    @Scheduled(fixedRate = 600000) // Обновляем статусы каждый час
     @Transactional
     public void updateEventConditions() {
         List<Event> events = getAllEvents();

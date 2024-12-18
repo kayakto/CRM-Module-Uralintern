@@ -130,4 +130,44 @@ GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;
 
 ALTER TABLE events ALTER COLUMN number_seats_curators SET NOT NULL;
 
+ALTER TABLE events DROP COLUMN number_seats_curators;
+
+DROP TABLE messages;
+
+-- Создание таблицы messages
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY, -- Автоматически увеличивающийся ID
+    event_id INT NOT NULL REFERENCES events(id) ON DELETE CASCADE, -- Ссылка на мероприятие
+    text TEXT NOT NULL,       -- Текст сообщения
+    status VARCHAR(20) NOT NULL CHECK (status IN ('ACCEPTED', 'DECLINED')), -- Статус сообщения
+    edit_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP -- Дата редактирования
+);
+
+-- Создание таблицы notifications
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY, -- Автоматически увеличивающийся ID
+    user_id INT NOT NULL REFERENCES users_info(id) ON DELETE CASCADE,  -- Ссылка на пользователя
+    message_id INT NOT NULL REFERENCES messages (id) ON DELETE CASCADE, -- Ссылка на сообщение
+    sent_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP -- Дата отправки уведомления
+);
+
+
+-- Вставка мероприятия со статусом "REGISTRATION_OPEN"
+INSERT INTO events (condition, description_text, title, enrollment_start_date, enrollment_end_date, event_start_date, event_end_date, number_seats_students, chat_url)
+VALUES ('REGISTRATION_OPEN', 'Описание мероприятия: Java Workshop', 'Java Workshop', NOW() - INTERVAL '1 day', NOW() + INTERVAL '15 days', NOW() + INTERVAL '16 days', NOW() + INTERVAL '30 days', 50, 'https://chat.url/java-workshop');
+
+-- Проверка вставки мероприятия
+SELECT id FROM events WHERE title = 'Java Workshop'; -- Вернет ID мероприятия
+
+-- Вставка пользователей
+INSERT INTO users_info (first_name, last_name, email, sign, telegram_url, role_enum, competencies)
+VALUES
+    ('Alice', 'Johnson', 'alice@example.com', 'Student Signature', 't.me/alice_j', 'STUDENT', 'Java, Spring Boot'),
+    ('Bob', 'Smith', 'bob@example.com', 'Student Signature', 't.me/bob_smith', 'STUDENT', 'Microservices, PostgreSQL'),
+    ('Charlie', 'Brown', 'charlie@example.com', 'Curator Signature', 't.me/charlie_b', 'CURATOR', 'Leadership, Event Organization');
+
+-- Проверка вставки пользователей
+SELECT id FROM users_info;
+
+
 

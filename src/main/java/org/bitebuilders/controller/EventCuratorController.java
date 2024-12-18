@@ -89,7 +89,7 @@ public class EventCuratorController {
                     StatusRequest.SENT_PERSONAL_INFO
             );
         } catch (EventUserNotFoundException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
 
@@ -105,9 +105,7 @@ public class EventCuratorController {
             @PathVariable Long curatorId
     ) {
         EventCurator eventCurator = eventCuratorService.getEventCurator(eventId, curatorId);
-        if (eventCurator == null) {
-            return ResponseEntity.notFound().build();
-        } else if (eventCurator.getCuratorStatus() != StatusRequest.SENT_PERSONAL_INFO) {
+        if (eventCurator.getCuratorStatus() != StatusRequest.SENT_PERSONAL_INFO) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -129,9 +127,7 @@ public class EventCuratorController {
             @PathVariable Long curatorId
     ) {
         EventCurator eventCurator = eventCuratorService.getEventCurator(eventId, curatorId);
-        if (eventCurator == null) {
-            return ResponseEntity.notFound().build();
-        } else if (eventCurator.getCuratorStatus() != StatusRequest.SENT_PERSONAL_INFO) {
+        if (eventCurator.getCuratorStatus() != StatusRequest.SENT_PERSONAL_INFO) {
             return ResponseEntity.badRequest().build();
         }
 

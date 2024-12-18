@@ -3,9 +3,11 @@ package org.bitebuilders.repository;
 import org.bitebuilders.model.EventGroup;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface EventGroupRepository extends CrudRepository<EventGroup, Long> {
 
     @Query("SELECT * FROM event_groups " +

@@ -25,5 +25,4 @@ public class EventDTO {
     private final OffsetDateTime enrollmentStartDate;
     private final OffsetDateTime enrollmentEndDate;
     private final int numberSeatsStudent;
-    private final int numberSeatsCurator;
 }

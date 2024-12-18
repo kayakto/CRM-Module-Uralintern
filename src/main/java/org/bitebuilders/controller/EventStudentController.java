@@ -102,9 +102,7 @@ public class EventStudentController {
             @PathVariable Long studentId
     ) {
         EventStudent eventStudent = eventStudentService.getEventStudent(eventId, studentId);
-        if (eventStudent == null) {
-            return ResponseEntity.notFound().build();
-        } else if (eventStudent.getStudentStatus() != StatusRequest.SENT_PERSONAL_INFO) {
+        if (eventStudent.getStudentStatus() != StatusRequest.SENT_PERSONAL_INFO) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -126,9 +124,7 @@ public class EventStudentController {
             @PathVariable Long studentId
     ) {
         EventStudent eventStudent = eventStudentService.getEventStudent(eventId, studentId);
-        if (eventStudent == null) {
-            return ResponseEntity.notFound().build();
-        } else if (eventStudent.getStudentStatus() != StatusRequest.SENT_PERSONAL_INFO) {
+        if (eventStudent.getStudentStatus() != StatusRequest.SENT_PERSONAL_INFO) {
             return ResponseEntity.badRequest().build();
         }
 

@@ -2,10 +2,7 @@ package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.exception.EventUserNotFoundException;
-import org.bitebuilders.model.EventCurator;
-import org.bitebuilders.model.EventGroup;
-import org.bitebuilders.model.EventStudent;
-import org.bitebuilders.model.EventStudentInfo;
+import org.bitebuilders.model.*;
 import org.bitebuilders.repository.EventGroupRepository;
 import org.bitebuilders.repository.EventStudentRepository;
 import org.bitebuilders.repository.UserInfoRepository;
@@ -15,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.bitebuilders.model.Message.parseStatusRequestToMessageStatus;
 
 @Service
 public class EventStudentService {
@@ -28,10 +27,14 @@ public class EventStudentService {
     @Autowired
     private final EventGroupRepository eventGroupRepository;
 
-    public EventStudentService(EventStudentRepository eventStudentRepository, UserInfoRepository userInfoRepository, EventCuratorService eventCuratorService, EventGroupRepository eventGroupRepository) {
+    @Autowired
+    private final NotificationService notificationService;
+
+    public EventStudentService(EventStudentRepository eventStudentRepository, UserInfoRepository userInfoRepository, EventCuratorService eventCuratorService, EventGroupRepository eventGroupRepository, NotificationService notificationService) {
         this.eventStudentRepository = eventStudentRepository;
         this.userInfoRepository = userInfoRepository;
         this.eventGroupRepository = eventGroupRepository;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -44,7 +47,7 @@ public class EventStudentService {
 
     public EventStudent getEventStudent(Long eventId, Long studentId) {
         Optional<EventStudent> eventStudent = eventStudentRepository.findStudentEvent(studentId, eventId);
-        return eventStudent.orElse(null); // todo throw exception
+        return eventStudent.orElseThrow(() -> new EventUserNotFoundException("Student does not exist on this event"));
     }
 
 
@@ -90,6 +93,12 @@ public class EventStudentService {
 
         eventStudent.setStudentStatus(newStatus);
         EventStudent savedEventStudent = eventStudentRepository.save(eventStudent);
+
+        // Отправляем уведомление
+        if (newStatus == StatusRequest.ADDED_IN_CHAT || newStatus == StatusRequest.REJECTED_FROM_EVENT) {
+            Message.MessageStatus messageStatus = parseStatusRequestToMessageStatus(newStatus);
+            notificationService.sendNotification(studentId, eventId, messageStatus);
+        }
 
         return savedEventStudent.getStudentStatus() == newStatus;
     }

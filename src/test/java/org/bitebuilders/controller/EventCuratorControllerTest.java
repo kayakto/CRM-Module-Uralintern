@@ -84,6 +84,7 @@ class EventCuratorControllerTest {
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
+                null,
                 100
         );
         eventId = eventRepository.save(event1).getId();

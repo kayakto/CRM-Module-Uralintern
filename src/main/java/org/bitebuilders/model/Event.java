@@ -41,8 +41,6 @@ public class Event {
     private OffsetDateTime enrollmentEndDate;
     @Column("number_seats_students")
     private int numberSeatsStudent;
-    @Column("number_seats_curators")
-    private int numberSeatsCurator;
 
     public enum Condition {
         PREPARATION, // Статус "Подготовка" : (текущая дата < enrollment_start_date)
@@ -55,7 +53,7 @@ public class Event {
         DELETED // Статус "Удалено" : Мероприятие вручную удалено администратором
     }
 
-    public Event(Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeatsStudent, int numberSeatsCurator) {
+    public Event(Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
         this.condition = condition;
         this.descriptionText = descriptionText;
         this.title = title;
@@ -65,24 +63,11 @@ public class Event {
         this.eventEndDate = eventEndDate;
         this.enrollmentStartDate = enrollmentStartDate;
         this.enrollmentEndDate = enrollmentEndDate;
-        this.numberSeatsStudent = numberSeatsStudent;
-        this.numberSeatsCurator = numberSeatsCurator;
-    }
-
-    public Event(Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeatsStudent) {
-        this.condition = condition;
-        this.descriptionText = descriptionText;
-        this.title = title;
-        this.adminId = adminId;
-        this.managerId = managerId;
-        this.eventStartDate = eventStartDate;
-        this.eventEndDate = eventEndDate;
-        this.enrollmentStartDate = enrollmentStartDate;
-        this.enrollmentEndDate = enrollmentEndDate;
+        this.chatUrl = chatUrl;
         this.numberSeatsStudent = numberSeatsStudent;
     }
 
-    public Event(Long id, Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, int numberSeatsStudent, int numberSeatsCurator) {
+    public Event(Long id, Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
         this.id = id;
         this.condition = condition;
         this.descriptionText = descriptionText;
@@ -93,8 +78,8 @@ public class Event {
         this.eventEndDate = eventEndDate;
         this.enrollmentStartDate = enrollmentStartDate;
         this.enrollmentEndDate = enrollmentEndDate;
+        this.chatUrl = chatUrl;
         this.numberSeatsStudent = numberSeatsStudent;
-        this.numberSeatsCurator = numberSeatsCurator;
     }
 
     public EventDTO toEventDTO() {
@@ -105,6 +90,6 @@ public class Event {
                 chatUrl,
                 enrollmentStartDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
                 enrollmentEndDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
-                numberSeatsStudent, numberSeatsCurator);
+                numberSeatsStudent);
     }
 }

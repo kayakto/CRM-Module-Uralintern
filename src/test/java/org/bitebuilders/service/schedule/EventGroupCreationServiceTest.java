@@ -51,7 +51,7 @@ class EventGroupCreationServiceTest {
         OffsetDateTime currentTime = OffsetDateTime.now();
         Event testEvent = eventService.getAllEvents().get(0);
         Long eventId = testEvent.getId();
-        testEvent.setEnrollmentStartDate(currentTime.minusMinutes(10));
+        testEvent.setEventStartDate(currentTime.minusMinutes(10));
         eventService.createOrUpdateEvent(testEvent);
 
         assertDoesNotThrow(() -> eventGroupCreationService.startEvents());

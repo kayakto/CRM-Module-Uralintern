@@ -4,6 +4,7 @@ import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.EventCurator;
 import org.bitebuilders.model.EventCuratorInfo;
+import org.bitebuilders.model.Message;
 import org.bitebuilders.repository.EventCuratorRepository;
 import org.bitebuilders.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.bitebuilders.model.Message.parseStatusRequestToMessageStatus;
 
 @Service
 public class EventCuratorService {
@@ -22,14 +25,18 @@ public class EventCuratorService {
     @Autowired
     private final UserInfoRepository userInfoRepository;
 
-    public EventCuratorService(EventCuratorRepository eventCuratorRepository, UserInfoRepository userInfoRepository) {
+    @Autowired
+    private final NotificationService notificationService;
+
+    public EventCuratorService(EventCuratorRepository eventCuratorRepository, UserInfoRepository userInfoRepository, NotificationService notificationService) {
         this.eventCuratorRepository = eventCuratorRepository;
         this.userInfoRepository = userInfoRepository;
+        this.notificationService = notificationService;
     }
 
     public EventCurator getEventCurator(Long eventId, Long curatorId) {
         Optional<EventCurator> eventCurator = eventCuratorRepository.findCuratorEvent(curatorId, eventId);
-        return eventCurator.orElse(null);
+        return eventCurator.orElseThrow(() -> new EventUserNotFoundException("Curator does not exist in this event"));
     }
 
     // Метод возвращающий список всех заявок на кураторство.
@@ -76,7 +83,14 @@ public class EventCuratorService {
 
         eventCurator.setCuratorStatus(newStatus);
         EventCurator savedEventCurator = eventCuratorRepository.save(eventCurator);
+        // Отправляем уведомление
+        if (newStatus == StatusRequest.ADDED_IN_CHAT || newStatus == StatusRequest.REJECTED_FROM_EVENT) {
+            Message.MessageStatus messageStatus = parseStatusRequestToMessageStatus(newStatus);
+            notificationService.sendNotification(curatorId, eventId, messageStatus);
+        }
 
         return savedEventCurator.getCuratorStatus() == newStatus;
     }
+
+
 }

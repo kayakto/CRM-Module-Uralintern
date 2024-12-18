@@ -66,6 +66,7 @@ class EventServiceTest {
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
+                null,
                 100
         );
 
@@ -118,6 +119,7 @@ class EventServiceTest {
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
                 OffsetDateTime.now(),
+                null,
                 100
         );
 
