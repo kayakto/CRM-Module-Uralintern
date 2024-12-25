@@ -1,9 +1,12 @@
 package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
+import org.bitebuilders.exception.EventNotFoundException;
 import org.bitebuilders.exception.EventUserNotFoundException;
+import org.bitebuilders.exception.UserNotFoundException;
 import org.bitebuilders.model.*;
 import org.bitebuilders.repository.EventGroupRepository;
+import org.bitebuilders.repository.EventRepository;
 import org.bitebuilders.repository.EventStudentRepository;
 import org.bitebuilders.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +28,18 @@ public class EventStudentService {
     private final UserInfoRepository userInfoRepository;
 
     @Autowired
+    private final EventRepository eventRepository;
+
+    @Autowired
     private final EventGroupRepository eventGroupRepository;
 
     @Autowired
     private final NotificationService notificationService;
 
-    public EventStudentService(EventStudentRepository eventStudentRepository, UserInfoRepository userInfoRepository, EventCuratorService eventCuratorService, EventGroupRepository eventGroupRepository, NotificationService notificationService) {
+    public EventStudentService(EventStudentRepository eventStudentRepository, UserInfoRepository userInfoRepository, EventCuratorService eventCuratorService, EventRepository eventRepository, EventGroupRepository eventGroupRepository, NotificationService notificationService) {
         this.eventStudentRepository = eventStudentRepository;
         this.userInfoRepository = userInfoRepository;
+        this.eventRepository = eventRepository;
         this.eventGroupRepository = eventGroupRepository;
         this.notificationService = notificationService;
     }
@@ -50,12 +57,15 @@ public class EventStudentService {
         return eventStudent.orElseThrow(() -> new EventUserNotFoundException("Student does not exist on this event"));
     }
 
-
     /**
      * Метод возвращающий список всех заявок студентов на мероприятие.
      */
     public List<EventStudentInfo> getSentStudentInfo(Long eventId) {
         return eventStudentRepository.findWaitingStudentsInfo(eventId);
+    }
+
+    public List<EventStudentInfo> getAcceptedStudentInfo(Long eventId) {
+        return eventStudentRepository.findAcceptedStudentsInfo(eventId);
     }
 
     public List<EventStudent> getAcceptedEventStudent(Long eventId) {
@@ -64,6 +74,16 @@ public class EventStudentService {
 
     public StatusRequest getStudentStatus(Long eventId, Long studentId) {
         return eventStudentRepository.findStudentEventStatus(studentId, eventId); // todo throw exception
+    }
+
+    public Boolean canSend(Long eventId, Long studentId) {
+        if (userInfoRepository.findById(studentId).isEmpty()) {
+            throw new UserNotFoundException("user " + studentId + " not found");
+        }
+        else if (eventRepository.findById(eventId).isEmpty()) {
+            throw new EventNotFoundException("event " + eventId + " not found");
+        }
+        return eventStudentRepository.findStudentEvent(studentId, eventId).isEmpty();
     }
 
     // мб транзактионал

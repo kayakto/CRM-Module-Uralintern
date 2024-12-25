@@ -3,6 +3,7 @@ package org.bitebuilders.controller;
 import org.bitebuilders.controller.dto.EventDTO;
 import org.bitebuilders.controller.requests.EventRequest;
 import org.bitebuilders.model.Event;
+import org.bitebuilders.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,12 @@ public class EventController {
     @Autowired
     private final EventService eventService;
 
-    public EventController(EventService eventService) {
+    @Autowired
+    private final UserInfoService userInfoService;
+
+    public EventController(EventService eventService, UserInfoService userInfoService) {
         this.eventService = eventService;
+        this.userInfoService = userInfoService;
     }
 
     @GetMapping("/active")
@@ -61,6 +66,15 @@ public class EventController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/my-events/{userId}")
+    public ResponseEntity<List<EventDTO>> getMyEvents(@PathVariable Long userId) { // TODO без pathvariable будет
+        List<EventDTO> eventDTOS = userInfoService.getMyEvents(userId)
+                .stream()
+                .map(Event::toEventDTO)
+                .toList();
+        return ResponseEntity.ok(eventDTOS);
+    }
+
     @PostMapping("/post")
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventRequest requestedEvent) {
         Event newEvent = requestedEvent.toEvent();
@@ -99,7 +113,7 @@ public class EventController {
     public ResponseEntity<Boolean> hideEvent(@PathVariable Long eventId) {
         Boolean result = eventService.hideEvent(eventId);
         return result ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
-    }
+    } // TODO вернуть в активное состояние
 
     @DeleteMapping("/delete/{eventId}")
     public ResponseEntity<Boolean> deleteEventByID(@PathVariable Long eventId) {

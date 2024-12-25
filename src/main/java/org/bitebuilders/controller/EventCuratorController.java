@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/events_curators")
+@RequestMapping("/events-curators")
 public class EventCuratorController {
 
     @Autowired
@@ -38,14 +38,27 @@ public class EventCuratorController {
 
     // Получение статуса куратора GET - возвращает текущий статус студента или куратора.
     @GetMapping("/{eventId}/curator-status/{curatorId}")
-    public ResponseEntity<StatusRequest> getStudentStatus(Long eventId, Long curatorId) {
+    public ResponseEntity<StatusRequest> getCuratorStatus(Long eventId, Long curatorId) {
         StatusRequest result = eventCuratorService.getCuratorStatus(eventId, curatorId);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{eventId}/waiting_curators")
+    @GetMapping("/{eventId}/waiting-curators")
     public ResponseEntity<List<EventCuratorInfoDTO>> getSentCuratorsInfo(@PathVariable Long eventId) {
         List<EventCuratorInfoDTO> ecInfoDTO = eventCuratorService.getSentCuratorInfo(eventId)
+                .stream()
+                .map(EventCuratorInfo::toEventCuratorDTO)
+                .toList();
+
+        if (ecInfoDTO != null)
+            return ResponseEntity.ok(ecInfoDTO);  // Возвращаем список кураторов
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{eventId}/accepted-curators")
+    public ResponseEntity<List<EventCuratorInfoDTO>> getAcceptedCuratorsInfo(@PathVariable Long eventId) {
+        List<EventCuratorInfoDTO> ecInfoDTO = eventCuratorService.getAcceptedCuratorInfo(eventId)
                 .stream()
                 .map(EventCuratorInfo::toEventCuratorDTO)
                 .toList();

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/events_students")
+@RequestMapping("/events-students")
 public class EventStudentController {
 
     @Autowired
@@ -37,9 +37,30 @@ public class EventStudentController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{eventId}/waiting_students")
+    @GetMapping("/{eventId}/student-can-send/{studentId}")
+    public ResponseEntity<Boolean> canSend(
+            @PathVariable Long eventId,
+            @PathVariable Long studentId ) {
+        Boolean hasAbility = eventStudentService.canSend(eventId, studentId);
+        return ResponseEntity.ok(hasAbility);
+    }
+
+    @GetMapping("/{eventId}/waiting-students")
     public ResponseEntity<List<EventStudentInfoDTO>> getSentStudentsInfo(@PathVariable Long eventId) {
         List<EventStudentInfoDTO> esInfoDTO = eventStudentService.getSentStudentInfo(eventId)
+                .stream()
+                .map(EventStudentInfo::toEventStudentDTO)
+                .toList();
+
+        if (esInfoDTO != null)
+            return ResponseEntity.ok(esInfoDTO);  // Возвращаем список студентов
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{eventId}/accepted-students")
+    public ResponseEntity<List<EventStudentInfoDTO>> getAcceptedStudentsInfo(@PathVariable Long eventId) {
+        List<EventStudentInfoDTO> esInfoDTO = eventStudentService.getAcceptedStudentInfo(eventId)
                 .stream()
                 .map(EventStudentInfo::toEventStudentDTO)
                 .toList();

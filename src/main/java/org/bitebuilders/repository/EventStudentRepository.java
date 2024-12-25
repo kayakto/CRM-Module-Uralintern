@@ -1,6 +1,7 @@
 package org.bitebuilders.repository;
 
 import org.bitebuilders.enums.StatusRequest;
+import org.bitebuilders.model.Event;
 import org.bitebuilders.model.EventStudent;
 import org.bitebuilders.model.EventStudentInfo;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -36,6 +37,13 @@ public interface EventStudentRepository extends CrudRepository<EventStudent, Lon
             "WHERE es.event_id = :eventId AND es.student_status = 'SENT_PERSONAL_INFO'")
     List<EventStudentInfo> findWaitingStudentsInfo(Long eventId);
 
+    @Query("SELECT es.event_id, es.student_id, es.student_status, ui.competencies, " +
+            "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
+            "FROM events_students es " +
+            "JOIN users_info ui ON es.student_id = ui.id " +
+            "WHERE es.event_id = :eventId AND es.student_status = 'ADDED_IN_CHAT'")
+    List<EventStudentInfo> findAcceptedStudentsInfo(Long eventId);
+
     @Query("SELECT es.event_id, es.student_id, es.student_status " +
             "FROM events_students es " +
             "WHERE es.event_id = :eventId AND es.student_status = 'ADDED_IN_CHAT'")
@@ -46,4 +54,9 @@ public interface EventStudentRepository extends CrudRepository<EventStudent, Lon
 
     @Query("SELECT student_status FROM events_students WHERE student_id = :studentId AND event_id = :eventId")
     StatusRequest findStudentEventStatus(Long studentId, Long eventId);
+
+    @Query("SELECT e.* FROM events e " +
+            "JOIN events_students es ON es.event_id = e.id " +
+            "WHERE es.student_id = :studentId AND es.student_status = 'ADDED_IN_CHAT'")
+    List<Event> findAcceptedEventsByStudent(Long studentId);
 }

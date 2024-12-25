@@ -17,6 +17,8 @@ dependencies {
     // Spring Data JDBC
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    // Security
+//    implementation("org.springframework.boot:spring-boot-starter-security")
     // PostgreSQL driver
     implementation("org.postgresql:postgresql")
     compileOnly("org.projectlombok:lombok")

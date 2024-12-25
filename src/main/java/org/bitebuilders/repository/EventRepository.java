@@ -19,13 +19,16 @@ public interface EventRepository extends CrudRepository<Event, Long> {
 
     // Метод для поиска по adminId
     @Query("SELECT * FROM events WHERE admin_id = :adminId AND condition != 'DELETED';")
-    List<Event> findAllByAdminId(Long adminId); // 4
+    List<Event> findAllByAdminId(Long adminId);
+
+    @Query("SELECT * FROM events WHERE manager_id = :managerId AND condition != 'DELETED';")
+    List<Event> findAllByManagerId(Long managerId);
 
     // Метод для удаления из базы данных удаленных пользователем записей,
     // которые были удалены им более 30 дней назад
     @Transactional
     @Modifying
-    @Query("DELETE FROM Event e WHERE e.condition = :condition AND e.updatedAt < :dateTime")
+    @Query("DELETE FROM events e WHERE e.condition = :condition AND e.updatedAt < :dateTime")
     void deleteByConditionAndUpdatedBefore(Event.Condition condition, LocalDateTime dateTime);
 
     // Метод для поиска по дате начала мероприятия

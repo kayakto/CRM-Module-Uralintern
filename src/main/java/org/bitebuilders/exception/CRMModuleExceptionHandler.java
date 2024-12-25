@@ -21,6 +21,7 @@ public class CRMModuleExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorResponse handleDefaultException(Exception e) {
+        System.err.println(e.getMessage());
         return new ErrorResponse("Internal server error");
     }
 }

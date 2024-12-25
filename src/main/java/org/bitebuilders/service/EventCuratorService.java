@@ -44,6 +44,10 @@ public class EventCuratorService {
         return eventCuratorRepository.findWaitingCuratorsInfo(eventId);
     }
 
+    public List<EventCuratorInfo> getAcceptedCuratorInfo(Long eventId) {
+        return eventCuratorRepository.findAcceptedCuratorsInfo(eventId);
+    }
+
     public List<EventCurator> getAcceptedEventCurator(Long eventId) {
         return eventCuratorRepository.findAcceptedEventCurator(eventId);
     }
