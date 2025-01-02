@@ -1,9 +1,9 @@
 package org.bitebuilders.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.bitebuilders.controller.dto.ManagerInfoDTO;
+import org.bitebuilders.controller.dto.UserDTO;
+import org.bitebuilders.enums.UserRole;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.data.annotation.Id;
@@ -29,11 +29,11 @@ public class UserInfo {
     @Column("vk_url")
     private String vkUrl;
     @Column("role_enum")
-    private Role role_enum;
+    private UserRole role_enum;
     @Column("competencies")
     private String competencies;
 
-    public UserInfo(String firstName, String lastName, String surname, String email, String sign, String vkUrl, String telegramUrl, Role role_enum, String competencies) {
+    public UserInfo(String firstName, String lastName, String surname, String email, String sign, String vkUrl, String telegramUrl, UserRole role_enum, String competencies) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.surname = surname;
@@ -45,19 +45,16 @@ public class UserInfo {
         this.competencies = competencies;
     }
 
-    public enum Role {
-        ADMIN, CURATOR, MANAGER, STUDENT
-    }
-
-    public ManagerInfoDTO toManagerInfoDTO() {
-        return new ManagerInfoDTO(
+    public UserDTO toUserDTO() {
+        return new UserDTO(
                 this.id,
                 this.firstName,
                 this.lastName,
                 this.surname,
-                this.email,
                 this.telegramUrl,
-                this.vkUrl
+                this.vkUrl,
+                this.role_enum,
+                this.competencies
         );
     }
 }

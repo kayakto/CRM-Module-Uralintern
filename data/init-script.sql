@@ -169,5 +169,10 @@ VALUES
 -- Проверка вставки пользователей
 SELECT id FROM users_info;
 
-
-
+CREATE TABLE IF NOT EXISTS invitations (
+    id SERIAL PRIMARY KEY,
+    token VARCHAR(128) NOT NULL,
+    role_enum VARCHAR(20),
+    expiration_Date DATE NOT NULL,
+    used boolean NOT NULL
+);

@@ -14,13 +14,25 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    // Spring Data JDBC
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
-    // Security
-//    implementation("org.springframework.boot:spring-boot-starter-security")
+
+    // JWT для авторизации
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
     // PostgreSQL driver
     implementation("org.postgresql:postgresql")
+
+//    // Jakarta Servlet API для работы с HttpServletRequest и HttpServletResponse
+//    implementation("jakarta.servlet:jakarta.servlet-api")
+
+    // Tomcat 10.x (обязательно для Spring Boot 3.x)
+    implementation("org.apache.tomcat.embed:tomcat-embed-core")
+
+    // Lombok для сокращения кода
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
@@ -29,6 +41,12 @@ dependencies {
         exclude(group = "org.mockito")
     }
     testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+configurations {
+    all {
+        exclude(group = "javax.servlet", module = "javax.servlet-api")
+    }
 }
 
 tasks.test {

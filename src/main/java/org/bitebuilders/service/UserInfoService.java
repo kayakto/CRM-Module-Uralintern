@@ -8,6 +8,7 @@ import org.bitebuilders.repository.EventRepository;
 import org.bitebuilders.repository.EventStudentRepository;
 import org.bitebuilders.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -37,6 +38,22 @@ public class UserInfoService {
         return userInfoRepository.findById(id);
     }
     // TODO сделать контроллер для получения данных пользователя
+
+    public Boolean existsByEmail(String email) {
+        return userInfoRepository.findByEmail(email).isPresent();
+    }
+
+    public UserInfo getByEmail(String email) {
+        Optional<UserInfo> userOptional = userInfoRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        }
+        throw new UsernameNotFoundException("User with email " + email + " not found");
+    }
+
+    public UserInfo addOrUpdateUser(UserInfo user) {
+        return userInfoRepository.save(user);
+    }
 
     public List<UserInfo> getAllManagers() {
         return userInfoRepository.findAllManagers();

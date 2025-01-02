@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserInfoRepository extends CrudRepository<UserInfo, Long> {
@@ -14,6 +15,11 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, Long> {
             "FROM users_info " +
             "WHERE id = :curatorId;")
     UserInfo findCuratorById(Long curatorId);
+
+    @Query("SELECT * " +
+            "FROM users_info " +
+            "WHERE email = :email;")
+    Optional<UserInfo> findByEmail(String email);
 
     @Query("SELECT id, first_name, last_name, surname, competencies " +
             "FROM users_info " +

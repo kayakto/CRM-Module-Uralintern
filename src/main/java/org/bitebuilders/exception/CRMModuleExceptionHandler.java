@@ -1,6 +1,7 @@
 package org.bitebuilders.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,6 +14,14 @@ public class CRMModuleExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorResponse handleCustomNoFoundException(CustomNotFoundException e)
+    {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleCustomAuthenticationException(AuthenticationException e)
     {
         return new ErrorResponse(e.getMessage());
     }
