@@ -120,14 +120,6 @@ CREATE TABLE IF NOT EXISTS event_groups (
 ALTER TABLE events_students
 ADD COLUMN group_id INT REFERENCES event_groups(id) ON DELETE SET NULL;
 
-GRANT ALL PRIVILEGES ON DATABASE internships TO crm_admin;
-
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO crm_admin;
-
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO crm_admin;
-
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;
-
 ALTER TABLE events ALTER COLUMN number_seats_curators SET NOT NULL;
 
 ALTER TABLE events DROP COLUMN number_seats_curators;
@@ -173,6 +165,23 @@ CREATE TABLE IF NOT EXISTS invitations (
     id SERIAL PRIMARY KEY,
     token VARCHAR(128) NOT NULL,
     role_enum VARCHAR(20),
-    expiration_Date DATE NOT NULL,
+    expiration_date DATE NOT NULL,
     used boolean NOT NULL
 );
+
+ALTER TABLE invitations
+ADD COLUMN author_id INT NOT NULL REFERENCES users_info(id) ON DELETE CASCADE;
+
+ALTER TABLE invitations
+ALTER COLUMN token TYPE VARCHAR(512);
+
+GRANT ALL PRIVILEGES ON DATABASE internships TO crm_admin;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO crm_admin;
+
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO crm_admin;
+
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;
+
+ALTER TABLE users_info
+ALTER COLUMN competencies DROP NOT NULL;

@@ -1,6 +1,7 @@
 package org.bitebuilders.controller;
 
 import org.bitebuilders.controller.dto.EventStudentInfoDTO;
+import org.bitebuilders.controller.dto.MessageResponseDTO;
 import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.EventStudent;
@@ -38,11 +39,13 @@ public class EventStudentController {
     }
 
     @GetMapping("/{eventId}/student-can-send/{studentId}")
-    public ResponseEntity<Boolean> canSend(
+    public ResponseEntity<MessageResponseDTO> canSend(
             @PathVariable Long eventId,
             @PathVariable Long studentId ) {
-        Boolean hasAbility = eventStudentService.canSend(eventId, studentId);
-        return ResponseEntity.ok(hasAbility);
+        boolean hasAbility = eventStudentService.canSend(eventId, studentId);
+        return ResponseEntity.ok(
+                new MessageResponseDTO(String.valueOf(hasAbility))
+        );
     }
 
     @GetMapping("/{eventId}/waiting-students")
@@ -78,47 +81,53 @@ public class EventStudentController {
         return ResponseEntity.ok(result);
     }
 
-    // Ручное изменение статуса студента - позволяет руководителю вручную изменять статус участника мероприятия (“Удалён(а) с мероприятия“)
     @DeleteMapping("/{eventId}/delete/{studentId}")
-    public ResponseEntity<Boolean> deleteStudentFromEvent(
+    public ResponseEntity<MessageResponseDTO> deleteStudentFromEvent(
             @PathVariable Long eventId,
             @PathVariable Long studentId) {
-        return ResponseEntity.ok(
-                eventStudentService
-                        .updateStudentStatus(
-                                eventId,
-                                studentId,
-                                StatusRequest.DELETED_FROM_EVENT));
+        boolean isDeleted = eventStudentService
+                .updateStudentStatus(
+                        eventId,
+                        studentId,
+                        StatusRequest.DELETED_FROM_EVENT);
+        if (isDeleted) {
+            return ResponseEntity.ok(
+                new MessageResponseDTO("Student " + studentId + " successfully deleted from event " + eventId)
+            );
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Student " + studentId + " cannot be deleted from event " + eventId)
+        );
     }
 
     /**
      * Метод отправки заявки студента на мероприятие
      */
     @PutMapping("/{eventId}/send/{studentId}")
-    public ResponseEntity<Boolean> sendStudentToEvent(
+    public ResponseEntity<MessageResponseDTO> sendStudentToEvent(
             @PathVariable Long eventId,
             @PathVariable Long studentId
     ) {
-        Boolean isUpdated;
-        try {
-            isUpdated = eventStudentService.updateStudentStatus(
-                    eventId,
-                    studentId,
-                    StatusRequest.SENT_PERSONAL_INFO
-            );
-        } catch (EventUserNotFoundException e) {
-            System.err.println(e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        boolean isUpdated = eventStudentService.updateStudentStatus(
+                eventId,
+                studentId,
+                StatusRequest.SENT_PERSONAL_INFO
+        );
 
-        return ResponseEntity.ok(isUpdated); // todo проверить, не закончились ли места
+        if (isUpdated) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Student with id " + studentId + " sent request to event " + eventId));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Student with id " + studentId + " cannot send request to event " + eventId)
+        ); // todo проверить, не закончились ли места
     }
 
     /**
      * Метод принятия заявки студента на мероприятие. (становится участником мероприятия)
      */
     @PutMapping("/{eventId}/accept/{studentId}")
-    public ResponseEntity<Boolean> acceptStudentRequest(
+    public ResponseEntity<MessageResponseDTO> acceptStudentRequest(
             @PathVariable Long eventId,
             @PathVariable Long studentId
     ) {
@@ -127,20 +136,26 @@ public class EventStudentController {
             return ResponseEntity.badRequest().build();
         }
 
-        Boolean isUpdated = eventStudentService.updateStudentStatus(
+        boolean isUpdated = eventStudentService.updateStudentStatus(
                 eventId,
                 studentId,
                 StatusRequest.ADDED_IN_CHAT
         );
 
-        return ResponseEntity.ok(isUpdated);
+        if (isUpdated) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Student with id " + studentId + " accepted to event " + eventId));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Student with id " + studentId + " cannot be accepted to event " + eventId)
+        );
     } // TODO add student to chat
 
     /**
      * Метод отклонения заявки студента на мероприятие (reject)
      */
     @PutMapping("/{eventId}/reject/{studentId}")
-    public ResponseEntity<Boolean> rejectStudentRequest(
+    public ResponseEntity<MessageResponseDTO> rejectStudentRequest(
             @PathVariable Long eventId,
             @PathVariable Long studentId
     ) {
@@ -149,26 +164,35 @@ public class EventStudentController {
             return ResponseEntity.badRequest().build();
         }
 
-        Boolean isUpdated = eventStudentService.updateStudentStatus(
+        boolean isUpdated = eventStudentService.updateStudentStatus(
                 eventId,
                 studentId,
                 StatusRequest.REJECTED_FROM_EVENT
         );
 
-        return ResponseEntity.ok(isUpdated);
+        if (isUpdated) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Student with id " + studentId + " rejected from event " + eventId));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Student with id " + studentId + " cannot be rejected from event " + eventId)
+        );
     }
 
     @PutMapping("/change-curator/{eventId}/students/{studentId}/curator/{newCuratorId}")
-    public ResponseEntity<String> changeStudentCurator(
+    public ResponseEntity<MessageResponseDTO> changeStudentCurator(
             @PathVariable Long eventId,
             @PathVariable Long studentId,
             @RequestParam Long newCuratorId
     ) {
         try {
             eventStudentService.changeCurator(eventId, studentId, newCuratorId);
-            return ResponseEntity.ok("Curator successfully updated for student: " + studentId);
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Curator " + newCuratorId + " updated for student: " + studentId)
+            );
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    new MessageResponseDTO(e.getMessage()));
         }
     } // todo еще потестить
 }

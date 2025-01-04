@@ -1,0 +1,1289 @@
+openapi: 3.0.1
+info:
+  title: CRM module for Uralintern
+  description: API documentation for Uralintern CRM Module
+  version: '1.0'
+servers:
+  - url: http://localhost:8080
+    description: kayakto server url
+security:
+  - BearerAuth: []
+tags:
+  - name: user-info-controller
+    description: Управляет пользовательскими данными, включая обновление профиля, получение реферальных ссылок и список руководителей.
+  - name: event-controller
+    description: Обеспечивает управление мероприятиями, включая их создание, обновление, скрытие, удаление, а также доступ к информации о мероприятиях.
+  - name: message-controller
+    description: Управляет шаблонами сообщений для мероприятий, включая их получение и обновление.
+  - name: event-student-controller
+    description: Обеспечивает управление заявками и участием студентов в мероприятиях, включая отправку заявок, их принятие/отклонение и управление студентами на мероприятии.
+  - name: event-curator-controller
+    description: Управляет заявками и участием кураторов в мероприятиях, включая их принятие/отклонение и управление кураторами.
+  - name: auth-controller
+    description: Отвечает за регистрацию и авторизацию пользователей, включая регистрацию с реферальной ссылкой и обновление токенов.
+  - name: notification-controller
+    description: Управляет уведомлениями пользователей, связанными с их участием в мероприятиях.
+paths:
+  /users/me:
+    get:
+      tags:
+        - user-info-controller
+      operationId: getCurrentUser
+      description: "Получение данных пользователя"
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    put:
+      tags:
+        - user-info-controller
+      operationId: updateCurrentUser
+      description: "Обновление данных пользователя"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /messages/update-message:
+    put:
+      tags:
+        - message-controller
+      operationId: updateMessage
+      description: "Обновление шаблона сообщения"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageUpdateRequest'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/update/{eventId}:
+    put:
+      tags:
+        - event-controller
+      operationId: updateEvent
+      description: "Обновление данных мероприятия"
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/hide/{eventId}:
+    put:
+      tags:
+        - event-controller
+      operationId: hideEvent
+      description: "Поменять статус мероприятия на \"скрытое\""
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/send/{studentId}:
+    put:
+      tags:
+        - event-student-controller
+      operationId: sendStudentToEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/reject/{studentId}:
+    put:
+      tags:
+        - event-student-controller
+      operationId: rejectStudentRequest
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/accept/{studentId}:
+    put:
+      tags:
+        - event-student-controller
+      operationId: acceptStudentRequest
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/change-curator/{eventId}/students/{studentId}/curator/{newCuratorId}:
+    put:
+      tags:
+        - event-student-controller
+      operationId: changeStudentCurator
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: newCuratorId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-curators/{eventId}/send/{curatorId}:
+    put:
+      tags:
+        - event-curator-controller
+      operationId: sendCuratorToEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: curatorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-curators/{eventId}/reject/{curatorId}:
+    put:
+      tags:
+        - event-curator-controller
+      operationId: rejectCuratorRequest
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: curatorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-curators/{eventId}/accept/{curatorId}:
+    put:
+      tags:
+        - event-curator-controller
+      operationId: acceptCuratorRequest
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: curatorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/start-event:
+    post:
+      tags:
+        - event-controller
+      operationId: startEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int64
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/post:
+    post:
+      tags:
+        - event-controller
+      operationId: createEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventRequest'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /auth/register:
+    post:
+      tags:
+        - auth-controller
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /auth/register-with-token:
+    post:
+      tags:
+        - auth-controller
+      operationId: registerWithToken
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /auth/refresh:
+    post:
+      tags:
+        - auth-controller
+      operationId: refresh
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /auth/login:
+    post:
+      tags:
+        - auth-controller
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /users/all-managers:
+    get:
+      tags:
+        - user-info-controller
+      operationId: getAllManagers
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /notifications/user/{userId}:
+    get:
+      tags:
+        - notification-controller
+      operationId: getUserNotifications
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /messages/{messageId}:
+    get:
+      tags:
+        - message-controller
+      operationId: getMessageById
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /messages/event/{eventId}:
+    get:
+      tags:
+        - message-controller
+      operationId: getEventMessages
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/{eventId}:
+    get:
+      tags:
+        - event-controller
+      operationId: getEventByID
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/my-events/{userId}:
+    get:
+      tags:
+        - event-controller
+      operationId: getMyEvents
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/condition/{eventId}:
+    get:
+      tags:
+        - event-controller
+      operationId: getEventConditionByID
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/admin/{adminId}:
+    get:
+      tags:
+        - event-controller
+      operationId: getEventsByAdminId
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/active:
+    get:
+      tags:
+        - event-controller
+      operationId: getOpenedEvents
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/waiting-students:
+    get:
+      tags:
+        - event-student-controller
+      operationId: getSentStudentsInfo
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/students:
+    get:
+      tags:
+        - event-student-controller
+      operationId: getStudentsInfo
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/student-status/{studentId}:
+    get:
+      tags:
+        - event-student-controller
+      operationId: getStudentStatus
+      parameters:
+        - name: eventId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: studentId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/student-can-send/{studentId}:
+    get:
+      tags:
+        - event-student-controller
+      operationId: canSend
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/accepted-students:
+    get:
+      tags:
+        - event-student-controller
+      operationId: getAcceptedStudentsInfo
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-curators/{eventId}/waiting-curators:
+    get:
+      tags:
+        - event-curator-controller
+      operationId: getSentCuratorsInfo
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-curators/{eventId}/curators:
+    get:
+      tags:
+        - event-curator-controller
+      operationId: getCuratorsInfo
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-curators/{eventId}/curator-status/{curatorId}:
+    get:
+      tags:
+        - event-curator-controller
+      operationId: getCuratorStatus
+      parameters:
+        - name: eventId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: curatorId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-curators/{eventId}/accepted-curators:
+    get:
+      tags:
+        - event-curator-controller
+      operationId: getAcceptedCuratorsInfo
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events/delete/{eventId}:
+    delete:
+      tags:
+        - event-controller
+      operationId: deleteEventByID
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-students/{eventId}/delete/{studentId}:
+    delete:
+      tags:
+        - event-student-controller
+      operationId: deleteStudentFromEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /events-curators/{eventId}/delete/{curatorId}:
+    delete:
+      tags:
+        - event-curator-controller
+      operationId: deleteCuratorFromEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: curatorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OkResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+components:
+  responses:
+      OkResponse:
+        description: OK, запрос выполнен успешно
+        content:
+          '*/*':
+            schema:
+              type: boolean
+      BadRequestResponse:
+        description: Bad Request, запрос неверный со стороны клиента
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+      NotFoundResponse:
+        description: Not Found, такого элемента не существует
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+      InternalServerErrorResponse:
+        description: Internal Server Error, запрос вызвал ошибку на сервере
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "User with email email123@gmail.com not found"
+    UserUpdateRequest:
+      required:
+        - firstName
+        - lastName
+        - telegramUrl
+        - vkUrl
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "Николай"
+        lastName:
+          type: string
+          example: "Путин"
+        surname:
+          type: string
+          example: "Евгеньевич"
+        telegramUrl:
+          type: string
+          example: "https://t.me/kayakto"
+        vkUrl:
+          type: string
+          example: "https://vk.com/kayakto"
+        competencies:
+          type: string
+          example: "Spring Boot, Gradle, git, Java, Docker"
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+        firstName:
+          type: string
+          example: "Николай"
+        lastName:
+          type: string
+          example: "Иванов"
+        surname:
+          type: string
+          example: "Евгеньевич"
+        telegramUrl:
+          type: string
+          example: "https://t.me/kayakto"
+        vkUrl:
+          type: string
+          example: "https://vk.com/kayakto"
+        role_enum:
+          type: string
+          enum:
+            - ADMIN
+            - CURATOR
+            - MANAGER
+            - STUDENT
+          example: "STUDENT"
+        competencies:
+          type: string
+          example: "Spring Boot, Gradle, git, Java, Docker"
+    MessageUpdateRequest:
+      type: object
+      properties:
+        messageId:
+          type: integer
+          format: int64
+          example: 40
+        text:
+          type: string
+          example: "Вы приняты на мероприятие \"Продажа часов\". Присоединяйтесь к чату: t.me/chatBitrix"
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 40
+        eventId:
+          type: integer
+          format: int64
+          example: 34
+        text:
+          type: string
+          example: "Вы приняты на мероприятие \"Продажа часов\". Присоединяйтесь к чату: t.me/chatBitrix"
+        messageStatus:
+          type: string
+          enum:
+            - ACCEPTED
+            - DECLINED
+          example: "ACCEPTED"
+        editDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+    EventRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        descriptionText:
+          type: string
+        adminId:
+          type: integer
+          format: int64
+        managerId:
+          type: integer
+          format: int64
+        eventStartDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+        eventEndDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+        enrollmentStartDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+        enrollmentEndDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+        chatUrl:
+          type: string
+        numberSeatsStudent:
+          type: integer
+          format: int32
+        condition:
+          type: string
+          enum:
+            - PREPARATION
+            - REGISTRATION_OPEN
+            - NO_SEATS
+            - REGISTRATION_CLOSED
+            - IN_PROGRESS
+            - FINISHED
+            - HIDDEN
+            - DELETED
+          example: "REGISTRATION_OPEN"
+    EventDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        condition:
+          type: string
+          enum:
+            - PREPARATION
+            - REGISTRATION_OPEN
+            - NO_SEATS
+            - REGISTRATION_CLOSED
+            - IN_PROGRESS
+            - FINISHED
+            - HIDDEN
+            - DELETED
+        descriptionText:
+          type: string
+        title:
+          type: string
+        adminId:
+          type: integer
+          format: int64
+        managerId:
+          type: integer
+          format: int64
+        eventStartDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+        eventEndDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+        chatUrl:
+          type: string
+        enrollmentStartDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+        enrollmentEndDate:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+        numberSeatsStudent:
+          type: integer
+          format: int32
+    UserRequest:
+      required:
+        - email
+        - firstName
+        - lastName
+        - sign
+        - telegramUrl
+        - vkUrl
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "Николай"
+        lastName:
+          type: string
+          example: "Иванов"
+        surname:
+          type: string
+          example: "Евгеньевич"
+        telegramUrl:
+          type: string
+          example: "https://t.me/kayakto"
+        vkUrl:
+          type: string
+          example: "https://vk.com/kayakto"
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - CURATOR
+            - MANAGER
+            - STUDENT
+          example: "STUDENT"
+        competencies:
+          type: string
+          example: "Spring Boot, Gradle, git, Java, Docker"
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "mail123@mail.ru"
+        password:
+          type: string
+          example: "password"
+    NotificationInfo:
+      type: object
+      properties:
+        notificationId:
+          type: integer
+          format: int64
+          example: 156
+        eventTitle:
+          type: string
+          example: "Продажа часов"
+        messageText:
+          type: string
+          example: "Вы приняты на мероприятие \"Продажа часов\""
+        sent_at:
+          type: string
+          format: date-time
+          example: "2024-11-01T22:00:00+05:00"
+    EventStudentInfoDTO:
+      type: object
+      properties:
+        eventId:
+          type: integer
+          format: int64
+          example: 1
+        studentId:
+          type: integer
+          format: int64
+          example: 3
+        statusRequest:
+          type: string
+          enum:
+            - SENT_PERSONAL_INFO
+            - REJECTED_FROM_EVENT
+            - ADDED_IN_CHAT
+            - STARTED_EVENT
+            - ENDED_EVENT
+            - DELETED_FROM_EVENT
+          example: "SENT_PERSONAL_INFO"
+        firstName:
+          type: string
+          example: "Николай"
+        lastName:
+          type: string
+          example: "Алексеев"
+        surname:
+          type: string
+          example: "Михайлович"
+        competencies:
+          type: string
+          example: "Spring Boot, Gradle, git, Java, Docker"
+        telegramUrl:
+          type: string
+          example: "https://t.me/kayakto"
+        vkUrl:
+          type: string
+          example: "https://vk.com/kayakto"
+        curatorFirstName:
+          type: string
+          example: "Николай"
+        curatorLastName:
+          type: string
+          example: "Путин"
+        curatorSurname:
+          type: string
+          example: "Евгеньевич"
+    EventCuratorInfoDTO:
+      type: object
+      properties:
+        eventId:
+          type: integer
+          format: int64
+          example: 1
+        curatorId:
+          type: integer
+          format: int64
+          example: 1
+        curatorStatus:
+          type: string
+          enum:
+            - SENT_PERSONAL_INFO
+            - REJECTED_FROM_EVENT
+            - ADDED_IN_CHAT
+            - STARTED_EVENT
+            - ENDED_EVENT
+            - DELETED_FROM_EVENT
+          example: "REJECTED_FROM_EVENT"
+        firstName:
+          type: string
+          example: "Владислав"
+        lastName:
+          type: string
+          example: "Путин"
+        surname:
+          type: string
+          example: "Николаевич"
+        competencies:
+          type: string
+          example: "Spring Boot, Gradle, git, Java, Docker"
+        telegramUrl:
+          type: string
+          example: "https://t.me/kayakto"
+        vkUrl:
+          type: string
+          example: "https://vk.com/kayakto"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -7,6 +7,9 @@ import org.bitebuilders.converter.messageStatus.StringToMessageStatusConverter;
 import org.bitebuilders.converter.statusRequest.StatusRequestToStringConverter;
 import org.bitebuilders.converter.statusRequest.StringToStatusRequestConverter;
 import org.bitebuilders.converter.time.OffsetDateTimeReadConverter;
+import org.bitebuilders.converter.time.OffsetDateTimeReadDateConverter;
+import org.bitebuilders.converter.userRole.StringToUserRoleConverter;
+import org.bitebuilders.converter.userRole.UserRoleToStringConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jdbc.core.convert.JdbcCustomConversions;
@@ -27,10 +30,13 @@ public class JdbcConfig extends AbstractJdbcConfiguration {
                 new StringToConditionConverter(),
                 // converting from type [java.sql.Timestamp] to type [java.time.OffsetDateTime]]
                 new OffsetDateTimeReadConverter(),
+                new OffsetDateTimeReadDateConverter(),
                 new StringToStatusRequestConverter(),
                 new StatusRequestToStringConverter(),
                 new StringToMessageStatusConverter(),
-                new MessageStatusToStringConverter()
+                new MessageStatusToStringConverter(),
+                new StringToUserRoleConverter(),
+                new UserRoleToStringConverter()
         ));
     }
 }

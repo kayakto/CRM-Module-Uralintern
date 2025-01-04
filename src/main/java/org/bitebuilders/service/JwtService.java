@@ -2,6 +2,7 @@ package org.bitebuilders.service;
 
 import io.jsonwebtoken.*;
 import org.bitebuilders.enums.UserRole;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,7 +30,7 @@ public class JwtService {
 
     private Key getSigningKey() {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-        return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName());
+        return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
     private String generateToken(String username, String role, long expiration) {
@@ -38,7 +39,7 @@ public class JwtService {
                 .claim("role", role) // Здесь добавляется роль
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -58,7 +59,7 @@ public class JwtService {
                     .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
-            return false; // Возвращаем false для некорректных токенов
+            return false;
         }
     }
 
@@ -90,6 +91,31 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .get("role", String.class); // Извлечение кастомного claim "role"
+                .get("role", String.class);
+    }
+
+    public String generateReferralToken(UserRole role, Long authorId) {
+        return Jwts.builder()
+                .setSubject(authorId.toString())
+                .claim("role", role.name())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // Срок действия 1 день
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public Claims parseReferralToken(String token) {
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        Long authorId = Long.valueOf(claims.getSubject());
+        String role = claims.get("role", String.class);
+        Date expiration = claims.getExpiration();
+
+        return claims;
     }
 }

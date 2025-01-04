@@ -24,7 +24,7 @@ public class MessageController {
         return messageService.getMessageById(messageId);
     }
 
-    @GetMapping("event/{eventId}")
+    @GetMapping("/event/{eventId}")
     public List<Message> getEventMessages(@PathVariable Long eventId) {
         return messageService.getEventMessages(eventId);
     }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class MessageService {
         if (optionalMessage.isPresent()) {
             return optionalMessage.get();
         }
-        throw new MessageNotFoundException("Message not found");
+        throw new MessageNotFoundException("Message with id " + messageId + " not found");
     }
 
     public List<Message> getEventMessages(Long eventId) {
@@ -61,17 +62,18 @@ public class MessageService {
     public Message updateMessage(Long messageId, String messageText) {
         Message message = getMessageById(messageId);
         message.setText(messageText);
+        message.setEditDate(OffsetDateTime.now());
         return messageRepository.save(message);
     }
 
     @Transactional
     public void createDefaultMessages(Long eventId) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+                .orElseThrow(() -> new EventNotFoundException("Event with id: " + eventId + " not found"));
 
         // Создаем сообщения
         String acceptText = "Вы приняты на мероприятие \"" + event.getTitle() + "\". Присоединяйтесь к чату: " + event.getChatUrl();
-        String declineText = "К сожалению, ваша заявка была отклонена.";
+        String declineText = "К сожалению, ваша заявка на мероприятие \"" + event.getTitle() + "\". была отклонена.";
 
         messageRepository.save(new Message(eventId, acceptText, Message.MessageStatus.ACCEPTED));
         messageRepository.save(new Message(eventId, declineText, Message.MessageStatus.DECLINED));

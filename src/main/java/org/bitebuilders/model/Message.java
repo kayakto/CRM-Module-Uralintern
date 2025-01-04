@@ -21,13 +21,21 @@ public class Message {
     private String text;
     @Column("status")
     private MessageStatus messageStatus;
+    @Setter
     @Column("edit_date")
     private OffsetDateTime editDate; // добавим таблицу сообщения когда было отправлено добавить
 
+    // Конструктор с параметром по умолчанию
     public Message(Long eventId, String text, MessageStatus messageStatus) {
-        this.eventId = eventId;
-        this.text = text;
+        this(messageStatus, text, eventId, OffsetDateTime.now());
+    }
+
+    // Основной конструктор
+    public Message(MessageStatus messageStatus, String text, Long eventId, OffsetDateTime editDate) {
         this.messageStatus = messageStatus;
+        this.text = text;
+        this.eventId = eventId;
+        this.editDate = editDate;
     }
     // статус сообщения на accept reject
 
@@ -37,13 +45,10 @@ public class Message {
     }
 
     public static MessageStatus parseStatusRequestToMessageStatus(StatusRequest statusRequest) {
-        switch (statusRequest) {
-            case ADDED_IN_CHAT:
-                return Message.MessageStatus.ACCEPTED;
-            case REJECTED_FROM_EVENT:
-                return Message.MessageStatus.DECLINED;
-            default:
-                throw new IllegalArgumentException("Unsupported StatusRequest: " + statusRequest);
-        }
+        return switch (statusRequest) {
+            case ADDED_IN_CHAT -> MessageStatus.ACCEPTED;
+            case REJECTED_FROM_EVENT -> MessageStatus.DECLINED;
+            default -> throw new IllegalArgumentException("Unsupported StatusRequest: " + statusRequest);
+        };
     }
 }

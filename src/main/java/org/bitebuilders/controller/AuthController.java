@@ -1,7 +1,9 @@
 package org.bitebuilders.controller;
 
+import org.bitebuilders.controller.dto.TokensDTO;
 import org.bitebuilders.controller.dto.UserDTO;
 import org.bitebuilders.controller.requests.LoginRequest;
+import org.bitebuilders.controller.requests.RefreshTokenRequest;
 import org.bitebuilders.controller.requests.UserRequest;
 import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.model.InvitationToken;
@@ -16,8 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -116,40 +116,32 @@ public class AuthController {
 
 //    @Operation(summary = "Login", description = "Authenticate user and retrieve tokens", security = {})
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<TokensDTO> login(@RequestBody LoginRequest loginRequest) {
         UserInfo user = userInfoService.getByEmail(loginRequest.getEmail());
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getSign())) {
             throw new BadCredentialsException("Invalid password");
         }
 
-        String accessToken = jwtService.generateToken(user.getEmail(), user.getRole_enum().name());
-        String refreshToken = jwtService.generateRefreshToken(user.getEmail(), user.getRole_enum().name());
+        String access = jwtService.generateToken(user.getEmail(), user.getRole_enum().name());
+        String refresh = jwtService.generateRefreshToken(user.getEmail(), user.getRole_enum().name());
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(new TokensDTO(access, refresh));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Map<String, String>> refresh(@RequestBody Map<String, String> request) {
-        String refreshToken = request.get("refreshToken");
+    public ResponseEntity<TokensDTO> refresh(@RequestBody RefreshTokenRequest request) {
+        String refresh = request.getRefresh();
 
-        if (!jwtService.validateToken(refreshToken)) {
+        if (!jwtService.validateToken(refresh)) {
             throw new BadCredentialsException("Invalid refresh token");
         }
 
-        String username = jwtService.getUsernameFromToken(refreshToken);
-        String role = jwtService.getRoleFromToken(refreshToken);
-        String newAccessToken = jwtService.generateToken(username, role);
+        String username = jwtService.getUsernameFromToken(refresh);
+        String role = jwtService.getRoleFromToken(refresh);
+        String newAccess = jwtService.generateToken(username, role);
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", newAccessToken);
-        tokens.put("refreshToken", refreshToken); // Возвращаем refresh токен как есть
-
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(new TokensDTO(newAccess, refresh));
     }
 }
 

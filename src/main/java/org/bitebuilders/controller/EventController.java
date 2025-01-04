@@ -1,6 +1,7 @@
 package org.bitebuilders.controller;
 
 import org.bitebuilders.controller.dto.EventDTO;
+import org.bitebuilders.controller.dto.MessageResponseDTO;
 import org.bitebuilders.controller.requests.EventRequest;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.service.UserInfoService;
@@ -110,14 +111,26 @@ public class EventController {
     }
 
     @PutMapping("/hide/{eventId}")
-    public ResponseEntity<Boolean> hideEvent(@PathVariable Long eventId) {
+    public ResponseEntity<MessageResponseDTO> hideEvent(@PathVariable Long eventId) {
         Boolean result = eventService.hideEvent(eventId);
-        return result ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
+        if (result) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Event with id " + eventId + " hided successfully"));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Event with id " + eventId + " could not hide")
+        );
     } // TODO вернуть в активное состояние
 
     @DeleteMapping("/delete/{eventId}")
-    public ResponseEntity<Boolean> deleteEventByID(@PathVariable Long eventId) {
+    public ResponseEntity<MessageResponseDTO> deleteEventById(@PathVariable Long eventId) {
         Boolean result = eventService.deleteEvent(eventId);
-        return result ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
+        if (result) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Event with id " + eventId + " deleted successfully"));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Event with id " + eventId + " could not delete")
+        );
     }
 }

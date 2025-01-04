@@ -13,7 +13,7 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
 
     Optional<Message> findById(Long id);
 
-    @Query("SELECT * FROM messages WHERE event_id = :eventId")
+    @Query("SELECT * FROM messages WHERE event_id = :eventId;")
     List<Message> findByEventId(Long eventId);
 
     @Query("SELECT * FROM messages WHERE event_id = :eventId AND status = :messageStatus;")

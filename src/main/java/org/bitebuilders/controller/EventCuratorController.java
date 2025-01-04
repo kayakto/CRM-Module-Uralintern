@@ -1,8 +1,8 @@
 package org.bitebuilders.controller;
 
 import org.bitebuilders.controller.dto.EventCuratorInfoDTO;
+import org.bitebuilders.controller.dto.MessageResponseDTO;
 import org.bitebuilders.enums.StatusRequest;
-import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.EventCurator;
 import org.bitebuilders.model.EventCuratorInfo;
 import org.bitebuilders.service.EventCuratorService;
@@ -70,19 +70,25 @@ public class EventCuratorController {
     }
 
     /**
-     * Метод удаления куратора c мероприятия
+     * Метод удаления куратора с мероприятия
      */
     @DeleteMapping("/{eventId}/delete/{curatorId}")
-    public ResponseEntity<Boolean> deleteCuratorFromEvent(
+    public ResponseEntity<MessageResponseDTO> deleteCuratorFromEvent(
             @PathVariable Long eventId,
             @PathVariable Long curatorId
     ) {
-        return ResponseEntity.ok(
-                eventCuratorService.updateCuratorStatus(
-                        eventId,
-                        curatorId,
-                        StatusRequest.DELETED_FROM_EVENT
-                )
+        boolean isDeleted = eventCuratorService.updateCuratorStatus(
+                eventId,
+                curatorId,
+                StatusRequest.DELETED_FROM_EVENT
+        );
+
+        if (isDeleted) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Curator with id " + curatorId + " deleted successfully from event " + eventId));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Curator with id " + curatorId + " cannot delete from event " + eventId)
         );
     }
 
@@ -90,30 +96,30 @@ public class EventCuratorController {
      * Метод отправки заявки на кураторство. (reject)
      */
     @PutMapping("/{eventId}/send/{curatorId}")
-    public ResponseEntity<Boolean> sendCuratorToEvent(
+    public ResponseEntity<MessageResponseDTO> sendCuratorToEvent(
             @PathVariable Long eventId,
             @PathVariable Long curatorId
     ) {
-        Boolean isUpdated;
-        try {
-            isUpdated = eventCuratorService.updateCuratorStatus(
-                    eventId,
-                    curatorId,
-                    StatusRequest.SENT_PERSONAL_INFO
-            );
-        } catch (EventUserNotFoundException e) {
-            System.err.println(e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        boolean isUpdated = eventCuratorService.updateCuratorStatus(
+                eventId,
+                curatorId,
+                StatusRequest.SENT_PERSONAL_INFO
+        );
 
-        return ResponseEntity.ok(isUpdated);
+        if (isUpdated) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Curator with id " + curatorId + " send request to event " + eventId));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Curator with id " + curatorId + " cannot send request to event " + eventId)
+        );
     }
 
     /**
      * Метод принятия заявки на кураторство. (reject)
      */
     @PutMapping("/{eventId}/accept/{curatorId}")
-    public ResponseEntity<Boolean> acceptCuratorRequest(
+    public ResponseEntity<MessageResponseDTO> acceptCuratorRequest(
             @PathVariable Long eventId,
             @PathVariable Long curatorId
     ) {
@@ -128,14 +134,20 @@ public class EventCuratorController {
                 StatusRequest.ADDED_IN_CHAT
         );
 
-        return ResponseEntity.ok(isUpdated);
+        if (isUpdated) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Curator with id " + curatorId + " accepted to event " + eventId));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Curator with id " + curatorId + " cannot be accepted to event " + eventId)
+        );
     } // TODO add curator to chat
 
     /**
      * Метод отклонения заявки на кураторство. (reject)
      */
     @PutMapping("/{eventId}/reject/{curatorId}")
-    public ResponseEntity<Boolean> rejectCuratorRequest(
+    public ResponseEntity<MessageResponseDTO> rejectCuratorRequest(
             @PathVariable Long eventId,
             @PathVariable Long curatorId
     ) {
@@ -144,12 +156,18 @@ public class EventCuratorController {
             return ResponseEntity.badRequest().build();
         }
 
-        Boolean isUpdated = eventCuratorService.updateCuratorStatus(
+        boolean isUpdated = eventCuratorService.updateCuratorStatus(
                 eventId,
                 curatorId,
                 StatusRequest.REJECTED_FROM_EVENT
         );
 
-        return ResponseEntity.ok(isUpdated);
+        if (isUpdated) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Curator with id " + curatorId + " rejected to event " + eventId));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Curator with id " + curatorId + " cannot be rejected to event " + eventId)
+        );
     }
 }

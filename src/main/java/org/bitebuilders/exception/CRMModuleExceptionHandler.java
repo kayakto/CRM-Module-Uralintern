@@ -1,6 +1,7 @@
 package org.bitebuilders.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,6 +26,15 @@ public class CRMModuleExceptionHandler {
     {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleCustomAccessDeniedException(AccessDeniedException e)
+    {
+        return new ErrorResponse(e.getMessage());
+    }
+
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

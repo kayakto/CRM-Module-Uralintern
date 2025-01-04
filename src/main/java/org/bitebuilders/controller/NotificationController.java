@@ -1,5 +1,6 @@
 package org.bitebuilders.controller;
 
+import org.bitebuilders.controller.dto.MessageResponseDTO;
 import org.bitebuilders.model.Message;
 import org.bitebuilders.model.NotificationInfo;
 import org.bitebuilders.service.NotificationService;
@@ -27,12 +28,14 @@ public class NotificationController {
     }
 
 //    @PostMapping("/send") // на случай, если отдельным запросом отправлять уведомления
-    public ResponseEntity<String> sendNotification(
+    public ResponseEntity<MessageResponseDTO> sendNotification(
             @RequestParam Long userId,
             @RequestParam Long eventId,
             @RequestParam Message.MessageStatus messageStatus) {
         notificationService.sendNotification(userId, eventId, messageStatus);
-        return ResponseEntity.ok("Notification sent successfully");
+        return ResponseEntity.ok(
+                new MessageResponseDTO("Notification sent successfully")
+        );
     }
 
 }

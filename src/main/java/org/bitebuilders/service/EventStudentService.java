@@ -76,7 +76,7 @@ public class EventStudentService {
         return eventStudentRepository.findStudentEventStatus(studentId, eventId); // todo throw exception
     }
 
-    public Boolean canSend(Long eventId, Long studentId) {
+    public boolean canSend(Long eventId, Long studentId) {
         if (userInfoRepository.findById(studentId).isEmpty()) {
             throw new UserNotFoundException("user " + studentId + " not found");
         }
@@ -95,7 +95,7 @@ public class EventStudentService {
      * Метод, который меняет статус студента
      */
     @Transactional
-    public Boolean updateStudentStatus(Long eventId, Long studentId, StatusRequest newStatus) {
+    public boolean updateStudentStatus(Long eventId, Long studentId, StatusRequest newStatus) {
         Optional<EventStudent> optionalEventStudent = eventStudentRepository.findStudentEvent(studentId, eventId);
         EventStudent eventStudent;
         if (optionalEventStudent.isPresent()) {

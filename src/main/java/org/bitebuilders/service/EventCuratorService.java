@@ -68,7 +68,7 @@ public class EventCuratorService {
      * Метод, который меняет статус куратора
      */
     @Transactional
-    public Boolean updateCuratorStatus(Long eventId, Long curatorId, StatusRequest newStatus) {
+    public boolean updateCuratorStatus(Long eventId, Long curatorId, StatusRequest newStatus) {
         Optional<EventCurator> optionalEventCurator = eventCuratorRepository.findCuratorEvent(curatorId, eventId);
 
         EventCurator eventCurator;

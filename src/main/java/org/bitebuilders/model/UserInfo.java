@@ -2,6 +2,7 @@ package org.bitebuilders.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.bitebuilders.controller.dto.UserDTO;
 import org.bitebuilders.enums.UserRole;
 import org.springframework.data.relational.core.mapping.Column;
@@ -11,6 +12,7 @@ import org.springframework.data.annotation.Id;
 @Getter
 @Table("users_info")
 @Setter
+@ToString
 public class UserInfo {
     @Id
     private Long id;
