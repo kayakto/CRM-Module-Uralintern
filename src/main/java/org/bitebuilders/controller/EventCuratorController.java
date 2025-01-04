@@ -6,8 +6,10 @@ import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.model.EventCurator;
 import org.bitebuilders.model.EventCuratorInfo;
 import org.bitebuilders.service.EventCuratorService;
+import org.bitebuilders.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,15 +18,23 @@ import java.util.List;
 @RequestMapping("/events-curators")
 public class EventCuratorController {
 
-    @Autowired
     private final EventCuratorService eventCuratorService;
 
-    public EventCuratorController(EventCuratorService eventCuratorService) {
+    private final EventService eventService;
+
+    @Autowired
+    public EventCuratorController(EventCuratorService eventCuratorService, EventService eventService) {
         this.eventCuratorService = eventCuratorService;
+        this.eventService = eventService;
     }
 
     @GetMapping("/{eventId}/curators")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<List<EventCuratorInfoDTO>> getCuratorsInfo(@PathVariable Long eventId) {
+        if (!eventService.haveManagerAccess(eventId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         List<EventCuratorInfoDTO> ecInfoDTO = eventCuratorService.getCuratorsInfo(eventId)
                 .stream()
                 .map(EventCuratorInfo::toEventCuratorDTO)
@@ -34,17 +44,15 @@ public class EventCuratorController {
             return ResponseEntity.ok(ecInfoDTO);  // Возвращаем список кураторов
 
         return ResponseEntity.noContent().build();
-    }
+    } // TODO может быть удалено
 
-    // Получение статуса куратора GET - возвращает текущий статус студента или куратора.
-    @GetMapping("/{eventId}/curator-status/{curatorId}")
-    public ResponseEntity<StatusRequest> getCuratorStatus(Long eventId, Long curatorId) {
-        StatusRequest result = eventCuratorService.getCuratorStatus(eventId, curatorId);
-        return ResponseEntity.ok(result);
-    }
-
+    @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/{eventId}/waiting-curators")
     public ResponseEntity<List<EventCuratorInfoDTO>> getSentCuratorsInfo(@PathVariable Long eventId) {
+        if (!eventService.haveManagerAccess(eventId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         List<EventCuratorInfoDTO> ecInfoDTO = eventCuratorService.getSentCuratorInfo(eventId)
                 .stream()
                 .map(EventCuratorInfo::toEventCuratorDTO)
@@ -56,8 +64,13 @@ public class EventCuratorController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     @GetMapping("/{eventId}/accepted-curators")
     public ResponseEntity<List<EventCuratorInfoDTO>> getAcceptedCuratorsInfo(@PathVariable Long eventId) {
+        if (!eventService.haveManagerAdminAccess(eventId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         List<EventCuratorInfoDTO> ecInfoDTO = eventCuratorService.getAcceptedCuratorInfo(eventId)
                 .stream()
                 .map(EventCuratorInfo::toEventCuratorDTO)
@@ -70,31 +83,9 @@ public class EventCuratorController {
     }
 
     /**
-     * Метод удаления куратора с мероприятия
-     */
-    @DeleteMapping("/{eventId}/delete/{curatorId}")
-    public ResponseEntity<MessageResponseDTO> deleteCuratorFromEvent(
-            @PathVariable Long eventId,
-            @PathVariable Long curatorId
-    ) {
-        boolean isDeleted = eventCuratorService.updateCuratorStatus(
-                eventId,
-                curatorId,
-                StatusRequest.DELETED_FROM_EVENT
-        );
-
-        if (isDeleted) {
-            return ResponseEntity.ok(
-                    new MessageResponseDTO("Curator with id " + curatorId + " deleted successfully from event " + eventId));
-        }
-        return ResponseEntity.badRequest().body(
-                new MessageResponseDTO("Curator with id " + curatorId + " cannot delete from event " + eventId)
-        );
-    }
-
-    /**
      * Метод отправки заявки на кураторство. (reject)
      */
+    @PreAuthorize("hasRole('CURATOR')")
     @PutMapping("/{eventId}/send/{curatorId}")
     public ResponseEntity<MessageResponseDTO> sendCuratorToEvent(
             @PathVariable Long eventId,
@@ -118,11 +109,16 @@ public class EventCuratorController {
     /**
      * Метод принятия заявки на кураторство. (reject)
      */
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{eventId}/accept/{curatorId}")
     public ResponseEntity<MessageResponseDTO> acceptCuratorRequest(
             @PathVariable Long eventId,
             @PathVariable Long curatorId
     ) {
+        if (!eventService.haveManagerAccess(eventId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         EventCurator eventCurator = eventCuratorService.getEventCurator(eventId, curatorId);
         if (eventCurator.getCuratorStatus() != StatusRequest.SENT_PERSONAL_INFO) {
             return ResponseEntity.badRequest().build();
@@ -146,11 +142,16 @@ public class EventCuratorController {
     /**
      * Метод отклонения заявки на кураторство. (reject)
      */
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{eventId}/reject/{curatorId}")
     public ResponseEntity<MessageResponseDTO> rejectCuratorRequest(
             @PathVariable Long eventId,
             @PathVariable Long curatorId
     ) {
+        if (!eventService.haveManagerAccess(eventId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
         EventCurator eventCurator = eventCuratorService.getEventCurator(eventId, curatorId);
         if (eventCurator.getCuratorStatus() != StatusRequest.SENT_PERSONAL_INFO) {
             return ResponseEntity.badRequest().build();
@@ -168,6 +169,34 @@ public class EventCuratorController {
         }
         return ResponseEntity.badRequest().body(
                 new MessageResponseDTO("Curator with id " + curatorId + " cannot be rejected to event " + eventId)
+        );
+    }
+
+    /**
+     * Метод удаления куратора с мероприятия
+     */
+    @PreAuthorize("hasRole('MANAGER')")
+    @DeleteMapping("/{eventId}/delete/{curatorId}")
+    public ResponseEntity<MessageResponseDTO> deleteCuratorFromEvent(
+            @PathVariable Long eventId,
+            @PathVariable Long curatorId
+    ) {
+        if (!eventService.haveManagerAccess(eventId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        boolean isDeleted = eventCuratorService.updateCuratorStatus(
+                eventId,
+                curatorId,
+                StatusRequest.DELETED_FROM_EVENT
+        );
+
+        if (isDeleted) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Curator with id " + curatorId + " deleted successfully from event " + eventId));
+        }
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("Curator with id " + curatorId + " cannot delete from event " + eventId)
         );
     }
 }

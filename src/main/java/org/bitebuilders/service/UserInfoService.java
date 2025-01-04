@@ -1,7 +1,5 @@
 package org.bitebuilders.service;
 
-import org.bitebuilders.component.UserContext;
-import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.repository.EventCuratorRepository;
@@ -9,7 +7,6 @@ import org.bitebuilders.repository.EventRepository;
 import org.bitebuilders.repository.EventStudentRepository;
 import org.bitebuilders.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +40,6 @@ public class UserInfoService {
     public Optional<UserInfo> getUserInfo(Long id) {
         return userInfoRepository.findById(id);
     }
-    // TODO сделать контроллер для получения данных пользователя
 
     public Boolean existsByEmail(String email) {
         return userInfoRepository.findByEmail(email).isPresent();
@@ -68,9 +64,8 @@ public class UserInfoService {
         return userInfoRepository.findAllManagers();
     }
 
-    public List<Event> getMyEvents(Long userId) {
-        UserInfo user = userInfoRepository.findById(userId)
-                .orElseThrow(() -> new EventUserNotFoundException("User not found with ID: " + userId));
+    public List<Event> getMyEvents(UserInfo user) {
+        Long userId = user.getId();
 
         switch (user.getRole_enum()) {
             case ADMIN -> {

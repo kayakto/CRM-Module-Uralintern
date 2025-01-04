@@ -19,15 +19,13 @@ import static org.bitebuilders.model.Message.parseStatusRequestToMessageStatus;
 @Service
 public class EventCuratorService {
 
-    @Autowired
     private final EventCuratorRepository eventCuratorRepository;
 
-    @Autowired
     private final UserInfoRepository userInfoRepository;
 
-    @Autowired
     private final NotificationService notificationService;
 
+    @Autowired
     public EventCuratorService(EventCuratorRepository eventCuratorRepository, UserInfoRepository userInfoRepository, NotificationService notificationService) {
         this.eventCuratorRepository = eventCuratorRepository;
         this.userInfoRepository = userInfoRepository;
@@ -74,6 +72,7 @@ public class EventCuratorService {
         EventCurator eventCurator;
         if (optionalEventCurator.isPresent()) {
             eventCurator = optionalEventCurator.get();
+            if (newStatus == StatusRequest.SENT_PERSONAL_INFO) return false;
         } else {
             if (newStatus == StatusRequest.SENT_PERSONAL_INFO &&
                     userInfoRepository.findById(curatorId).isPresent()) { // тут добавить проверку на существование куратора

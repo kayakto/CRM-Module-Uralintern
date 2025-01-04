@@ -1,17 +1,22 @@
 package org.bitebuilders.service;
 
+import org.bitebuilders.component.UserContext;
+import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.exception.EventNotFoundException;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.EventGroup;
+import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -19,15 +24,17 @@ public class EventService {
     /**
      * репозиторий с готовыми методами для events
      */
-    @Autowired
     private final EventRepository eventRepository;
 
-    @Autowired
     private final EventGroupService eventGroupService;
 
-    public EventService(EventRepository eventRepository, EventGroupService eventGroupService) {
+    private final UserContext userContext;
+
+    @Autowired
+    public EventService(EventRepository eventRepository, EventGroupService eventGroupService, UserContext userContext) {
         this.eventRepository = eventRepository;
         this.eventGroupService = eventGroupService;
+        this.userContext = userContext;
     }
 
     public void isPresentEvent(Long eventId) {
@@ -51,21 +58,13 @@ public class EventService {
         return eventRepository.findAllByAdminId(adminId); // Фильтрация по admin_id
     }
 
-    public Optional<Event> getEventById(Long eventId) {
-        return eventRepository.findById(eventId);
+    public Event getEventById(Long eventId) {
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
     }
 
     public List<Event> getEventsMoreEventStartDate(OffsetDateTime dateTime) {
         return eventRepository.findStartedEventsByDate(dateTime);
-    }
-
-    // Получение статуса мероприятия GET - возвращает текущий статус мероприятия, на основе его параметров (даты, количество мест).
-    public Event.Condition getEventCondition(Long eventId) {
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        if (eventOptional.isEmpty()) {
-            throw new EventNotFoundException("Event not found");
-        }
-        return eventOptional.get().getCondition();
     }
 
     // Метод, который сохраняет Event и возвращает его
@@ -81,23 +80,23 @@ public class EventService {
 
     // Ручное управление статусом (для администратора) - администратор вручную изменяет статус мероприятия (“Скрыто”, “Удалено“)
     @Transactional
-    public Boolean deleteEvent(Long eventId) {
-        Optional<Event> eventToDelete = getEventById(eventId);
-        return eventToDelete.map(event -> {
-            event.setCondition(Event.Condition.DELETED);
-            eventRepository.save(event); // Сохраняем изменение статуса в базе данных
-            return true;
-        }).orElse(false);
+    public boolean deleteEvent(Long eventId) {
+        Event eventToDelete = getEventById(eventId);
+        eventToDelete.setCondition(Event.Condition.DELETED);
+        eventRepository.save(eventToDelete);
+        return true;
     }
 
     @Transactional
-    public Boolean hideEvent(Long eventId) {
-        Optional<Event> eventToHide = getEventById(eventId);
-        return eventToHide.map(event -> {
-            event.setCondition(Event.Condition.HIDDEN);
-            eventRepository.save(event); // Сохраняем изменение статуса в базе данных
-            return true;
-        }).orElse(false);
+    public boolean hideOrFindOutEvent(Long eventId) {
+        Event eventToHide = getEventById(eventId);
+        if (eventToHide.getCondition() == Event.Condition.HIDDEN){
+            eventToHide.setCondition(Event.Condition.PREPARATION);
+            updateEventCondition(eventToHide);
+        }
+        else eventToHide.setCondition(Event.Condition.HIDDEN);
+        eventRepository.save(eventToHide);
+        return true;
     }
 
     @Scheduled(fixedRate = 600000) // Обновляем статусы каждый час
@@ -106,19 +105,23 @@ public class EventService {
         List<Event> events = getAllEvents();
 
         for (Event event : events) {
-            Event.Condition newCondition = calculateCondition(event);
-            Event.Condition currentCondition = event.getCondition();
-
-            if (newCondition != currentCondition) {
-                if (currentCondition == Event.Condition.IN_PROGRESS) {
-                    startEventById(event.getId());
-                } else {
-                    event.setCondition(newCondition);
-                    createOrUpdateEvent(event);
-                }
-            }
+            updateEventCondition(event);
         }
     } // TODO вынести в отдельный класс
+
+    private void updateEventCondition(Event event) {
+        Event.Condition newCondition = calculateCondition(event);
+        Event.Condition currentCondition = event.getCondition();
+
+        if (newCondition != currentCondition) {
+            if (currentCondition == Event.Condition.IN_PROGRESS) {
+                startEventById(event.getId());
+            } else {
+                event.setCondition(newCondition);
+                createOrUpdateEvent(event);
+            }
+        }
+    }
 
     private Event.Condition calculateCondition(Event event) {
         OffsetDateTime now = OffsetDateTime.now();
@@ -165,12 +168,7 @@ public class EventService {
 
     private Event getEventToStart(Long eventId) {
         // Получение мероприятия по ID
-        Optional<Event> eventOptional = getEventById(eventId);
-        if (eventOptional.isEmpty()) {
-            throw new EventNotFoundException("Event with ID " + eventId + " not found.");
-        }
-
-        Event eventToStart = eventOptional.get();
+        Event eventToStart = getEventById(eventId);
         Event.Condition currentCondition = eventToStart.getCondition();
 
         // Разрешённые статусы для старта мероприятия
@@ -185,5 +183,43 @@ public class EventService {
             throw new IllegalStateException("Event cannot be started due to its current condition: " + currentCondition);
         }
         return eventToStart;
+    }
+
+    public boolean haveManagerAdminAccess(Long eventId) {
+        UserInfo user = userContext.getCurrentUser();
+        Event event = getEventById(eventId);
+
+        switch (user.getRole_enum()){
+            case UserRole.ADMIN -> {
+                if (!Objects.equals(event.getAdminId(), user.getId())) {
+                    throw new AccessDeniedException("This admin does not have permission to this event");
+                }
+            }
+            case UserRole.MANAGER -> {
+                if (!Objects.equals(event.getManagerId(), user.getId())) {
+                    throw new AccessDeniedException("This manager does not have permission to this event");
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public boolean haveAdminAccess(Long eventId) {
+        UserInfo user = userContext.getCurrentUser();
+        Event event = getEventById(eventId);
+        if (!Objects.equals(event.getAdminId(), user.getId())) {
+            throw new AccessDeniedException("This admin does not have permission to this event");
+        }
+        return true;
+    }
+
+    public boolean haveManagerAccess(Long eventId) {
+        UserInfo user = userContext.getCurrentUser();
+        Event event = getEventById(eventId);
+        if (!Objects.equals(event.getManagerId(), user.getId())) {
+            throw new AccessDeniedException("This manager does not have permission to this event");
+        }
+        return true;
     }
 }

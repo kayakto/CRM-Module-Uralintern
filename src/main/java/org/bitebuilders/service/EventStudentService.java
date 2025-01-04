@@ -21,21 +21,17 @@ import static org.bitebuilders.model.Message.parseStatusRequestToMessageStatus;
 @Service
 public class EventStudentService {
 
-    @Autowired
     private final EventStudentRepository eventStudentRepository;
 
-    @Autowired
     private final UserInfoRepository userInfoRepository;
 
-    @Autowired
     private final EventRepository eventRepository;
 
-    @Autowired
     private final EventGroupRepository eventGroupRepository;
 
-    @Autowired
     private final NotificationService notificationService;
 
+    @Autowired
     public EventStudentService(EventStudentRepository eventStudentRepository, UserInfoRepository userInfoRepository, EventCuratorService eventCuratorService, EventRepository eventRepository, EventGroupRepository eventGroupRepository, NotificationService notificationService) {
         this.eventStudentRepository = eventStudentRepository;
         this.userInfoRepository = userInfoRepository;
@@ -100,6 +96,7 @@ public class EventStudentService {
         EventStudent eventStudent;
         if (optionalEventStudent.isPresent()) {
             eventStudent = optionalEventStudent.get();
+            if (newStatus == StatusRequest.SENT_PERSONAL_INFO) return false;
         } else {
             if (newStatus == StatusRequest.SENT_PERSONAL_INFO &&
                     userInfoRepository.findById(studentId).isPresent()) {

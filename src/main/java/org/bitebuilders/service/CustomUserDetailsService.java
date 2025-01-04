@@ -3,6 +3,7 @@ package org.bitebuilders.service;
 import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.repository.UserInfoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -19,6 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserInfoRepository userInfoRepository;
 
+    @Autowired
     public CustomUserDetailsService(UserInfoRepository userInfoRepository) {
         this.userInfoRepository = userInfoRepository;
     }

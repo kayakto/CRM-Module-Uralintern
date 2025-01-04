@@ -52,6 +52,8 @@ public interface EventCuratorRepository extends CrudRepository<EventCurator, Lon
 
     @Query("SELECT e.* FROM events e " +
             "JOIN events_curators ec ON ec.event_id = e.id " +
-            "WHERE ec.curator_id = :curatorId AND ec.curator_status = 'ADDED_IN_CHAT'")
+            "WHERE ec.curator_id = :curatorId " +
+            "AND ec.curator_status IN ('ADDED_IN_CHAT', 'STARTED_EVENT', 'ENDED_EVENT') " +
+            "AND e.status IN ('REGISTRATION_OPEN', 'NO_SEATS', 'REGISTRATION_CLOSED', 'IN_PROGRESS', 'FINISHED');")
     List<Event> findAcceptedEventsByCurator(Long curatorId);
 }

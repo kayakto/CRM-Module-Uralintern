@@ -21,7 +21,7 @@ public class EventRequest {
     private final OffsetDateTime enrollmentEndDate;
     private final String chatUrl;
     private final int numberSeatsStudent;
-    private final Event.Condition condition;
+    private final Event.Condition condition; // TODO не должно передаваться
 
     public Event toEvent() {
         return new Event(condition != null ? condition : Event.Condition.REGISTRATION_OPEN,

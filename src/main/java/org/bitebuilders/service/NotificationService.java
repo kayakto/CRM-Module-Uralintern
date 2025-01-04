@@ -1,12 +1,9 @@
 package org.bitebuilders.service;
 
+import org.bitebuilders.component.UserContext;
 import org.bitebuilders.exception.EventNotFoundException;
-import org.bitebuilders.model.Message;
-import org.bitebuilders.model.Notification;
-import org.bitebuilders.model.NotificationInfo;
-import org.bitebuilders.model.Event;
+import org.bitebuilders.model.*;
 import org.bitebuilders.repository.EventRepository;
-import org.bitebuilders.repository.MessageRepository;
 import org.bitebuilders.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,19 +17,29 @@ import java.util.stream.Collectors;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+
     private final MessageService messageService;
+
     private final EventRepository eventRepository; // Для получения названия мероприятия
+
+    private final UserContext userContext;
 
     @Autowired
     public NotificationService(NotificationRepository notificationRepository,
                                MessageService messageService,
-                               EventRepository eventRepository) {
+                               EventRepository eventRepository, UserContext userContext) {
         this.notificationRepository = notificationRepository;
         this.messageService = messageService;
         this.eventRepository = eventRepository; // TODO переделать под сервисы
+        this.userContext = userContext;
     }
 
-    public List<NotificationInfo> getNotificationsByUserId(Long userId) {
+    public List<NotificationInfo> getMyNotifications() {
+        Long userId = userContext.getCurrentUser().getId();
+        return getNotificationsByUserId(userId);
+    }
+
+    private List<NotificationInfo> getNotificationsByUserId(Long userId) {
         List<Notification> notifications = notificationRepository.findByUserId(userId);
 
         // Преобразование списка Notification в список NotificationInfo

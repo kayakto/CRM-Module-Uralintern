@@ -59,8 +59,7 @@ public class MessageService {
     } // пока не используется
 
     @Transactional
-    public Message updateMessage(Long messageId, String messageText) {
-        Message message = getMessageById(messageId);
+    public Message updateMessage(Message message, String messageText) {
         message.setText(messageText);
         message.setEditDate(OffsetDateTime.now());
         return messageRepository.save(message);

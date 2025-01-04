@@ -16,15 +16,13 @@ import java.util.List;
 @Service
 public class EventGroupService {
 
-    @Autowired
     private final EventGroupRepository eventGroupRepository;
 
-    @Autowired
     private final EventCuratorService eventCuratorService;
 
-    @Autowired
     private final EventStudentService eventStudentService;
 
+    @Autowired
     public EventGroupService(EventGroupRepository eventGroupRepository, EventCuratorService eventCuratorService, EventStudentService eventStudentService) {
         this.eventGroupRepository = eventGroupRepository;
         this.eventCuratorService = eventCuratorService;

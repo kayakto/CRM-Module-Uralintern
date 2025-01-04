@@ -24,18 +24,15 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserInfoController {
 
-    @Autowired
     private final UserInfoService userInfoService;
 
-    @Autowired
     private final UserContext userContext;
 
-    @Autowired
     private final InvitationTokenService invitationService;
 
-    @Autowired
     private final JwtService jwtService;
 
+    @Autowired
     public UserInfoController(UserInfoService userInfoService, UserContext userContext, InvitationTokenService invitationService, JwtService jwtService) {
         this.userInfoService = userInfoService;
         this.userContext = userContext;
@@ -141,6 +138,7 @@ public class UserInfoController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/invite-manager")
     public ResponseEntity<ReferralTokenDTO> createReferralToken() {
         String email = userContext.getCurrentUserEmail();

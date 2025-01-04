@@ -56,7 +56,7 @@ class EventGroupCreationServiceTest {
 
         assertDoesNotThrow(() -> eventGroupCreationService.startEvents());
 
-        Event updatedEvent = eventService.getEventById(eventId).orElseThrow();
+        Event updatedEvent = eventService.getEventById(eventId);
         List<EventGroup> eventGroups = eventGroupService.getEventGroups(eventId);
 
         assertAll(

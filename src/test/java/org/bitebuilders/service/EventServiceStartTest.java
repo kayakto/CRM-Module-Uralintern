@@ -86,7 +86,7 @@ public class EventServiceStartTest {
         assertThrows(IllegalStateException.class, () -> eventService.startEventById(eventId));
 
         // Убедимся, что статус события не изменился
-        Event unchangedEvent = eventService.getEventById(eventId).orElseThrow();
+        Event unchangedEvent = eventService.getEventById(eventId);
         assertEquals(Event.Condition.HIDDEN, unchangedEvent.getCondition(), "Event status should remain HIDDEN");
     }
 

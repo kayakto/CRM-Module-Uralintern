@@ -24,18 +24,15 @@ import java.util.Optional;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
     private final UserInfoService userInfoService;
 
-    @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     private final JwtService jwtService;
 
-    @Autowired
     private final InvitationTokenService tokenService;
 
+    @Autowired
     public AuthController(UserInfoService userInfoService, PasswordEncoder passwordEncoder, JwtService jwtService, InvitationTokenService tokenService) {
         this.userInfoService = userInfoService;
         this.passwordEncoder = passwordEncoder;

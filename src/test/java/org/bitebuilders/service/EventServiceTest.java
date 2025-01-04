@@ -1,5 +1,6 @@
 package org.bitebuilders.service; // для теста старта отдельного event в EventServiceStartTest
 
+import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.repository.EventRepository;
@@ -48,7 +49,7 @@ class EventServiceTest {
                 "John's sign",
                 "vk.com/johndoe",
                 "t.me/johndoe",
-                UserInfo.Role.ADMIN,
+                UserRole.ADMIN,
                 "Chill guy"
         );
 
@@ -86,24 +87,13 @@ class EventServiceTest {
     }
 
     @Test
-    void getEventsByAdminId_ShouldReturnEventsForAdmin() {
-        // Act
-        List<Event> events = eventService.getEventsByAdminId(adminId);
-
-        // Assert
-        assertNotNull(events);
-        assertEquals(1, events.size());
-        assertEquals(adminId, events.get(0).getAdminId());
-    }
-
-    @Test
     void getEventById_ShouldReturnEventWhenExists() {
         // Act
-        Optional<Event> result = eventService.getEventById(eventId);
+        Event result = eventService.getEventById(eventId);
 
         // Assert
-        assertTrue(result.isPresent());
-        assertEquals(eventId, result.get().getId());
+        assertNotNull(result);
+        assertEquals(eventId, result.getId());
     }
 
     @Test
