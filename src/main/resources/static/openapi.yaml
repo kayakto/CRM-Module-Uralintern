@@ -43,7 +43,7 @@ paths:
       tags:
         - user-info-controller
       operationId: updateCurrentUser
-      description: "Обновление данных пользователя"
+      description: "Обновление данных пользователя. Доступ - пользовальтельЮ который сделал запрос."
       requestBody:
         content:
           application/json:
@@ -85,7 +85,7 @@ paths:
       tags:
         - event-controller
       operationId: updateEvent
-      description: "Обновление данных мероприятия"
+      description: "Обновление данных мероприятия. Доступ - руководитель и администратор."
       parameters:
         - name: eventId
           in: path
@@ -113,7 +113,7 @@ paths:
       tags:
         - event-controller
       operationId: hideEvent
-      description: "Поменять статус мероприятия на \"скрытое\""
+      description: "Поменять статус мероприятия на \"скрытое\". Доступ - руководитель и администратор."
       parameters:
         - name: eventId
           in: path
@@ -135,6 +135,7 @@ paths:
       tags:
         - event-student-controller
       operationId: sendStudentToEvent
+      description: "Отправить студенту заявку на мероприятие. Доступ - студент."
       parameters:
         - name: eventId
           in: path
@@ -162,6 +163,7 @@ paths:
       tags:
         - event-student-controller
       operationId: rejectStudentRequest
+      description: "Отклонить заявку на меропритие от студента. Доступ - руководитель."
       parameters:
         - name: eventId
           in: path
@@ -189,6 +191,7 @@ paths:
       tags:
         - event-student-controller
       operationId: acceptStudentRequest
+      description: "Принять заявку от студента на мероприятие. Доступ - руководитель."
       parameters:
         - name: eventId
           in: path
@@ -216,6 +219,7 @@ paths:
       tags:
         - event-student-controller
       operationId: changeStudentCurator
+      description: "Изменить куратора у студента, доступно только после начала мероприятия. Доступ - руководитель."
       parameters:
         - name: eventId
           in: path
@@ -249,6 +253,7 @@ paths:
       tags:
         - event-curator-controller
       operationId: sendCuratorToEvent
+      description: "Отправить куратору заявку на мероприятие. Доступ - куратор."
       parameters:
         - name: eventId
           in: path
@@ -276,6 +281,7 @@ paths:
       tags:
         - event-curator-controller
       operationId: rejectCuratorRequest
+      description: "Отклонить заявку куратора на мероприятие. Доступ - руководитель."
       parameters:
         - name: eventId
           in: path
@@ -303,6 +309,7 @@ paths:
       tags:
         - event-curator-controller
       operationId: acceptCuratorRequest
+      description: "Принять заявку от куратора на мероприятие. Доступ - руководитель."
       parameters:
         - name: eventId
           in: path
@@ -330,6 +337,7 @@ paths:
       tags:
         - event-controller
       operationId: startEvent
+      description: "Досрочно начать мероприятие. Доступ - администратор."
       requestBody:
         content:
           application/json:
@@ -351,6 +359,7 @@ paths:
       tags:
         - event-controller
       operationId: createEvent
+      description: "Создать мероприятие. Доступ - администратор."
       requestBody:
         content:
           application/json:
@@ -371,6 +380,7 @@ paths:
       tags:
         - auth-controller
       operationId: register
+      description: "Создание пользователя. Доступ: все незарегистрированные пользователи."
       requestBody:
         content:
           application/json:
@@ -391,6 +401,7 @@ paths:
       tags:
         - auth-controller
       operationId: registerWithToken
+      description: "Регистрация руководителя. При вводе токена, полученного от администратора, можно зарегистрировать руководителя. Доступ - все незарегистрированные пользователи."
       parameters:
         - name: token
           in: query
@@ -417,6 +428,7 @@ paths:
       tags:
         - auth-controller
       operationId: refresh
+      description: "Обновление токена на доступ к запросам. Доступ: все пользователи."
       requestBody:
         content:
           application/json:
@@ -439,6 +451,7 @@ paths:
       tags:
         - auth-controller
       operationId: login
+      description: "Авторизация пользователя. Получение токенов на доступ к запросам и на обновление токена доступа. Доступ - все пользователи."
       requestBody:
         content:
           application/json:
@@ -459,6 +472,7 @@ paths:
       tags:
         - user-info-controller
       operationId: getAllManagers
+      description: "Получение всех зарегистрированных руководителей. Доступ - администратор"
       responses:
         '200':
           $ref: '#/components/responses/OkResponse'
@@ -494,6 +508,7 @@ paths:
       tags:
         - message-controller
       operationId: getMessageById
+      description: "Получение шаблона сообщения по его идентификатору. Доступ: администратор и руководитель."
       parameters:
         - name: messageId
           in: path
@@ -515,6 +530,7 @@ paths:
       tags:
         - message-controller
       operationId: getEventMessages
+      description: "Получение шаблонов сообщений на принятие и отклонение заявки студента или куратора на мероприятие."
       parameters:
         - name: eventId
           in: path
@@ -536,6 +552,7 @@ paths:
       tags:
         - event-controller
       operationId: getEventByID
+      description: "Получение данных мероприятия по его идентификатору. Доступ - администратор или руководитель."
       parameters:
         - name: eventId
           in: path
@@ -552,60 +569,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-  /events/my-events/{userId}:
+  /events/my:
     get:
       tags:
         - event-controller
       operationId: getMyEvents
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          $ref: '#/components/responses/OkResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '404':
-          $ref: '#/components/responses/NotFoundResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerErrorResponse'
-  /events/condition/{eventId}:
-    get:
-      tags:
-        - event-controller
-      operationId: getEventConditionByID
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          $ref: '#/components/responses/OkResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '404':
-          $ref: '#/components/responses/NotFoundResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerErrorResponse'
-  /events/admin/{adminId}:
-    get:
-      tags:
-        - event-controller
-      operationId: getEventsByAdminId
-      parameters:
-        - name: adminId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
+      description: "Получение данных мероприятий, с которыми связан пользователь, отправивший запрос. Доступ: все авторизованные пользователи."
       responses:
         '200':
           $ref: '#/components/responses/OkResponse'
@@ -634,6 +603,7 @@ paths:
       tags:
         - event-student-controller
       operationId: getSentStudentsInfo
+      description: "Получение студентов, которые отправили заявку на регистрацию н мероприятие. Доступ: руководитель"
       parameters:
         - name: eventId
           in: path

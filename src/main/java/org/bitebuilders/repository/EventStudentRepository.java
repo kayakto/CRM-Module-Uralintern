@@ -59,6 +59,6 @@ public interface EventStudentRepository extends CrudRepository<EventStudent, Lon
             "JOIN events_students es ON es.event_id = e.id " +
             "WHERE es.student_id = :studentId " +
             "AND es.student_status IN ('ADDED_IN_CHAT', 'STARTED_EVENT', 'ENDED_EVENT') " +
-            "AND e.status IN ('REGISTRATION_OPEN', 'NO_SEATS', 'REGISTRATION_CLOSED', 'IN_PROGRESS', 'FINISHED');")
+            "AND e.condition IN ('REGISTRATION_OPEN', 'NO_SEATS', 'REGISTRATION_CLOSED', 'IN_PROGRESS', 'FINISHED')")
     List<Event> findAcceptedEventsByStudent(Long studentId);
 }
