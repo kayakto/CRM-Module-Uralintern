@@ -22,7 +22,7 @@ import java.util.Optional;
 @Service
 public class EventService {
     /**
-     * репозиторий с готовыми методами для events
+     *  репозиторий с готовыми методами для events
      */
     private final EventRepository eventRepository;
 
@@ -88,15 +88,16 @@ public class EventService {
     }
 
     @Transactional
-    public boolean hideOrFindOutEvent(Long eventId) {
+    public Event.Condition hideOrFindOutEvent(Long eventId) {
         Event eventToHide = getEventById(eventId);
+
         if (eventToHide.getCondition() == Event.Condition.HIDDEN){
             eventToHide.setCondition(Event.Condition.PREPARATION);
             updateEventCondition(eventToHide);
         }
         else eventToHide.setCondition(Event.Condition.HIDDEN);
-        eventRepository.save(eventToHide);
-        return true;
+
+        return eventRepository.save(eventToHide).getCondition();
     }
 
     @Scheduled(fixedRate = 600000) // Обновляем статусы каждый час

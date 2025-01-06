@@ -4,6 +4,7 @@ import org.bitebuilders.component.UserContext;
 import org.bitebuilders.controller.dto.EventDTO;
 import org.bitebuilders.controller.dto.MessageResponseDTO;
 import org.bitebuilders.controller.requests.EventRequest;
+import org.bitebuilders.controller.requests.StartEventRequest;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.service.UserInfoService;
@@ -83,7 +84,8 @@ public class EventController {
      */
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     @PostMapping("/start-event")
-    public ResponseEntity<EventDTO> startEvent(@RequestBody Long eventId) {
+    public ResponseEntity<EventDTO> startEvent(@RequestBody StartEventRequest startEventRequest) {
+        Long eventId = startEventRequest.getEventId();
         Event startedEvent;
 
         if (!eventService.haveManagerAdminAccess(eventId))
@@ -121,16 +123,10 @@ public class EventController {
         if (!eventService.haveManagerAdminAccess(eventId))
             return ResponseEntity.badRequest().build();
 
-        boolean result = eventService.hideOrFindOutEvent(eventId);
-        if (result) {
-            return ResponseEntity.ok(
-                    new MessageResponseDTO("Event with id " + eventId + " hided successfully"));
-        }
-
-        return ResponseEntity.badRequest().body(
-                new MessageResponseDTO("Event with id " + eventId + " could not hide")
-        );
-    } // TODO вернуть в активное состояние
+        Event.Condition result = eventService.hideOrFindOutEvent(eventId);
+        return ResponseEntity.ok(
+                new MessageResponseDTO("Event with id " + eventId + " have status " + result));
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{eventId}")

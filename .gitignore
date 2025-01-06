@@ -41,4 +41,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+### My ignore ###
 README.Docker.md
+src/main/java/PasswordGenerator.java

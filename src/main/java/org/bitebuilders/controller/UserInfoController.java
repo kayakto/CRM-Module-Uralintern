@@ -1,6 +1,7 @@
 package org.bitebuilders.controller;
 
 import org.bitebuilders.component.UserContext;
+import org.bitebuilders.controller.dto.MessageResponseDTO;
 import org.bitebuilders.controller.dto.ReferralTokenDTO;
 import org.bitebuilders.controller.dto.TokensDTO;
 import org.bitebuilders.controller.dto.UserDTO;
@@ -49,6 +50,13 @@ public class UserInfoController {
         UserInfo user = userContext.getCurrentUser();
 
         return ResponseEntity.ok(user.toUserDTO());
+    }
+
+    @GetMapping("/my-role")
+    public ResponseEntity<MessageResponseDTO> getMyRole() {
+        UserRole role = userContext.getCurrentUser().getRole_enum();
+
+        return ResponseEntity.ok(new MessageResponseDTO(role.name()));
     }
 
     /**
@@ -121,8 +129,7 @@ public class UserInfoController {
 
     @PostMapping("/update-email")
     public ResponseEntity<TokensDTO> updateEmail(@RequestBody EmailUpdateRequest emailUpdateRequest) {
-        String currentEmail = userContext.getCurrentUserEmail();
-        UserInfo user = userInfoService.getByEmail(currentEmail);
+        UserInfo user = userContext.getCurrentUser();
 
         try {
             userInfoService.updateEmail(user, emailUpdateRequest.getNewEmail());
@@ -141,9 +148,7 @@ public class UserInfoController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/invite-manager")
     public ResponseEntity<ReferralTokenDTO> createReferralToken() {
-        String email = userContext.getCurrentUserEmail();
-
-        Long authorId = userInfoService.getByEmail(email).getId();
+        Long authorId = userContext.getCurrentUser().getId();
 
         String token = invitationService.generateToken(
                 UserRole.MANAGER,
