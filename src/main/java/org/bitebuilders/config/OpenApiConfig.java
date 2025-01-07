@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @OpenAPIDefinition(
@@ -22,7 +24,13 @@ import org.springframework.context.annotation.Configuration;
         scheme = "bearer",
         bearerFormat = "JWT"
 )
-public class OpenApiConfig {
+public class OpenApiConfig implements WebMvcConfigurer { // Добавлено implements WebMvcConfigurer
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                // Настраиваем путь к вашему статическому swagger.json
+                registry.addResourceHandler("/static/swagger.json")
+                        .addResourceLocations("classpath:/static/swagger.json");
+        }
 }
 
 

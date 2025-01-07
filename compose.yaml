@@ -14,6 +14,7 @@ services:
       - SECURITY_JWT_SECRET=kkpCT7HHsKjkXCfVKzz7JA9Dgwhkg0xXqequdWhH60onkqPnU83hZ831b3eOYvyQdMytDFNfjMwZUBC3DHYaRg==
       - SECURITY_JWT_EXPIRATION=86400000
       - SECURITY_JWT_REFRESH_EXPIRATION=604800000
+      - SPRINGDOC_SWAGGER_UI_URL=/swagger.json
     command: ["sh", "-c", "while ! nc -z db-postgres 5432; do sleep 1; done; java -jar build/libs/CRM-Module-1.0-SNAPSHOT.jar"]
     ports:
       - "8080:8080"

@@ -13,8 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -31,7 +29,8 @@ public class SecurityConfig {
             "/v3/api-docs/**", // OpenAPI JSON
             "/auth/register",
             "/auth/login",
-            "/auth/refresh"
+            "/auth/refresh",
+            "/swagger.json" // Разрешаем доступ к custom-swagger.json
     };
 
     @Bean
