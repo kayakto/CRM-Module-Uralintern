@@ -9,6 +9,7 @@ import org.bitebuilders.controller.requests.EmailUpdateRequest;
 import org.bitebuilders.controller.requests.PasswordUpdateRequest;
 import org.bitebuilders.controller.requests.UserUpdateRequest;
 import org.bitebuilders.enums.UserRole;
+import org.bitebuilders.exception.UserNotFoundException;
 import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.service.InvitationTokenService;
 import org.bitebuilders.service.JwtService;
@@ -50,6 +51,18 @@ public class UserInfoController {
         UserInfo user = userContext.getCurrentUser();
 
         return ResponseEntity.ok(user.toUserDTO());
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
+//        UserInfo userRequested = userContext.getCurrentUser(); TODO add permissions
+
+        UserInfo userResult = userInfoService.getUserInfo(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with id + " + userId + " not found"));
+
+        return ResponseEntity.ok(
+                userResult.toUserDTO()
+        );
     }
 
     @GetMapping("/my-role")

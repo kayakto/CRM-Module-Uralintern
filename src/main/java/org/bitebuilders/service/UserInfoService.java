@@ -1,5 +1,6 @@
 package org.bitebuilders.service;
 
+import org.bitebuilders.exception.UserNotFoundException;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.repository.EventCuratorRepository;
@@ -40,6 +41,24 @@ public class UserInfoService {
     public Optional<UserInfo> getUserInfo(Long id) {
         return userInfoRepository.findById(id);
     }
+
+    public String getFullNameById(Long userId) {
+        if (userId == null) return "Unknown User";
+
+        UserInfo user = userInfoRepository.findById(userId)
+                .orElseThrow(
+                        () -> new UserNotFoundException("User with id " + userId + " not found"));
+
+        String firstName = user.getFirstName();
+        String lastName = user.getLastName();
+        String surname = user.getSurname();
+
+        if (surname == null) {
+            return lastName + " " + firstName;
+        }
+
+        return lastName + " " + firstName + " " + surname;
+    } // на будущее
 
     public Boolean existsByEmail(String email) {
         return userInfoRepository.findByEmail(email).isPresent();

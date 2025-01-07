@@ -188,7 +188,7 @@ ALTER COLUMN competencies DROP NOT NULL;
 
 INSERT INTO users_info (first_name, last_name, email, sign, telegram_url, role_enum, competencies)
 VALUES
-    ('STUDENT', 'Test', 'student@mail.ru', '$2a$10$5aBB1wiv0FTV3oGktU1gKe8Qx6Ww5cYxzlLhmAFupqFI3OI3DrAGS', 't.me/student', 'STUDENT', 'Java, Spring Boot'),
-    ('CURATOR', 'TEST', 'curator@mail.ru', '$2a$10$gg9HzJXK6cNkO5iwmlbr9em47XJxDYAEzCy7xl9NR8HulO9bqReHW', 't.me/curator', 'CURATOR', 'Microservices, PostgreSQL'),
-    ('MANAGER', 'TEST', 'manager@mail.ru', '$2a$10$8u8MBb7DvvCXNcoX58S.j.FDVlfewX7jQkFBwu705WtMfhB67./Ra', 't.me/manager', 'MANAGER', 'Leadership, Event Organization'),
-    ('ADMIN', 'TEST', 'admin@mail.ru', '$2a$10$eUoFKpCuqm3kpIkvjc8NQOcN79LgjcNEmP63l/yKVZWbN73NM6tTS', 't.me/admin', 'ADMIN', 'Leadership, Event Organization');
+    ('STUDENT', 'Test', 'student@mail.ru', '$2a$10$RdL7hBEysSncR8i1iPWh.uww2h5SA4yV/Ao4VwskzgZJ7jtc40PmO', 't.me/student', 'STUDENT', 'Java, Spring Boot'),
+    ('CURATOR', 'TEST', 'curator@mail.ru', '$2a$10$oHSxJ9Gup3jdVaIkNcfWluMY/hlH/yZHq.wsJdRCHiP2hXNiMENQa', 't.me/curator', 'CURATOR', 'Microservices, PostgreSQL'),
+    ('MANAGER', 'TEST', 'manager@mail.ru', '$2a$10$0n7IAwS81oANxZBA1smbDOFordm2ekzK8K2aWvANVxN4ZrMfI0WL6', 't.me/manager', 'MANAGER', 'Leadership, Event Organization'),
+    ('ADMIN', 'TEST', 'admin@mail.ru', '$2a$10$yBgtUtwl8KBdyXv56PjnX.IRf.X0S6WuKY2ilzV05r4Y/3kfTx1le', 't.me/admin', 'ADMIN', 'Leadership, Event Organization');
