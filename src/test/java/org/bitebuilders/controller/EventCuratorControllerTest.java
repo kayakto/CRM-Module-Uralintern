@@ -1,6 +1,7 @@
 package org.bitebuilders.controller;
 
 import org.bitebuilders.enums.StatusRequest;
+import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.EventCurator;
 import org.bitebuilders.model.UserInfo;
@@ -54,7 +55,7 @@ class EventCuratorControllerTest {
                 "John's sign",
                 "vk.com/johndoe",
                 "t.me/johndoe",
-                UserInfo.Role.CURATOR,
+                UserRole.CURATOR,
                 "Chill guy"
 
         );
@@ -68,14 +69,13 @@ class EventCuratorControllerTest {
                 "Andrew's sign",
                 "vk.com/andrewdoe",
                 "t.me/andrewdoe",
-                UserInfo.Role.CURATOR,
+                UserRole.CURATOR,
                 "Chill guy"
 
         );
         curatorIdWithoutEvent = userInfoRepository.save(curatorWithoutEvent).getId();
 
         Event event1 = new Event(
-                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 null,

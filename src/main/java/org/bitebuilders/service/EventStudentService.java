@@ -124,11 +124,11 @@ public class EventStudentService {
     public void changeCurator(Long eventId, Long studentId, Long newCuratorId) {
         // Проверка наличия студента
         EventStudent student = eventStudentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + studentId));
+                .orElseThrow(() -> new UserNotFoundException("Student not found with ID: " + studentId));
 
         // Проверка, что студент принадлежит мероприятию
         if (!student.getEventId().equals(eventId)) {
-            throw new IllegalArgumentException("Student does not belong to event with ID: " + eventId);
+            throw new EventUserNotFoundException("Student does not belong to event with ID: " + eventId);
         }
 
         // Проверка наличия группы для нового куратора
@@ -137,5 +137,9 @@ public class EventStudentService {
         // Обновление groupId у студента
         student.setGroupId(newGroup.getId());
         eventStudentRepository.save(student); // Сохраняем изменения в базе
+    }
+
+    public List<Event> getStudentEvents(Long studentId) {
+        return eventStudentRepository.findAcceptedEventsByStudent(studentId);
     }
 }

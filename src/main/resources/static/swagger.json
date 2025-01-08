@@ -2025,45 +2025,31 @@
           "eventStartDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-11-01T22:00:00+05:00"
+            "example": "2025-02-22T22:00:00+05:00"
           },
           "eventEndDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-11-01T22:00:00+05:00"
+            "example": "2025-05-18T22:00:00+05:00"
           },
           "enrollmentStartDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-11-01T22:00:00+05:00"
+            "example": "2025-01-01T22:00:00+05:00"
           },
           "enrollmentEndDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-11-01T22:00:00+05:00"
+            "example": "2025-02-22T22:00:00+05:00"
           },
           "chatUrl": {
             "type": "string",
-            "example": "t.me/chaturl"
+            "example": "https://t.me/chaturl"
           },
           "numberSeatsStudent": {
             "type": "integer",
             "format": "int32",
             "example": 50
-          },
-          "condition": {
-            "type": "string",
-            "enum": [
-              "PREPARATION",
-              "REGISTRATION_OPEN",
-              "NO_SEATS",
-              "REGISTRATION_CLOSED",
-              "IN_PROGRESS",
-              "FINISHED",
-              "HIDDEN",
-              "DELETED"
-            ],
-            "example": "REGISTRATION_OPEN"
           }
         }
       },
@@ -2097,42 +2083,44 @@
             "type": "string",
             "example": "CRM модуль"
           },
-          "adminFullName": {
-            "type": "string",
-            "example": "Смирнов Денис"
+          "adminId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
           },
-          "managerFullName": {
-            "type": "string",
-            "example": "Обабков Илья Николаевич"
+          "managerId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
           },
           "eventStartDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-11-01T22:00:00+05:00"
+            "example": "2025-02-22T22:00:00+05:00"
           },
           "eventEndDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-11-01T22:00:00+05:00"
-          },
-          "chatUrl": {
-            "type": "string",
-            "example": "t.me/chaturl"
+            "example": "2025-05-18T22:00:00+05:00"
           },
           "enrollmentStartDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-11-01T22:00:00+05:00"
+            "example": "2025-01-01T22:00:00+05:00"
           },
           "enrollmentEndDate": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-11-01T22:00:00+05:00"
+            "example": "2025-02-22T22:00:00+05:00"
           },
           "numberSeatsStudent": {
             "type": "integer",
             "format": "int32",
             "example": 50
+          },
+          "chatUrl": {
+            "type": "string",
+            "example": "https://t.me/chaturl"
           }
         }
       },

@@ -21,18 +21,15 @@ public class EventRequest {
     private final OffsetDateTime enrollmentEndDate;
     private final String chatUrl;
     private final int numberSeatsStudent;
-    private final Event.Condition condition; // TODO не должно передаваться
 
     public Event toEvent() {
-        return new Event(condition != null ? condition : Event.Condition.REGISTRATION_OPEN,
-                descriptionText, title,
+        return new Event(descriptionText, title,
                 adminId, managerId, eventStartDate, eventEndDate,
                 enrollmentStartDate, enrollmentEndDate, chatUrl, numberSeatsStudent);
     }
 
     public Event toEvent(Long eventId) {
         return new Event(eventId,
-                condition != null ? condition : Event.Condition.REGISTRATION_OPEN,
                 descriptionText, title,
                 adminId, managerId, eventStartDate, eventEndDate,
                 enrollmentStartDate, enrollmentEndDate, chatUrl, numberSeatsStudent);

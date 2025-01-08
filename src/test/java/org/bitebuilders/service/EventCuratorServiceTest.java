@@ -1,6 +1,7 @@
 package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
+import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.EventCurator;
@@ -57,14 +58,13 @@ class EventCuratorServiceTest {
                 "John's sign",
                 "vk.com/johndoe",
                 "t.me/johndoe",
-                UserInfo.Role.CURATOR,
+                UserRole.CURATOR,
                 "Chill guy"
 
         );
         curatorId = userInfoRepository.save(curator).getId();
 
         Event event1 = new Event(
-                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 null,

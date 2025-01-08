@@ -52,8 +52,7 @@ public class Event {
         DELETED // Статус "Удалено" : Мероприятие вручную удалено администратором
     }
 
-    public Event(Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
-        this.condition = condition;
+    public Event(String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
         this.descriptionText = descriptionText;
         this.title = title;
         this.adminId = adminId;
@@ -66,9 +65,8 @@ public class Event {
         this.numberSeatsStudent = numberSeatsStudent;
     }
 
-    public Event(Long id, Condition condition, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
+    public Event(Long id, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
         this.id = id;
-        this.condition = condition;
         this.descriptionText = descriptionText;
         this.title = title;
         this.adminId = adminId;

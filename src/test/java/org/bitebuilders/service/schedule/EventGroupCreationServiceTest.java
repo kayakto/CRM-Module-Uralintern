@@ -1,7 +1,5 @@
 package org.bitebuilders.service.schedule;
 
-import org.bitebuilders.exception.EventNotFoundException;
-import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.*;
 import org.bitebuilders.service.EventGroupService;
 import org.bitebuilders.service.EventService;

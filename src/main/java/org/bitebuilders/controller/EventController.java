@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.bitebuilders.service.EventService;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/events")
@@ -22,14 +23,11 @@ public class EventController {
 
     private final EventService eventService;
 
-    private final UserInfoService userInfoService;
-
     private final UserContext userContext;
 
     @Autowired
-    public EventController(EventService eventService, UserInfoService userInfoService, UserContext userContext) {
+    public EventController(EventService eventService, UserContext userContext) {
         this.eventService = eventService;
-        this.userInfoService = userInfoService;
         this.userContext = userContext;
     }
 
@@ -48,8 +46,7 @@ public class EventController {
 
     @GetMapping("/my")
     public ResponseEntity<List<EventDTO>> getMyEvents() {
-        UserInfo user = userContext.getCurrentUser();
-        List<EventDTO> eventDTOS = userInfoService.getMyEvents(user)
+        List<EventDTO> eventDTOS = eventService.getMyEvents()
                 .stream()
                 .map(Event::toEventDTO)
                 .toList();
@@ -74,8 +71,10 @@ public class EventController {
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventRequest requestedEvent) {
         Event newEvent = requestedEvent.toEvent();
         EventDTO eventDTO = eventService.createOrUpdateEvent(newEvent).toEventDTO();
+
         if (eventDTO != null)
             return ResponseEntity.ok(eventDTO);
+
         return ResponseEntity.notFound().build();
     }
 

@@ -30,6 +30,7 @@ public interface EventRepository extends CrudRepository<Event, Long> {
     @Modifying
     @Query("DELETE FROM events e WHERE e.condition = :condition AND e.updatedAt < :dateTime")
     void deleteByConditionAndUpdatedBefore(Event.Condition condition, LocalDateTime dateTime);
+    // TODO добавить events.updatedAt, это метод вызывает ошибку в полночь
 
     // Метод для поиска по дате начала мероприятия
     @Query("SELECT * FROM events WHERE event_start_date <= :dateTime AND condition = 'REGISTRATION_OPEN'")

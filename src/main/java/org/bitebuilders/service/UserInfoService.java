@@ -1,5 +1,6 @@
 package org.bitebuilders.service;
 
+import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.exception.UserNotFoundException;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.UserInfo;
@@ -83,26 +84,7 @@ public class UserInfoService {
         return userInfoRepository.findAllManagers();
     }
 
-    public List<Event> getMyEvents(UserInfo user) {
-        Long userId = user.getId();
 
-        switch (user.getRole_enum()) {
-            case ADMIN -> {
-                return eventRepository.findAllByAdminId(userId);
-            }
-            case MANAGER -> {
-                return eventRepository.findAllByManagerId(userId);
-            }
-            case CURATOR -> {
-                return eventCuratorRepository.findAcceptedEventsByCurator(userId);
-            }
-            case STUDENT -> {
-                return eventStudentRepository.findAcceptedEventsByStudent(userId);
-            }
-        }
-
-        return Collections.emptyList();
-    }
 
     public UserInfo updatePassword(UserInfo user, String oldPassword, String newPassword) {
         if (!passwordEncoder.matches(oldPassword, user.getSign())) {
@@ -133,5 +115,17 @@ public class UserInfoService {
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
         return email.matches(emailRegex);
+    }
+
+    public boolean isManager(Long managerId) {
+        UserInfo user = userInfoRepository.findById(managerId)
+                .orElseThrow(() -> new UserNotFoundException("Manager with id " + managerId + " not found"));
+        return user.getRole_enum() == UserRole.MANAGER;
+    }
+
+    public boolean isAdmin(Long adminId) {
+        UserInfo user = userInfoRepository.findById(adminId)
+                .orElseThrow(() -> new UserNotFoundException("Admin with id " + adminId + " not found"));
+        return user.getRole_enum() == UserRole.ADMIN;
     }
 }

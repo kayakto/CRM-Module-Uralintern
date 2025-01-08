@@ -1,6 +1,7 @@
 package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
+import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.*;
 import org.bitebuilders.repository.EventRepository;
@@ -53,14 +54,13 @@ public class EventStudentServiceTest {
                 "John's sign",
                 "vk.com/johndoe",
                 "t.me/johndoe",
-                UserInfo.Role.STUDENT,
+                UserRole.STUDENT,
                 "Chill student"
 
         );
         studentId = userInfoRepository.save(student).getId();
 
         Event event = new Event(
-                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 null,

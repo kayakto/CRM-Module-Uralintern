@@ -58,7 +58,6 @@ class EventServiceTest {
 
         // Создаем запись события
         Event event1 = new Event(
-                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 adminId, // Используем сохраненный adminId
@@ -100,7 +99,6 @@ class EventServiceTest {
     void createOrUpdateEvent_ShouldSaveAndReturnEvent() {
         // Arrange
         Event event = new Event(
-                Event.Condition.REGISTRATION_OPEN,
                 "description",
                 "title",
                 adminId,

@@ -2,6 +2,7 @@ package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.exception.EventUserNotFoundException;
+import org.bitebuilders.model.Event;
 import org.bitebuilders.model.EventCurator;
 import org.bitebuilders.model.EventCuratorInfo;
 import org.bitebuilders.model.Message;
@@ -95,5 +96,7 @@ public class EventCuratorService {
         return savedEventCurator.getCuratorStatus() == newStatus;
     }
 
-
+    public List<Event> getCuratorEvents(Long curatorId) {
+        return eventCuratorRepository.findAcceptedEventsByCurator(curatorId);
+    }
 }
