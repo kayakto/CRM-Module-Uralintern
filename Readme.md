@@ -9,7 +9,7 @@
     ```
 3. Сделайте билд и запустите приложение с помощью Docker Compose:
     ```bash
-    docker compose up -d
+    docker docker-compose up --build -d
     ```
 <p>Приложение будет доступно по адресу http://localhost:8080</p>
 <p>Документация расположена по адресу http://localhost:8080/swagger-ui/index.html# </p>
