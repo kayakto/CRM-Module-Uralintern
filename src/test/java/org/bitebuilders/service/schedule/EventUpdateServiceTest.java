@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest()
 @Transactional
-class EventGroupCreationServiceTest {
+class EventUpdateServiceTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -33,7 +33,7 @@ class EventGroupCreationServiceTest {
     private EventGroupService eventGroupService;
 
     @Autowired
-    private EventGroupCreationService eventGroupCreationService;
+    private EventUpdateService eventUpdateService;
 
     private final int expectedNumberOfGroups = 1;
 
@@ -52,7 +52,7 @@ class EventGroupCreationServiceTest {
         testEvent.setEventStartDate(currentTime.minusMinutes(10));
         eventService.createOrUpdateEvent(testEvent);
 
-        assertDoesNotThrow(() -> eventGroupCreationService.startEvents());
+        assertDoesNotThrow(() -> eventUpdateService.startEvents());
 
         Event updatedEvent = eventService.getEventById(eventId);
         List<EventGroup> eventGroups = eventGroupService.getEventGroups(eventId);
@@ -68,7 +68,7 @@ class EventGroupCreationServiceTest {
     void testCheckAndCreateEventGroupsNoEvents() {
         eventService.deleteAllEvents();
 
-        assertDoesNotThrow(() -> eventGroupCreationService.startEvents());
+        assertDoesNotThrow(() -> eventUpdateService.startEvents());
 
         List<Event> events = eventService.getAllEvents();
         assertTrue(events.isEmpty(), "No events should be present");

@@ -14,7 +14,7 @@ info:
     - **notification-controller**: Управляет уведомлениями пользователей, связанными с их участием в мероприятиях.
   version: '1.0'
 servers:
-  - url: http://localhost:8080
+  - url: https://84.252.132.66
     description: kayakto server url
 security:
   - BearerAuth: []

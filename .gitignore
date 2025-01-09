@@ -42,6 +42,7 @@ bin/
 .DS_Store
 
 ### My ignore ###
+certificates/
 README.Docker.md
 src/main/java/PasswordGenerator.java
 src/main/java/org/bitebuilders/component/EventMapper.java

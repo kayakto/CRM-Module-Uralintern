@@ -8,7 +8,6 @@ import org.bitebuilders.model.EventGroup;
 import org.bitebuilders.model.UserInfo;
 import org.bitebuilders.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,17 +51,17 @@ public class EventService {
 
     // Метод, который возвращает все мероприятия со статусом регистрация открыта
     public List<Event> getOpenedEvents() {
-        return eventRepository.findAllByCondition(Event.Condition.REGISTRATION_OPEN); // Используем метод репозитория
+        return eventRepository.findAllByCondition(Event.Condition.REGISTRATION_OPEN);
     }
 
     // Метод, который возвращает все мероприятия
     public List<Event> getAllEvents() {
-        return (List<Event>) eventRepository.findAll(); // Используем метод репозитория
+        return (List<Event>) eventRepository.findAll();
     }
 
     // Метод, который возвращает все мероприятия, у которых есть переданный admin_id
     public List<Event> getEventsByAdminId(Long adminId) {
-        return eventRepository.findAllByAdminId(adminId); // Фильтрация по admin_id
+        return eventRepository.findAllByAdminId(adminId);
     }
 
     public Event getEventById(Long eventId) {
@@ -133,22 +132,12 @@ public class EventService {
         return eventRepository.save(eventToHide).getCondition();
     }
 
-    @Scheduled(fixedRate = 600000) // Обновляем статусы каждый час
-    @Transactional
-    public void updateEventConditions() {
-        List<Event> events = getAllEvents();
-
-        for (Event event : events) {
-            updateEventCondition(event);
-        }
-    } // TODO вынести в отдельный класс
-
-    private Event updateEventCondition(Event event) {
+    public Event updateEventCondition(Event event) {
         Event.Condition newCondition = calculateCondition(event);
         Event.Condition currentCondition = event.getCondition();
 
         if (newCondition != currentCondition) {
-            if (currentCondition == Event.Condition.IN_PROGRESS) {
+            if (newCondition == Event.Condition.IN_PROGRESS) {
                 return startEventById(event.getId());
             } else {
                 event.setCondition(newCondition);

@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "https://84.252.132.66",
       "description": "kayakto server url"
     }
   ],
