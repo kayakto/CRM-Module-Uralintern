@@ -1,6 +1,7 @@
 package org.bitebuilders.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bitebuilders.enums.StatusRequest;
 import org.springframework.data.annotation.Id;
@@ -11,6 +12,7 @@ import java.time.OffsetDateTime;
 
 @Getter
 @Table("messages")
+@NoArgsConstructor
 public class Message {
     @Id
     private Long id;

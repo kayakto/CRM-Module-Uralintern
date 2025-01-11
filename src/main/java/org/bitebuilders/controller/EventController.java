@@ -56,12 +56,7 @@ public class EventController {
 
     // Получение мероприятия по его id
     @GetMapping("/{eventId}")
-    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<EventDTO> getEventByID(@PathVariable Long eventId) {
-        if (!eventService.haveManagerAdminAccess(eventId)) {
-            return ResponseEntity.badRequest().build();
-        }
-
         Event foundEvent = eventService.getEventById(eventId);
         return ResponseEntity.ok(foundEvent.toEventDTO());
     }
