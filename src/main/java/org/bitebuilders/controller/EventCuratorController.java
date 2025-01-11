@@ -46,6 +46,18 @@ public class EventCuratorController {
         return ResponseEntity.noContent().build();
     } // TODO может быть удалено
 
+    @PreAuthorize("hasRole('CURATOR')")
+    @GetMapping("/{eventId}/curator-can-send/{curatorId}")
+    public ResponseEntity<MessageResponseDTO> canSendCurator(
+            @PathVariable Long eventId,
+            @PathVariable Long curatorId ) {
+        boolean hasAbility = eventCuratorService.canSend(eventId, curatorId);
+
+        return ResponseEntity.ok(
+                new MessageResponseDTO(String.valueOf(hasAbility))
+        );
+    }
+
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/{eventId}/waiting-curators")
     public ResponseEntity<List<EventCuratorInfoDTO>> getSentCuratorsInfo(@PathVariable Long eventId) {

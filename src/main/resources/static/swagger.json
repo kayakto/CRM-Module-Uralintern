@@ -817,6 +817,58 @@
         }
       }
     },
+    "/events-students/{eventId}/student-can-send/{studentId}": {
+      "get": {
+        "tags": [
+          "event-student-controller"
+        ],
+        "operationId": "canSendStudent",
+        "description": "Если студент отправлял заявку на мероприятие - ему не будет доступна регистрация на мероприятие (вернется false). В обратном случае студент сможет отправить заявку на мероприятие (true).",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 1
+            }
+          },
+          {
+            "name": "studentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
     "/events-students/{eventId}/waiting-students": {
       "get": {
         "tags": [
@@ -891,58 +943,6 @@
                   "items": {
                     "$ref": "#/components/schemas/EventStudentInfoDTO"
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/BadRequestResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFoundResponse"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalServerErrorResponse"
-          }
-        }
-      }
-    },
-    "/events-students/{eventId}/student-can-send/{studentId}": {
-      "get": {
-        "tags": [
-          "event-student-controller"
-        ],
-        "operationId": "canSend",
-        "description": "Если студент отправлял заявку на мероприятие - ему не будет доступна регистрация на мероприятие (вернется false). В обратном случае студент сможет отправить заявку на мероприятие (true).",
-        "parameters": [
-          {
-            "name": "eventId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "example": 1
-            }
-          },
-          {
-            "name": "studentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64",
-              "example": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponseDTO"
                 }
               }
             }
@@ -1263,6 +1263,58 @@
           },
           {
             "name": "studentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/events-curators/{eventId}/curator-can-send/{curatorId}": {
+      "get": {
+        "tags": [
+          "event-curator-controller"
+        ],
+        "operationId": "canSendCurator",
+        "description": "Если куратор отправлял заявку на мероприятие - ему не будет доступна регистрация на мероприятие (вернется false). В обратном случае куратор сможет отправить заявку на мероприятие (true).",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 1
+            }
+          },
+          {
+            "name": "curatorId",
             "in": "path",
             "required": true,
             "schema": {

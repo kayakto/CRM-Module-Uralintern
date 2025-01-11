@@ -74,7 +74,7 @@ public class EventStudentService {
 
     public boolean canSend(Long eventId, Long studentId) {
         if (userInfoRepository.findById(studentId).isEmpty()) {
-            throw new UserNotFoundException("user " + studentId + " not found");
+            throw new UserNotFoundException("student " + studentId + " not found");
         }
         else if (eventRepository.findById(eventId).isEmpty()) {
             throw new EventNotFoundException("event " + eventId + " not found");

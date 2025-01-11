@@ -1,12 +1,15 @@
 package org.bitebuilders.service;
 
 import org.bitebuilders.enums.StatusRequest;
+import org.bitebuilders.exception.EventNotFoundException;
 import org.bitebuilders.exception.EventUserNotFoundException;
+import org.bitebuilders.exception.UserNotFoundException;
 import org.bitebuilders.model.Event;
 import org.bitebuilders.model.EventCurator;
 import org.bitebuilders.model.EventCuratorInfo;
 import org.bitebuilders.model.Message;
 import org.bitebuilders.repository.EventCuratorRepository;
+import org.bitebuilders.repository.EventRepository;
 import org.bitebuilders.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,13 +25,16 @@ public class EventCuratorService {
 
     private final EventCuratorRepository eventCuratorRepository;
 
+    private final EventRepository eventRepository;
+
     private final UserInfoRepository userInfoRepository;
 
     private final NotificationService notificationService;
 
     @Autowired
-    public EventCuratorService(EventCuratorRepository eventCuratorRepository, UserInfoRepository userInfoRepository, NotificationService notificationService) {
+    public EventCuratorService(EventCuratorRepository eventCuratorRepository, EventRepository eventRepository, UserInfoRepository userInfoRepository, NotificationService notificationService) {
         this.eventCuratorRepository = eventCuratorRepository;
+        this.eventRepository = eventRepository;
         this.userInfoRepository = userInfoRepository;
         this.notificationService = notificationService;
     }
@@ -36,6 +42,16 @@ public class EventCuratorService {
     public EventCurator getEventCurator(Long eventId, Long curatorId) {
         Optional<EventCurator> eventCurator = eventCuratorRepository.findCuratorEvent(curatorId, eventId);
         return eventCurator.orElseThrow(() -> new EventUserNotFoundException("Curator does not exist in this event"));
+    }
+
+    public boolean canSend(Long eventId, Long curatorId) {
+        if (userInfoRepository.findById(curatorId).isEmpty()) {
+            throw new UserNotFoundException("curator " + curatorId + " not found");
+        }
+        else if (eventRepository.findById(eventId).isEmpty()) {
+            throw new EventNotFoundException("event " + eventId + " not found");
+        }
+        return eventCuratorRepository.findCuratorEvent(curatorId, eventId).isEmpty();
     }
 
     // Метод возвращающий список всех заявок на кураторство.

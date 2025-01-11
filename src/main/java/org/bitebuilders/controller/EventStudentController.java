@@ -50,7 +50,7 @@ public class EventStudentController {
 
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/{eventId}/student-can-send/{studentId}")
-    public ResponseEntity<MessageResponseDTO> canSend(
+    public ResponseEntity<MessageResponseDTO> canSendStudent(
             @PathVariable Long eventId,
             @PathVariable Long studentId ) {
         boolean hasAbility = eventStudentService.canSend(eventId, studentId);
