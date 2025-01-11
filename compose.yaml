@@ -28,7 +28,7 @@ services:
       POSTGRES_USER: crm_admin
       POSTGRES_PASSWORD: bitrix24
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
       - ./data/init-script.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
     networks:
@@ -49,9 +49,6 @@ services:
     networks:
       - main-network
 
-volumes:
-  db_data:
-    driver: local
 
 networks:
   main-network:

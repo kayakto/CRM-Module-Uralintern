@@ -26,7 +26,7 @@
 
 4. Build and start the application using Docker Compose:
     ```bash
-    docker docker-compose up --build -d
+    docker-compose up --build -d
     ```
    
 <ul>

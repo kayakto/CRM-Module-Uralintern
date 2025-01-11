@@ -26,7 +26,7 @@
 
 4. Сделайте билд и запустите приложение с помощью Docker Compose:
     ```bash
-    docker docker-compose up --build -d
+    docker-compose up --build -d
     ```
 
 <ul>
