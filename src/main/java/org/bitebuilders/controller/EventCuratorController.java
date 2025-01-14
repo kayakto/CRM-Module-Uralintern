@@ -94,6 +94,24 @@ public class EventCuratorController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    @GetMapping("/{eventId}/started-curators")
+    public ResponseEntity<List<EventCuratorInfoDTO>> getStartedCuratorsInfo(@PathVariable Long eventId) {
+        if (!eventService.haveManagerAdminAccess(eventId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<EventCuratorInfoDTO> ecInfoDTO = eventCuratorService.getStartedCuratorInfo(eventId)
+                .stream()
+                .map(EventCuratorInfo::toEventCuratorDTO)
+                .toList();
+
+        if (ecInfoDTO != null)
+            return ResponseEntity.ok(ecInfoDTO);  // Возвращаем список кураторов
+
+        return ResponseEntity.noContent().build();
+    }
+
     /**
      * Метод отправки заявки на кураторство. (reject)
      */

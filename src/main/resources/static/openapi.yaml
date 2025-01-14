@@ -650,7 +650,67 @@ paths:
       tags:
         - event-student-controller
       operationId: getAcceptedStudentsInfo
-      description: "Получение студентов, которых приняли на мероприятие и их добавили в чат. Доступ: руководитель и администратор."
+      description: "Получение студентов, которых приняли на мероприятие и их добавили в чат. Доступ: руководитель, администратор."
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventStudentInfoDTO'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+
+  /events-students/{eventId}/started-students:
+    get:
+      tags:
+        - event-student-controller
+      operationId: getStartedStudentsInfo
+      description: "Получение студентов, которые начали выполнение мероприятия. Доступ: руководитель, администратор."
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventStudentInfoDTO'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+
+  /events-students/{eventId}/started-students-group:
+    get:
+      tags:
+        - event-student-controller
+      operationId: getStartedStudentsInfoGroup
+      description: "Получение группы студентов, которые начали выполнение мероприятия и они в одной группе с текущим куратором. Доступ: куратор."
       parameters:
         - name: eventId
           in: path
@@ -975,6 +1035,36 @@ paths:
         - event-curator-controller
       description: "Получение студентов, которых приняли на мероприятие. Доступ: руководитель и адимнистратор."
       operationId: getAcceptedCuratorsInfo
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventCuratorInfoDTO'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+
+  /events-curators/{eventId}/started-curators:
+    get:
+      tags:
+        - event-curator-controller
+      description: "Получение кураторов, которые начали выполнение мероприятие. Доступ: руководитель и адимнистратор."
+      operationId: getStartedCuratorsInfo
       parameters:
         - name: eventId
           in: path

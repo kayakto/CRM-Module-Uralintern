@@ -64,8 +64,16 @@ public class EventStudentService {
         return eventStudentRepository.findAcceptedStudentsInfo(eventId);
     }
 
+    public List<EventStudentInfo> getStartedStudentInfo(Long eventId) {
+        return eventStudentRepository.findStartedEventStudentInfo(eventId);
+    }
+
     public List<EventStudent> getAcceptedEventStudent(Long eventId) {
         return eventStudentRepository.findAcceptedEventStudent(eventId);
+    }
+
+    public List<EventStudent> getStartedEventStudent(Long eventId) {
+        return eventStudentRepository.findStartedEventStudent(eventId);
     }
 
     public StatusRequest getStudentStatus(Long eventId, Long studentId) {
@@ -142,4 +150,10 @@ public class EventStudentService {
     public List<Event> getStudentEvents(Long studentId) {
         return eventStudentRepository.findAcceptedEventsByStudent(studentId);
     }
+
+    public List<EventStudentInfo> getCuratorGroup(Long eventId, Long curatorId) {
+        return eventStudentRepository.findByEventIdAndCuratorId(eventId, curatorId);
+    }
+
+
 }

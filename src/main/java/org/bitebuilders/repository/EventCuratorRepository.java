@@ -14,32 +14,44 @@ import java.util.Optional;
 @Repository
 public interface EventCuratorRepository extends CrudRepository<EventCurator, Long> {
 
-    @Query("SELECT ec.event_id, ec.curator_id, ec.curator_status, ui.competencies, " +
+    @Query("SELECT ec.id, ec.event_id, ec.curator_id, ec.curator_status, ui.competencies, " +
             "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
             "FROM events_curators ec " +
             "JOIN users_info ui ON ec.curator_id = ui.id " +
-            "WHERE ec.event_id = :eventId AND curator_status <> 'DELETED_FROM_EVENT'")
+            "WHERE ec.event_id = :eventId AND ec.curator_status <> 'DELETED_FROM_EVENT'")
     List<EventCuratorInfo> findByEventId(Long eventId);
 
-    @Query("SELECT ec.event_id, ec.curator_id, ec.curator_status, ui.competencies, " +
+    @Query("SELECT ec.id, ec.event_id, ec.curator_id, ec.curator_status, ui.competencies, " +
             "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
             "FROM events_curators ec " +
             "JOIN users_info ui ON ec.curator_id = ui.id " +
             "WHERE ec.event_id = :eventId AND ec.curator_status = 'SENT_PERSONAL_INFO'")
     List<EventCuratorInfo> findWaitingCuratorsInfo(Long eventId);
 
-    @Query("SELECT ec.event_id, ec.curator_id, ec.curator_status, ui.competencies, " +
+    @Query("SELECT ec.id, ec.event_id, ec.curator_id, ec.curator_status, ui.competencies, " +
             "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
             "FROM events_curators ec " +
             "JOIN users_info ui ON ec.curator_id = ui.id " +
             "WHERE ec.event_id = :eventId AND ec.curator_status = 'ADDED_IN_CHAT'")
     List<EventCuratorInfo> findAcceptedCuratorsInfo(Long eventId);
 
+    @Query("SELECT ec.id, ec.event_id, ec.curator_id, ec.curator_status, ui.competencies, " +
+            "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
+            "FROM events_curators ec " +
+            "JOIN users_info ui ON ec.curator_id = ui.id " +
+            "WHERE ec.event_id = :eventId AND ec.curator_status IN ('STARTED_EVENT', 'ENDED_EVENT')")
+    List<EventCuratorInfo> findStartedEventCuratorInfo(Long eventId);
+
     // Метод для получения кураторов со статусом "ADDED_IN_CHAT" для определённого события
     @Query("SELECT ec.id, ec.curator_id, ec.event_id, ec.curator_status " +
             "FROM events_curators ec " +
             "WHERE ec.event_id = :eventId AND ec.curator_status = 'ADDED_IN_CHAT'")
     List<EventCurator> findAcceptedEventCurator(Long eventId);
+
+    @Query("SELECT ec.id, ec.curator_id, ec.event_id, ec.curator_status " +
+            "FROM events_curators ec " +
+            "WHERE ec.event_id = :eventId AND ec.curator_status == 'STARTED_EVENT'")
+    List<EventCurator> findStartedEventCurator(Long eventId);
 
     // Метод для поиска куратора по ID куратора и ID события
     @Query("SELECT ec.id, ec.curator_id, ec.event_id, ec.curator_status " +

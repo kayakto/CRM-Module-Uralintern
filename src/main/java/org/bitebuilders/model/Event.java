@@ -52,6 +52,12 @@ public class Event {
         DELETED // Статус "Удалено" : Мероприятие вручную удалено администратором
     }
 
+    public void setConditionToStarted() {
+        this.enrollmentEndDate = OffsetDateTime.now();
+        this.eventStartDate = OffsetDateTime.now();
+        this.condition = Condition.IN_PROGRESS;
+    }
+
     public Event(String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
         this.descriptionText = descriptionText;
         this.title = title;

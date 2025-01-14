@@ -17,7 +17,7 @@ public interface EventStudentRepository extends CrudRepository<EventStudent, Lon
     @Query("SELECT * FROM events_students WHERE student_status = :studentStatus::student_status")
     List<EventStudent> findByStudentStatus(StatusRequest statusRequest);
 
-    @Query("SELECT es.event_id, es.student_id, es.student_status, " +
+    @Query("SELECT es.id, es.event_id, es.student_id, es.student_status, " +
             "uis.first_name, uis.last_name, uis.surname, uis.competencies, uis.telegram_url, uis.vk_url, " +
             "ec.curator_id, uic.first_name AS curator_first_name, uic.last_name AS curator_last_name, uic.surname AS curator_surname, " +
             "eg.id AS group_id " +
@@ -29,25 +29,56 @@ public interface EventStudentRepository extends CrudRepository<EventStudent, Lon
             "WHERE es.event_id = :eventId AND es.student_status <> 'DELETED_FROM_EVENT'")
     List<EventStudentInfo> findByEventId(Long eventId);
 
+    @Query("SELECT es.id, es.event_id, es.student_id, es.student_status, " +
+            "uis.first_name, uis.last_name, uis.surname, uis.competencies, uis.telegram_url, uis.vk_url, " +
+            "ec.curator_id, uic.first_name AS curator_first_name, uic.last_name AS curator_last_name, uic.surname AS curator_surname, " +
+            "eg.id AS group_id " +
+            "FROM events_students es " +
+            "JOIN users_info uis ON es.student_id = uis.id " +
+            "LEFT JOIN event_groups eg ON es.group_id = eg.id " +
+            "LEFT JOIN events_curators ec ON ec.curator_id = eg.curator_id AND ec.event_id = eg.event_id " +
+            "LEFT JOIN users_info uic ON ec.curator_id = uic.id " +
+            "WHERE es.event_id = :eventId " +
+            "AND es.student_status <> 'DELETED_FROM_EVENT' " +
+            "AND ec.curator_id = :curatorId")
+    List<EventStudentInfo> findByEventIdAndCuratorId(Long eventId, Long curatorId);
+
+    @Query("SELECT es.id, es.event_id, es.student_id, es.student_status, " +
+            "uis.first_name, uis.last_name, uis.surname, uis.competencies, uis.telegram_url, uis.vk_url, " +
+            "ec.curator_id, uic.first_name AS curator_first_name, uic.last_name AS curator_last_name, uic.surname AS curator_surname, " +
+            "eg.id AS group_id " +
+            "FROM events_students es " +
+            "JOIN users_info uis ON es.student_id = uis.id " +
+            "LEFT JOIN event_groups eg ON es.group_id = eg.id " +
+            "LEFT JOIN events_curators ec ON ec.curator_id = eg.curator_id AND ec.event_id = eg.event_id "+
+            "LEFT JOIN users_info uic ON ec.curator_id = uic.id " +
+            "WHERE es.event_id = :eventId AND es.student_status IN ('STARTED_EVENT', 'ENDED_EVENT')")
+    List<EventStudentInfo> findStartedEventStudentInfo(Long eventId);
+
     // тут нет запросов кураторов, потому что их еще не присвоили
-    @Query("SELECT es.event_id, es.student_id, es.student_status, ui.competencies, " +
+    @Query("SELECT es.id, es.event_id, es.student_id, es.student_status, ui.competencies, " +
             "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
             "FROM events_students es " +
             "JOIN users_info ui ON es.student_id = ui.id " +
             "WHERE es.event_id = :eventId AND es.student_status = 'SENT_PERSONAL_INFO'")
     List<EventStudentInfo> findWaitingStudentsInfo(Long eventId);
 
-    @Query("SELECT es.event_id, es.student_id, es.student_status, ui.competencies, " +
+    @Query("SELECT es.id, es.event_id, es.student_id, es.student_status, ui.competencies, " +
             "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
             "FROM events_students es " +
             "JOIN users_info ui ON es.student_id = ui.id " +
             "WHERE es.event_id = :eventId AND es.student_status = 'ADDED_IN_CHAT'")
     List<EventStudentInfo> findAcceptedStudentsInfo(Long eventId);
 
-    @Query("SELECT es.event_id, es.student_id, es.student_status " +
+    @Query("SELECT es.id, es.event_id, es.student_id, es.student_status " +
             "FROM events_students es " +
             "WHERE es.event_id = :eventId AND es.student_status = 'ADDED_IN_CHAT'")
     List<EventStudent> findAcceptedEventStudent(Long eventId); // TODO check in chat
+
+    @Query("SELECT es.id, es.event_id, es.student_id, es.student_status " +
+            "FROM events_students es " +
+            "WHERE es.event_id = :eventId AND es.student_status = 'STARTED_EVENT'")
+    List<EventStudent> findStartedEventStudent(Long eventId);
 
     @Query("SELECT * FROM events_students WHERE student_id = :studentId AND event_id = :eventId")
     Optional<EventStudent> findStudentEvent(Long studentId, Long eventId);

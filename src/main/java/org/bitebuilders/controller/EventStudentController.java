@@ -3,7 +3,6 @@ package org.bitebuilders.controller;
 import org.bitebuilders.controller.dto.EventStudentInfoDTO;
 import org.bitebuilders.controller.dto.MessageResponseDTO;
 import org.bitebuilders.enums.StatusRequest;
-import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.model.EventStudent;
 import org.bitebuilders.model.EventStudentInfo;
 import org.bitebuilders.service.EventService;
@@ -88,6 +87,45 @@ public class EventStudentController {
 
         List<EventStudentInfoDTO> esInfoDTO = eventStudentService
                 .getAcceptedStudentInfo(eventId)
+                .stream()
+                .map(EventStudentInfo::toEventStudentDTO)
+                .toList();
+
+        if (esInfoDTO != null)
+            return ResponseEntity.ok(esInfoDTO);  // Возвращаем список студентов
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN') or hasRole('CURATOR')")
+    @GetMapping("/{eventId}/started-students")
+    public ResponseEntity<List<EventStudentInfoDTO>> getStartedStudentsInfo(@PathVariable Long eventId) {
+        if (!eventService.haveManagerAdminCuratorAccess(eventId)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<EventStudentInfoDTO> esInfoDTO = eventStudentService
+                .getStartedStudentInfo(eventId)
+                .stream()
+                .map(EventStudentInfo::toEventStudentDTO)
+                .toList();
+
+        if (esInfoDTO != null)
+            return ResponseEntity.ok(esInfoDTO);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('CURATOR')")
+    @GetMapping("/{eventId}/started-students-group")
+    public ResponseEntity<List<EventStudentInfoDTO>> getStartedStudentsInfoGroup(@PathVariable Long eventId) {
+        Long curatorId = eventService.haveCuratorAccessReturnId(eventId);
+        if (curatorId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<EventStudentInfoDTO> esInfoDTO = eventStudentService
+                .getCuratorGroup(eventId, curatorId)
                 .stream()
                 .map(EventStudentInfo::toEventStudentDTO)
                 .toList();

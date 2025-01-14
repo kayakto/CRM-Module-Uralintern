@@ -4,10 +4,7 @@ import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.exception.EventNotFoundException;
 import org.bitebuilders.exception.EventUserNotFoundException;
 import org.bitebuilders.exception.UserNotFoundException;
-import org.bitebuilders.model.Event;
-import org.bitebuilders.model.EventCurator;
-import org.bitebuilders.model.EventCuratorInfo;
-import org.bitebuilders.model.Message;
+import org.bitebuilders.model.*;
 import org.bitebuilders.repository.EventCuratorRepository;
 import org.bitebuilders.repository.EventRepository;
 import org.bitebuilders.repository.UserInfoRepository;
@@ -67,8 +64,16 @@ public class EventCuratorService {
         return eventCuratorRepository.findAcceptedEventCurator(eventId);
     }
 
+    public List<EventCurator> getStartedEventCurator(Long eventId) {
+        return eventCuratorRepository.findStartedEventCurator(eventId);
+    }
+
     public List<EventCuratorInfo> getCuratorsInfo(Long eventId) {
         return eventCuratorRepository.findByEventId(eventId);
+    }
+
+    public List<EventCuratorInfo> getStartedCuratorInfo(Long eventId) {
+        return eventCuratorRepository.findStartedEventCuratorInfo(eventId);
     }
 
     public StatusRequest getCuratorStatus(Long eventId, Long curatorId) {

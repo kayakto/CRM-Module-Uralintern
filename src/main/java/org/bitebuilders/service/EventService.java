@@ -1,11 +1,10 @@
 package org.bitebuilders.service;
 
 import org.bitebuilders.component.UserContext;
+import org.bitebuilders.enums.StatusRequest;
 import org.bitebuilders.enums.UserRole;
 import org.bitebuilders.exception.EventNotFoundException;
-import org.bitebuilders.model.Event;
-import org.bitebuilders.model.EventGroup;
-import org.bitebuilders.model.UserInfo;
+import org.bitebuilders.model.*;
 import org.bitebuilders.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -139,6 +138,8 @@ public class EventService {
         if (newCondition != currentCondition) {
             if (newCondition == Event.Condition.IN_PROGRESS) {
                 return startEventById(event.getId());
+            } else if (newCondition == Event.Condition.FINISHED){
+                return endEventById(event.getId());
             } else {
                 event.setCondition(newCondition);
                 return createOrUpdateEvent(event);
@@ -183,11 +184,35 @@ public class EventService {
         List<EventGroup> groups = eventGroupService.createGroups(eventToStart.getId());
         System.out.println("Groups created for event ID " + eventToStart.getId() + ": " + groups);
 
-        eventToStart.setCondition(Event.Condition.IN_PROGRESS);
+        eventToStart.setConditionToStarted();
         System.out.println("Event with ID " + eventToStart.getId() + " is now in progress.");
 
         // Сохранение изменений в мероприятии
         return createOrUpdateEvent(eventToStart);
+    }
+
+    public Event endEventById(Long eventId) {
+        Event eventToEnd = getEventById(eventId);
+        if (eventToEnd.getCondition() != Event.Condition.IN_PROGRESS) {
+            throw new IllegalStateException("Event cannot be ended because it is not in progress");
+        }
+
+        List<EventCurator> curatorsToEnd = eventCuratorService.getStartedEventCurator(eventId);
+        List<EventStudent> studentToEnd = eventStudentService.getStartedEventStudent(eventId);
+
+        for (EventCurator curator:curatorsToEnd) {
+            curator.setCuratorStatus(StatusRequest.ENDED_EVENT);
+            eventCuratorService.save(curator);
+        }
+
+        for (EventStudent student:studentToEnd) {
+            student.setStudentStatus(StatusRequest.ENDED_EVENT);
+            eventStudentService.save(student);
+        }
+
+        // TODO если сделать контроллер на окончание меро - меняем даты в меро
+        eventToEnd.setCondition(Event.Condition.FINISHED);
+        return createOrUpdateEvent(eventToEnd);
     }
 
     private Event getEventToStart(Long eventId) {
@@ -228,6 +253,31 @@ public class EventService {
         return true;
     }
 
+    public boolean haveManagerAdminCuratorAccess(Long eventId) {
+        UserInfo user = userContext.getCurrentUser();
+        Event event = getEventById(eventId);
+
+        switch (user.getRole_enum()){
+            case UserRole.ADMIN -> {
+                if (!Objects.equals(event.getAdminId(), user.getId())) {
+                    throw new AccessDeniedException("This admin does not have permission to this event");
+                }
+            }
+            case UserRole.MANAGER -> {
+                if (!Objects.equals(event.getManagerId(), user.getId())) {
+                    throw new AccessDeniedException("This manager does not have permission to this event");
+                }
+            }
+            case UserRole.CURATOR -> {
+                if (!haveCuratorAccess(eventId, user.getId())) {
+                    throw new AccessDeniedException("This curator does not have permission to this event");
+                }
+            }
+        }
+
+        return true;
+    }
+
     public boolean haveAdminAccess(Long eventId) {
         UserInfo user = userContext.getCurrentUser();
         Event event = getEventById(eventId);
@@ -244,6 +294,24 @@ public class EventService {
             throw new AccessDeniedException("This manager does not have permission to this event");
         }
         return true;
+    }
+
+    public boolean haveCuratorAccess(Long eventId) {
+        Long userId = userContext.getCurrentUser().getId();
+        EventCurator eventCurator = eventCuratorService.getEventCurator(eventId, userId);
+        return eventCurator.getCuratorStatus() == StatusRequest.STARTED_EVENT ||
+                eventCurator.getCuratorStatus() == StatusRequest.ENDED_EVENT;
+    }
+
+    private boolean haveCuratorAccess(Long eventId, Long userId) {
+        EventCurator eventCurator = eventCuratorService.getEventCurator(eventId, userId);
+        return eventCurator.getCuratorStatus() == StatusRequest.STARTED_EVENT ||
+                eventCurator.getCuratorStatus() == StatusRequest.ENDED_EVENT;
+    }
+
+    public Long haveCuratorAccessReturnId(Long eventId) {
+        Long userId = userContext.getCurrentUser().getId();
+        return haveCuratorAccess(eventId, userId) ? userId : null;
     }
 
     public boolean validateEvent(Event event) {
