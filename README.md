@@ -1,11 +1,11 @@
 # Application Location
 <p><strong>Backend REST API</strong> is available at:</p>
 
-<a>https://84.252.132.66</a>
+<a>https://84.252.132.66/api</a>
 
 <p><strong>Swagger Documentation</strong> is available at:</p>
 
-<a>https://84.252.132.66/swagger-ui/index.html</a>
+<a>https://84.252.132.66/api/swagger-ui/index.html</a>
 
 # Backend Launch Instructions
 1. Clone the repository:
@@ -32,11 +32,11 @@
 <ul>
     <li>
         <p>The application will be available at:</p>
-        <a href="https://localhost:8080">https://localhost:8080</a>
+        <a href="https://localhost:8080/api">https://localhost:8080/api</a>
     </li>
     <li>
         <p>Swagger documentation will be available at:</p>
-        <a href="https://localhost:8080/swagger-ui/index.html#">https://localhost:8080/swagger-ui/index.html#</a>
+        <a href="https://localhost:8080/api/swagger-ui/index.html#">https://localhost:8080/api/swagger-ui/index.html#</a>
     </li>
 </ul>
 

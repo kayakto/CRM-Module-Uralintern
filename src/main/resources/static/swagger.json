@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://84.252.132.66",
+      "url": "https://84.252.132.66/api",
       "description": "kayakto server url"
     }
   ],

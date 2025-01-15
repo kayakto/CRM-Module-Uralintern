@@ -1,11 +1,11 @@
 # Расположение приложения
 <p><strong>Backend REST API</strong> находится по адресу:</p>
 
-<a>https://84.252.132.66</a>
+<a>https://84.252.132.66/api</a>
 
 <p><strong>Swagger-документация</strong> сервиса расположена по адресу</p>
 
-<a>https://84.252.132.66/swagger-ui/index.html</a>
+<a>https://84.252.132.66/api/swagger-ui/index.html</a>
 
 # Инструкция для запуска(Backend)
 1. Скачайте данный репозиторий:
@@ -32,11 +32,11 @@
 <ul>
     <li>
         <p>Приложение будет доступно по адресу:</p>
-        <a href="https://localhost:8080">https://localhost:8080</a>
+        <a href="https://localhost:8080/api">https://localhost:8080/api</a>
     </li>
     <li>
         <p>Документация расположена по адресу:</p>
-        <a href="https://localhost:8080/swagger-ui/index.html#">https://localhost:8080/swagger-ui/index.html#</a>
+        <a href="https://localhost:8080/api/swagger-ui/index.html#">https://localhost:8080/api/swagger-ui/index.html#</a>
     </li>
 </ul>
 

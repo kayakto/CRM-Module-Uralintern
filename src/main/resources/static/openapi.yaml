@@ -14,7 +14,7 @@ info:
     - **notification-controller**: Управляет уведомлениями пользователей, связанными с их участием в мероприятиях.
   version: '1.0'
 servers:
-  - url: https://84.252.132.66
+  - url: https://84.252.132.66/api
     description: kayakto server url
 security:
   - BearerAuth: []
