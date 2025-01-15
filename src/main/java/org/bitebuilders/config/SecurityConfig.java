@@ -30,7 +30,13 @@ public class SecurityConfig {
             "/auth/register",
             "/auth/login",
             "/auth/refresh",
-            "/swagger.json" // Разрешаем доступ к custom-swagger.json
+            "/swagger.json", // Разрешаем доступ к custom-swagger.json
+            "api/swagger-ui/**",  // Swagger UI
+            "api/v3/api-docs/**", // OpenAPI JSON
+            "api/auth/register",
+            "api/auth/login",
+            "api/auth/refresh",
+            "api/swagger.json" // Разрешаем доступ к custom-swagger.json
     };
 
     @Bean
