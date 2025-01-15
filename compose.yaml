@@ -15,6 +15,7 @@ services:
       - SECURITY_JWT_EXPIRATION=86400000
       - SECURITY_JWT_REFRESH_EXPIRATION=604800000
       - SPRINGDOC_SWAGGER_UI_URL=/swagger.json
+      - SERVER_SERVLET_CONTEXT_PATH=/api
     command: ["sh", "-c", "while ! nc -z db-postgres 5432; do sleep 1; done; java -jar build/libs/CRM-Module-1.0-SNAPSHOT.jar"]
     restart: always
     networks:
