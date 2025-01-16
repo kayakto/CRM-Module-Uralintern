@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     event_id INT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
     text TEXT NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('ACCEPTED', 'DECLINED')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('ACCEPTED', 'DECLINED', 'SENT')),
     edit_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -77,11 +77,6 @@ CREATE TABLE IF NOT EXISTS invitations (
     author_id INT NOT NULL REFERENCES users_info(id) ON DELETE CASCADE
 );
 
-GRANT ALL PRIVILEGES ON DATABASE internships TO crm_admin;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO crm_admin;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO crm_admin;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;
-
 
 INSERT INTO users_info (first_name, last_name, email, sign, telegram_url, role_enum, competencies)
 VALUES
@@ -89,3 +84,31 @@ VALUES
     ('CURATOR', 'TEST', 'curator@mail.ru', '$2a$10$oHSxJ9Gup3jdVaIkNcfWluMY/hlH/yZHq.wsJdRCHiP2hXNiMENQa', 't.me/curator', 'CURATOR', 'Microservices, PostgreSQL'),
     ('MANAGER', 'TEST', 'manager@mail.ru', '$2a$10$0n7IAwS81oANxZBA1smbDOFordm2ekzK8K2aWvANVxN4ZrMfI0WL6', 't.me/manager', 'MANAGER', 'Leadership, Event Organization'),
     ('ADMIN', 'TEST', 'admin@mail.ru', '$2a$10$yBgtUtwl8KBdyXv56PjnX.IRf.X0S6WuKY2ilzV05r4Y/3kfTx1le', 't.me/admin', 'ADMIN', 'Leadership, Event Organization');
+
+ALTER TABLE events
+ADD COLUMN has_test BOOLEAN NOT NULL DEFAULT FALSE;
+
+CREATE TABLE events_tests (
+    id SERIAL PRIMARY KEY,
+    event_id BIGINT NOT NULL,
+    test_url TEXT NOT NULL,
+    CONSTRAINT fk_event_test_event FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE student_test_results (
+    id SERIAL PRIMARY KEY,
+    student_id BIGINT NOT NULL,
+    event_id BIGINT NOT NULL,
+    test_id BIGINT NOT NULL,
+    passed BOOLEAN NOT NULL,
+    score INT NOT NULL,
+    CONSTRAINT fk_student_test_result_student FOREIGN KEY (student_id) REFERENCES users_info(id) ON DELETE CASCADE,
+    CONSTRAINT fk_student_test_result_event FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
+
+GRANT ALL PRIVILEGES ON DATABASE internships TO crm_admin;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO crm_admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO crm_admin;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO crm_admin;

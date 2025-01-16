@@ -1,3 +1,7 @@
+# Select language | Выберите язык
+- [English Version](Readme.md)
+- [Русская версия](Readme-RU.md)
+
 # Application Location
 <p><strong>Backend REST API</strong> is available at:</p>
 

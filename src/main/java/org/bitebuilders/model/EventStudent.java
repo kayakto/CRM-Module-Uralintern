@@ -22,6 +22,8 @@ public class EventStudent {
     @Column("group_id")
     @Setter
     private Long groupId;
+//    @Column("test_score")
+//    private int testScore;
 
     public EventStudent(Long studentId, Long eventId, StatusRequest studentStatus) {
         this.studentId = studentId;

@@ -32,14 +32,17 @@ public class EventService {
 
     private final EventCuratorService eventCuratorService;
 
+    private final EventTestService testService;
+
     @Autowired
-    public EventService(EventRepository eventRepository, EventGroupService eventGroupService, UserContext userContext, UserInfoService userInfoService, EventStudentService eventStudentService, EventCuratorService eventCuratorService) {
+    public EventService(EventRepository eventRepository, EventGroupService eventGroupService, UserContext userContext, UserInfoService userInfoService, EventStudentService eventStudentService, EventCuratorService eventCuratorService, EventTestService testService) {
         this.eventRepository = eventRepository;
         this.eventGroupService = eventGroupService;
         this.userContext = userContext;
         this.userInfoService = userInfoService;
         this.eventStudentService = eventStudentService;
         this.eventCuratorService = eventCuratorService;
+        this.testService = testService;
     }
 
     public void isPresentEvent(Long eventId) {
@@ -97,12 +100,25 @@ public class EventService {
     // Метод, который сохраняет Event и возвращает его
     @Transactional
     public Event createOrUpdateEvent(Event event) {
-        // случай для обновления или создания мероприятия через контроллер
+        return createOrUpdateEvent(event, null); // Вызов метода с testUrl=null
+    }
+
+    @Transactional
+    public Event createOrUpdateEvent(Event event, String testUrl) {
+        Event resultEvent;
+        // Случай для обновления или создания мероприятия через контроллер
         if (event.getCondition() == null) {
             validateEvent(event);
-            return updateEventCondition(event);
-        } else
-            return eventRepository.save(event);
+            resultEvent = updateEventCondition(event);
+        } else {
+            resultEvent = eventRepository.save(event);
+        }
+
+        if (resultEvent.isHasTest() && testUrl != null) {
+            testService.createOrUpdateEventTest(resultEvent.getId(), testUrl);
+        }
+
+        return resultEvent;
     }
 
     public void deleteAllEvents() {

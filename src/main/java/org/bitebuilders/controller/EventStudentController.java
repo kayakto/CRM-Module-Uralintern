@@ -2,11 +2,12 @@ package org.bitebuilders.controller;
 
 import org.bitebuilders.controller.dto.EventStudentInfoDTO;
 import org.bitebuilders.controller.dto.MessageResponseDTO;
+import org.bitebuilders.controller.requests.StudentTestResultRequest;
 import org.bitebuilders.enums.StatusRequest;
-import org.bitebuilders.model.EventStudent;
 import org.bitebuilders.model.EventStudentInfo;
 import org.bitebuilders.service.EventService;
 import org.bitebuilders.service.EventStudentService;
+import org.bitebuilders.service.TestResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,13 +20,14 @@ import java.util.List;
 public class EventStudentController {
 
     private final EventStudentService eventStudentService;
-
     private final EventService eventService;
+    private final TestResultService testResultService;
 
     @Autowired
-    public EventStudentController(EventStudentService eventStudentService, EventService eventService) {
+    public EventStudentController(EventStudentService eventStudentService, EventService eventService, TestResultService testResultService) {
         this.eventStudentService = eventStudentService;
         this.eventService = eventService;
+        this.testResultService = testResultService;
     }
 
     // Получение всех студентов, отправивших персональные данные для участия
@@ -61,13 +63,13 @@ public class EventStudentController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/{eventId}/waiting-students")
-    public ResponseEntity<List<EventStudentInfoDTO>> getSentStudentsInfo(@PathVariable Long eventId) {
+    public ResponseEntity<List<EventStudentInfoDTO>> getWaitingStudentsInfo(@PathVariable Long eventId) {
         if (!eventService.haveManagerAccess(eventId)) {
             return ResponseEntity.badRequest().build();
         }
 
         List<EventStudentInfoDTO> esInfoDTO = eventStudentService
-                .getSentStudentInfo(eventId)
+                .getWaitingStudentInfo(eventId)
                 .stream()
                 .map(EventStudentInfo::toEventStudentDTO)
                 .toList();
@@ -173,8 +175,7 @@ public class EventStudentController {
             return ResponseEntity.badRequest().build();
         }
 
-        EventStudent eventStudent = eventStudentService.getEventStudent(eventId, studentId);
-        if (eventStudent.getStudentStatus() != StatusRequest.SENT_PERSONAL_INFO) {
+        if (!eventStudentService.isAllowedStatus(eventId, studentId)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -206,8 +207,7 @@ public class EventStudentController {
             return ResponseEntity.badRequest().build();
         }
 
-        EventStudent eventStudent = eventStudentService.getEventStudent(eventId, studentId);
-        if (eventStudent.getStudentStatus() != StatusRequest.SENT_PERSONAL_INFO) {
+        if (!eventStudentService.isAllowedStatus(eventId, studentId)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -247,6 +247,34 @@ public class EventStudentController {
                     new MessageResponseDTO(e.getMessage()));
         }
     } // todo еще потестить
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/test-result")
+    public ResponseEntity<MessageResponseDTO> saveTestResult(@RequestBody StudentTestResultRequest resultRequest) {
+        if (testResultService.
+                addOrUpdateResult(
+                        resultRequest.toStudentTestresult()).getId() == null)
+            return ResponseEntity.badRequest().body(new MessageResponseDTO("Could not save result for this test"));
+
+        Long eventId = resultRequest.getEventId();
+        Long studentId = resultRequest.getStudentId();
+
+        boolean isUpdated = eventStudentService
+                .updateStudentStatus(
+                        eventId,
+                        studentId,
+                        resultRequest.isPassed() ? StatusRequest.TEST_PASSED : StatusRequest.TEST_FAILED);
+
+        if (isUpdated) {
+            return ResponseEntity.ok(
+                    new MessageResponseDTO("Result successfully saved for student " + studentId + " in event " + eventId)
+            );
+        }
+
+        return ResponseEntity.badRequest().body(
+                new MessageResponseDTO("WARNING! Could not save result for student " + studentId + " in event " + eventId)
+        );
+    }
 
     @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{eventId}/delete/{studentId}")

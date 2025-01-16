@@ -817,6 +817,46 @@
         }
       }
     },
+    "/events-students/test-result": {
+      "post": {
+        "tags": [
+          "event-student-controller"
+        ],
+        "operationId": "saveTestResult",
+        "description": "Выгрузка баллов за тест студента. Доступно только администраторам.\nВНИМАНИЕ: этот метод для интеграции с сервисом тестов для uralintern\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentTestResultRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Баллы успешно выгрузились.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
     "/events-students/{eventId}/student-can-send/{studentId}": {
       "get": {
         "tags": [
@@ -874,8 +914,8 @@
         "tags": [
           "event-student-controller"
         ],
-        "operationId": "getSentStudentsInfo",
-        "description": "Получение студентов, которые отправили заявку на регистрацию на мероприятие. Доступ: руководитель",
+        "operationId": "getWaitingStudentsInfo",
+        "description": "Получение студентов, которые ждут принятия заявки на мероприятие. Доступ: руководитель",
         "parameters": [
           {
             "name": "eventId",
@@ -2237,6 +2277,38 @@
             "type": "integer",
             "format": "int32",
             "example": 50
+          },
+          "hasTest": {
+            "type": "boolean",
+            "example": false
+          },
+          "testUrl": {
+            "type": "string",
+            "example": null
+          }
+        }
+      },
+      "StudentTestResultRequest": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "eventId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "passed": {
+            "type": "boolean",
+            "example": true
+          },
+          "score": {
+            "type": "integer",
+            "format": "int64",
+            "example": 100
           }
         }
       },
@@ -2308,6 +2380,10 @@
           "chatUrl": {
             "type": "string",
             "example": "https://t.me/chaturl"
+          },
+          "hasTest": {
+            "type": "boolean",
+            "example": false
           }
         }
       },

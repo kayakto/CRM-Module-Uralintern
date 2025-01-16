@@ -40,6 +40,8 @@ public class Event {
     private OffsetDateTime enrollmentEndDate;
     @Column("number_seats_students")
     private int numberSeatsStudent;
+    @Column("has_test")
+    private boolean hasTest; // default false in db
 
     public enum Condition {
         PREPARATION, // Статус "Подготовка" : (текущая дата < enrollment_start_date)
@@ -58,7 +60,7 @@ public class Event {
         this.condition = Condition.IN_PROGRESS;
     }
 
-    public Event(String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
+    public Event(String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent, boolean hasTest) {
         this.descriptionText = descriptionText;
         this.title = title;
         this.adminId = adminId;
@@ -69,9 +71,10 @@ public class Event {
         this.enrollmentEndDate = enrollmentEndDate;
         this.chatUrl = chatUrl;
         this.numberSeatsStudent = numberSeatsStudent;
+        this.hasTest = hasTest;
     }
 
-    public Event(Long id, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent) {
+    public Event(Long id, String descriptionText, String title, Long adminId, Long managerId, OffsetDateTime eventStartDate, OffsetDateTime eventEndDate, OffsetDateTime enrollmentStartDate, OffsetDateTime enrollmentEndDate, String chatUrl, int numberSeatsStudent, boolean hasTest) {
         this.id = id;
         this.descriptionText = descriptionText;
         this.title = title;
@@ -83,6 +86,7 @@ public class Event {
         this.enrollmentEndDate = enrollmentEndDate;
         this.chatUrl = chatUrl;
         this.numberSeatsStudent = numberSeatsStudent;
+        this.hasTest = hasTest;
     }
 
     public EventDTO toEventDTO() {
@@ -93,6 +97,6 @@ public class Event {
                 chatUrl,
                 enrollmentStartDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
                 enrollmentEndDate.withOffsetSameInstant(ZoneOffset.ofHours(5)),
-                numberSeatsStudent);
+                numberSeatsStudent, hasTest);
     }
 }

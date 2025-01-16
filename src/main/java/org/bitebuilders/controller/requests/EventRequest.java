@@ -21,17 +21,19 @@ public class EventRequest {
     private final OffsetDateTime enrollmentEndDate;
     private final String chatUrl;
     private final int numberSeatsStudent;
+    private final boolean hasTest;
+    private final String testUrl;
 
     public Event toEvent() {
         return new Event(descriptionText, title,
                 adminId, managerId, eventStartDate, eventEndDate,
-                enrollmentStartDate, enrollmentEndDate, chatUrl, numberSeatsStudent);
+                enrollmentStartDate, enrollmentEndDate, chatUrl, numberSeatsStudent, hasTest);
     }
 
     public Event toEvent(Long eventId) {
         return new Event(eventId,
                 descriptionText, title,
                 adminId, managerId, eventStartDate, eventEndDate,
-                enrollmentStartDate, enrollmentEndDate, chatUrl, numberSeatsStudent);
+                enrollmentStartDate, enrollmentEndDate, chatUrl, numberSeatsStudent, hasTest);
     }
 }

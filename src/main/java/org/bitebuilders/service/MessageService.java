@@ -21,10 +21,13 @@ public class MessageService {
 
     private final EventRepository eventRepository;
 
+    private final EventTestService testService;
+
     @Autowired
-    public MessageService(MessageRepository messageRepository, EventRepository eventRepository) {
+    public MessageService(MessageRepository messageRepository, EventRepository eventRepository, EventTestService testService) {
         this.messageRepository = messageRepository;
         this.eventRepository = eventRepository;
+        this.testService = testService;
     }
 
     public Message getMessageById(Long messageId) {
@@ -70,10 +73,17 @@ public class MessageService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event with id: " + eventId + " not found"));
 
-        // Создаем сообщения
+        String sentText = "Вы успешно отправили заявку на мероприятие. Ожидайте уведомление об изменении статуса заявки";
+        if (event.isHasTest()) {
+            sentText = "Вы успешно отправили заявку на мероприятие. Пройдите тест по ссылке "
+                    + testService.getTestUrlByEventId(eventId)
+                    + " . После прохождения теста вернитесь на платформу и ожидайте уведомление об изменении статуса заявки";
+        }
+
         String acceptText = "Вы приняты на мероприятие \"" + event.getTitle() + "\". Присоединяйтесь к чату: " + event.getChatUrl();
         String declineText = "К сожалению, ваша заявка на мероприятие \"" + event.getTitle() + "\". была отклонена.";
 
+        messageRepository.save(new Message(eventId, sentText, Message.MessageStatus.SENT));
         messageRepository.save(new Message(eventId, acceptText, Message.MessageStatus.ACCEPTED));
         messageRepository.save(new Message(eventId, declineText, Message.MessageStatus.DECLINED));
     }

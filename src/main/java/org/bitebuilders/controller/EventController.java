@@ -1,13 +1,10 @@
 package org.bitebuilders.controller;
 
-import org.bitebuilders.component.UserContext;
 import org.bitebuilders.controller.dto.EventDTO;
 import org.bitebuilders.controller.dto.MessageResponseDTO;
 import org.bitebuilders.controller.requests.EventRequest;
 import org.bitebuilders.controller.requests.StartEventRequest;
 import org.bitebuilders.model.Event;
-import org.bitebuilders.model.UserInfo;
-import org.bitebuilders.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.bitebuilders.service.EventService;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/events")
@@ -23,12 +19,9 @@ public class EventController {
 
     private final EventService eventService;
 
-    private final UserContext userContext;
-
     @Autowired
-    public EventController(EventService eventService, UserContext userContext) {
+    public EventController(EventService eventService) {
         this.eventService = eventService;
-        this.userContext = userContext;
     }
 
     @GetMapping("/active")
@@ -65,7 +58,8 @@ public class EventController {
     @PostMapping("/post")
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventRequest requestedEvent) {
         Event newEvent = requestedEvent.toEvent();
-        EventDTO eventDTO = eventService.createOrUpdateEvent(newEvent).toEventDTO();
+        EventDTO eventDTO = eventService.
+                createOrUpdateEvent(newEvent, requestedEvent.getTestUrl()).toEventDTO();
 
         if (eventDTO != null)
             return ResponseEntity.ok(eventDTO);
@@ -103,7 +97,7 @@ public class EventController {
             return ResponseEntity.badRequest().build();
 
         Event eventToUpdate = requestedEvent.toEvent(eventId);
-        EventDTO eventDTO = eventService.createOrUpdateEvent(eventToUpdate).toEventDTO();
+        EventDTO eventDTO = eventService.createOrUpdateEvent(eventToUpdate, requestedEvent.getTestUrl()).toEventDTO();
 
         if (eventDTO != null)
             return ResponseEntity.ok(eventDTO);

@@ -10,6 +10,7 @@ import org.bitebuilders.repository.EventRepository;
 import org.bitebuilders.repository.EventStudentRepository;
 import org.bitebuilders.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,11 +54,25 @@ public class EventStudentService {
         return eventStudent.orElseThrow(() -> new EventUserNotFoundException("Student does not exist on this event"));
     }
 
+    public boolean isAllowedStatus(Long eventId, Long studentId) {
+        EventStudent eventStudent = getEventStudent(eventId, studentId);
+        StatusRequest current = eventStudent.getStudentStatus();
+        return current == StatusRequest.SENT_PERSONAL_INFO || current == StatusRequest.TEST_PASSED;
+        // IllegalArgumentException может лучше выкинуть
+    }
+
     /**
      * Метод возвращающий список всех заявок студентов на мероприятие.
+     * Если в мероприятии нет теста, то все студенты, которые отправили заявки.
+     * Если есть тест, то только те студенты, которые прошли тест.
      */
-    public List<EventStudentInfo> getSentStudentInfo(Long eventId) {
-        return eventStudentRepository.findWaitingStudentsInfo(eventId);
+    public List<EventStudentInfo> getWaitingStudentInfo(Long eventId) {
+        if (eventRepository.
+                findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event doesn`t exist"))
+                .isHasTest())
+            return eventStudentRepository.findPassedStudentsInfo(eventId);
+        return eventStudentRepository.findSentStudentsInfo(eventId);
     }
 
     public List<EventStudentInfo> getAcceptedStudentInfo(Long eventId) {
@@ -90,7 +105,6 @@ public class EventStudentService {
         return eventStudentRepository.findStudentEvent(studentId, eventId).isEmpty();
     }
 
-    // мб транзактионал
     public EventStudent save(EventStudent eventStudent) {
         return eventStudentRepository.save(eventStudent);
     }
@@ -102,6 +116,7 @@ public class EventStudentService {
     public boolean updateStudentStatus(Long eventId, Long studentId, StatusRequest newStatus) {
         Optional<EventStudent> optionalEventStudent = eventStudentRepository.findStudentEvent(studentId, eventId);
         EventStudent eventStudent;
+
         if (optionalEventStudent.isPresent()) {
             eventStudent = optionalEventStudent.get();
             if (newStatus == StatusRequest.SENT_PERSONAL_INFO) return false;
@@ -120,10 +135,13 @@ public class EventStudentService {
         EventStudent savedEventStudent = eventStudentRepository.save(eventStudent);
 
         // Отправляем уведомление
-        if (newStatus == StatusRequest.ADDED_IN_CHAT || newStatus == StatusRequest.REJECTED_FROM_EVENT) {
+        if (newStatus == StatusRequest.ADDED_IN_CHAT
+                || newStatus == StatusRequest.REJECTED_FROM_EVENT
+                || newStatus == StatusRequest.SENT_PERSONAL_INFO
+        ) {
             Message.MessageStatus messageStatus = parseStatusRequestToMessageStatus(newStatus);
             notificationService.sendNotification(studentId, eventId, messageStatus);
-        }
+        } // TODO сделать уведомления для всех статусов
 
         return savedEventStudent.getStudentStatus() == newStatus;
     }
@@ -154,6 +172,4 @@ public class EventStudentService {
     public List<EventStudentInfo> getCuratorGroup(Long eventId, Long curatorId) {
         return eventStudentRepository.findByEventIdAndCuratorId(eventId, curatorId);
     }
-
-
 }

@@ -3,7 +3,7 @@ info:
   title: CRM module for Uralintern
   description: |
     API documentation for Uralintern CRM Module.
-    
+
     **Контроллеры:**
     - **auth-controller**: Отвечает за регистрацию и авторизацию пользователей, включая регистрацию с реферальной ссылкой и обновление токенов.
     - **user-info-controller**: Управляет пользовательскими данными, включая обновление профиля, получение реферальных ссылок и список руководителей.
@@ -52,7 +52,6 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /auth/register:
     post:
       tags:
@@ -77,7 +76,6 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /auth/register-with-token:
     post:
       tags:
@@ -107,7 +105,6 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /auth/refresh:
     post:
       tags:
@@ -133,7 +130,6 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /users/invite-manager:
     post:
       tags:
@@ -152,7 +148,6 @@ paths:
           $ref: '#/components/responses/ForbiddenResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /users/update-password:
     post:
       tags:
@@ -180,7 +175,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /users/update-email:
     post:
       tags:
@@ -208,7 +202,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /users/me:
     get:
       tags:
@@ -250,15 +243,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserDTO'
-        '403':
-          $ref: '#/components/responses/ForbiddenResponse'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse'
         '404':
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /users/my-role:
     get:
       tags:
@@ -272,15 +264,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MessageResponseDTO'
-        '403':
-          $ref: '#/components/responses/ForbiddenResponse'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse'
         '404':
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /users/{userId}:
     get:
       tags:
@@ -308,7 +299,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /users/all-managers:
     get:
       tags:
@@ -329,7 +319,6 @@ paths:
           $ref: '#/components/responses/ForbiddenResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events/post:
     post:
       tags:
@@ -356,13 +345,12 @@ paths:
           $ref: '#/components/responses/ForbiddenResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events/start-event:
     post:
       tags:
         - event-controller
       operationId: startEvent
-      description: "Досрочно начать мероприятие. Доступ - администратор и руководитель проекта."
+      description: Досрочно начать мероприятие. Доступ - администратор и руководитель проекта.
       requestBody:
         content:
           application/json:
@@ -382,13 +370,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events/{eventId}:
     get:
       tags:
         - event-controller
       operationId: getEventByID
-      description: "Получение данных мероприятия по его идентификатору. Доступ - администратор или руководитель."
+      description: Получение данных мероприятия по его идентификатору. Доступ - администратор или руководитель.
       parameters:
         - name: eventId
           in: path
@@ -410,13 +397,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events/my:
     get:
       tags:
         - event-controller
       operationId: getMyEvents
-      description: "Получение данных мероприятий, с которыми связан пользователь, отправивший запрос. Доступ: все авторизованные пользователи."
+      description: 'Получение данных мероприятий, с которыми связан пользователь, отправивший запрос. Доступ: все авторизованные пользователи.'
       responses:
         '200':
           description: OK
@@ -432,7 +418,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events/active:
     get:
       tags:
@@ -454,7 +439,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events/update/{eventId}:
     put:
       tags:
@@ -496,7 +480,7 @@ paths:
       tags:
         - event-controller
       operationId: hideEvent
-      description: "Поменять статус мероприятия на \"скрытое\". Или вернуть состояние мероприятия к обычному. Доступ - руководитель и администратор."
+      description: Поменять статус мероприятия на "скрытое". Или вернуть состояние мероприятия к обычному. Доступ - руководитель и администратор.
       parameters:
         - name: eventId
           in: path
@@ -518,7 +502,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events/delete/{eventId}:
     delete:
       tags:
@@ -550,12 +533,40 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
 
+  /events-students/test-result:
+    post:
+      tags:
+        - event-student-controller
+      operationId: saveTestResult
+      description: |
+        Выгрузка баллов за тест студента. Доступно только администраторам.
+        ВНИМАНИЕ: этот метод для интеграции с сервисом тестов для uralintern
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentTestResultRequest'
+      responses:
+        '200':
+          description: Баллы успешно выгрузились.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+
   /events-students/{eventId}/student-can-send/{studentId}:
     get:
       tags:
         - event-student-controller
       operationId: canSendStudent
-      description: "Если студент отправлял заявку на мероприятие - ему не будет доступна регистрация на мероприятие (вернется false). В обратном случае студент сможет отправить заявку на мероприятие (true)."
+      description: Если студент отправлял заявку на мероприятие - ему не будет доступна регистрация на мероприятие (вернется false). В обратном случае студент сможет отправить заявку на мероприятие (true).
       parameters:
         - name: eventId
           in: path
@@ -584,13 +595,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/waiting-students:
     get:
       tags:
         - event-student-controller
-      operationId: getSentStudentsInfo
-      description: "Получение студентов, которые отправили заявку на регистрацию на мероприятие. Доступ: руководитель"
+      operationId: getWaitingStudentsInfo
+      description: 'Получение студентов, которые ждут принятия заявки на мероприятие. Доступ: руководитель'
       parameters:
         - name: eventId
           in: path
@@ -614,13 +624,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/students:
     get:
       tags:
         - event-student-controller
       operationId: getStudentsInfo
-      description: "Получение студентов, которые связаных с данным мероприятием, учитывая все возможные статусы. Доступ: руководитель"
+      description: 'Получение студентов, которые связаных с данным мероприятием, учитывая все возможные статусы. Доступ: руководитель'
       parameters:
         - name: eventId
           in: path
@@ -644,13 +653,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/accepted-students:
     get:
       tags:
         - event-student-controller
       operationId: getAcceptedStudentsInfo
-      description: "Получение студентов, которых приняли на мероприятие и их добавили в чат. Доступ: руководитель, администратор."
+      description: 'Получение студентов, которых приняли на мероприятие и их добавили в чат. Доступ: руководитель, администратор.'
       parameters:
         - name: eventId
           in: path
@@ -674,13 +682,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/started-students:
     get:
       tags:
         - event-student-controller
       operationId: getStartedStudentsInfo
-      description: "Получение студентов, которые начали выполнение мероприятия. Доступ: руководитель, администратор."
+      description: 'Получение студентов, которые начали выполнение мероприятия. Доступ: руководитель, администратор.'
       parameters:
         - name: eventId
           in: path
@@ -704,13 +711,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/started-students-group:
     get:
       tags:
         - event-student-controller
       operationId: getStartedStudentsInfoGroup
-      description: "Получение группы студентов, которые начали выполнение мероприятия и они в одной группе с текущим куратором. Доступ: куратор."
+      description: 'Получение группы студентов, которые начали выполнение мероприятия и они в одной группе с текущим куратором. Доступ: куратор.'
       parameters:
         - name: eventId
           in: path
@@ -734,7 +740,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/send/{studentId}:
     put:
       tags:
@@ -773,7 +778,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/reject/{studentId}:
     put:
       tags:
@@ -812,7 +816,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/accept/{studentId}:
     put:
       tags:
@@ -851,7 +854,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/change-curator/{eventId}/students/{studentId}/curator/{newCuratorId}:
     put:
       tags:
@@ -898,13 +900,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-students/{eventId}/delete/{studentId}:
     delete:
       tags:
         - event-student-controller
       operationId: deleteStudentFromEvent
-      description: "Удаление студента с мероприятия. Доступ - руководитель."
+      description: Удаление студента с мероприятия. Доступ - руководитель.
       parameters:
         - name: eventId
           in: path
@@ -933,13 +934,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/curator-can-send/{curatorId}:
     get:
       tags:
         - event-curator-controller
       operationId: canSendCurator
-      description: "Если куратор отправлял заявку на мероприятие - ему не будет доступна регистрация на мероприятие (вернется false). В обратном случае куратор сможет отправить заявку на мероприятие (true)."
+      description: Если куратор отправлял заявку на мероприятие - ему не будет доступна регистрация на мероприятие (вернется false). В обратном случае куратор сможет отправить заявку на мероприятие (true).
       parameters:
         - name: eventId
           in: path
@@ -968,13 +968,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/waiting-curators:
     get:
       tags:
         - event-curator-controller
       operationId: getSentCuratorsInfo
-      description: "Получение кураторов, которые отправили заявку на регистрацию на мероприятие. Доступ: руководитель"
+      description: 'Получение кураторов, которые отправили заявку на регистрацию на мероприятие. Доступ: руководитель'
       parameters:
         - name: eventId
           in: path
@@ -998,13 +997,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/curators:
     get:
       tags:
         - event-curator-controller
       operationId: getCuratorsInfo
-      description: "Получение кураторов, которые связаны с мероприятием. Кураторы, у которых есть любой статус, связанный с мероприятием. Доступ: руководитель"
+      description: 'Получение кураторов, которые связаны с мероприятием. Кураторы, у которых есть любой статус, связанный с мероприятием. Доступ: руководитель'
       parameters:
         - name: eventId
           in: path
@@ -1028,12 +1026,11 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/accepted-curators:
     get:
       tags:
         - event-curator-controller
-      description: "Получение студентов, которых приняли на мероприятие. Доступ: руководитель и адимнистратор."
+      description: 'Получение студентов, которых приняли на мероприятие. Доступ: руководитель и адимнистратор.'
       operationId: getAcceptedCuratorsInfo
       parameters:
         - name: eventId
@@ -1058,12 +1055,11 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/started-curators:
     get:
       tags:
         - event-curator-controller
-      description: "Получение кураторов, которые начали выполнение мероприятие. Доступ: руководитель и адимнистратор."
+      description: 'Получение кураторов, которые начали выполнение мероприятие. Доступ: руководитель и адимнистратор.'
       operationId: getStartedCuratorsInfo
       parameters:
         - name: eventId
@@ -1088,13 +1084,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/send/{curatorId}:
     put:
       tags:
         - event-curator-controller
       operationId: sendCuratorToEvent
-      description: "Отправить куратору заявку на мероприятие. Доступ - куратор."
+      description: Отправить куратору заявку на мероприятие. Доступ - куратор.
       parameters:
         - name: eventId
           in: path
@@ -1123,13 +1118,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/reject/{curatorId}:
     put:
       tags:
         - event-curator-controller
       operationId: rejectCuratorRequest
-      description: "Отклонить заявку куратора на мероприятие. Доступ - руководитель."
+      description: Отклонить заявку куратора на мероприятие. Доступ - руководитель.
       parameters:
         - name: eventId
           in: path
@@ -1158,13 +1152,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/accept/{curatorId}:
     put:
       tags:
         - event-curator-controller
       operationId: acceptCuratorRequest
-      description: "Принять заявку от куратора на мероприятие. Доступ - руководитель."
+      description: Принять заявку от куратора на мероприятие. Доступ - руководитель.
       parameters:
         - name: eventId
           in: path
@@ -1193,12 +1186,11 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /events-curators/{eventId}/delete/{curatorId}:
     delete:
       tags:
         - event-curator-controller
-      description: "Удалить куратора с мероприятия. Доступ: руководитель"
+      description: 'Удалить куратора с мероприятия. Доступ: руководитель'
       operationId: deleteCuratorFromEvent
       parameters:
         - name: eventId
@@ -1228,13 +1220,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /notifications/my:
     get:
       tags:
         - notification-controller
       operationId: getUserNotifications
-      description: "Получение уведомлений текущего пользователя. Доступ - все авторизованные пользователи."
+      description: Получение уведомлений текущего пользователя. Доступ - все авторизованные пользователи.
       responses:
         '200':
           description: OK
@@ -1250,13 +1241,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /messages/{messageId}:
     get:
       tags:
         - message-controller
       operationId: getMessageById
-      description: "Получение шаблона сообщения по его идентификатору. Доступ: администратор и руководитель."
+      description: 'Получение шаблона сообщения по его идентификатору. Доступ: администратор и руководитель.'
       parameters:
         - name: messageId
           in: path
@@ -1277,13 +1267,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /messages/event/{eventId}:
     get:
       tags:
         - message-controller
       operationId: getEventMessages
-      description: "Получение шаблонов сообщений на принятие и отклонение заявки студента или куратора на мероприятие. Доступ: администратор и руководитель."
+      description: 'Получение шаблонов сообщений на принятие и отклонение заявки студента или куратора на мероприятие. Доступ: администратор и руководитель.'
       parameters:
         - name: eventId
           in: path
@@ -1307,13 +1296,12 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
   /messages/update-message:
     put:
       tags:
         - message-controller
       operationId: updateMessage
-      description: "Обновление шаблона сообщения. Доступ: администратор и руководитель."
+      description: 'Обновление шаблона сообщения. Доступ: администратор и руководитель.'
       requestBody:
         content:
           application/json:
@@ -1333,7 +1321,6 @@ paths:
           $ref: '#/components/responses/NotFoundResponse'
         '500':
           $ref: '#/components/responses/InternalServerErrorResponse'
-
 components:
   responses:
     OkResponse:
@@ -1351,7 +1338,7 @@ components:
             properties:
               message:
                 type: string
-                example: "Invalid argument"
+                example: Invalid argument
     ForbiddenResponse:
       description: Forbidden, отказано в доступе
       content:
@@ -1361,7 +1348,7 @@ components:
             properties:
               message:
                 type: string
-                example: "Access denied"
+                example: Access denied
     NotFoundResponse:
       description: Not Found, такого элемента не существует
       content:
@@ -1371,7 +1358,7 @@ components:
             properties:
               message:
                 type: string
-                example: "Event with id 123 not found"
+                example: Event with id 123 not found
     InternalServerErrorResponse:
       description: Internal Server Error, запрос вызвал ошибку на сервере
       content:
@@ -1381,8 +1368,7 @@ components:
             properties:
               message:
                 type: string
-                example: "Internal Server Error"
-
+                example: Internal Server Error
   schemas:
     UserUpdateRequest:
       required:
@@ -1394,22 +1380,22 @@ components:
       properties:
         firstName:
           type: string
-          example: "Николай"
+          example: Николай
         lastName:
           type: string
-          example: "Путин"
+          example: Путин
         surname:
           type: string
-          example: "Евгеньевич"
+          example: Евгеньевич
         telegramUrl:
           type: string
-          example: "https://t.me/kayakto"
+          example: https://t.me/kayakto
         vkUrl:
           type: string
-          example: "https://vk.com/kayakto"
+          example: https://vk.com/kayakto
         competencies:
           type: string
-          example: "Spring Boot, Gradle, git, Java, Docker"
+          example: Spring Boot, Gradle, git, Java, Docker
     UserDTO:
       type: object
       properties:
@@ -1419,19 +1405,19 @@ components:
           example: 123
         firstName:
           type: string
-          example: "Николай"
+          example: Николай
         lastName:
           type: string
-          example: "Иванов"
+          example: Иванов
         surname:
           type: string
-          example: "Евгеньевич"
+          example: Евгеньевич
         telegramUrl:
           type: string
-          example: "https://t.me/kayakto"
+          example: https://t.me/kayakto
         vkUrl:
           type: string
-          example: "https://vk.com/kayakto"
+          example: https://vk.com/kayakto
         role_enum:
           type: string
           enum:
@@ -1439,10 +1425,10 @@ components:
             - CURATOR
             - MANAGER
             - STUDENT
-          example: "STUDENT"
+          example: STUDENT
         competencies:
           type: string
-          example: "Spring Boot, Gradle, git, Java, Docker"
+          example: Spring Boot, Gradle, git, Java, Docker
     MessageUpdateRequest:
       type: object
       properties:
@@ -1452,7 +1438,7 @@ components:
           example: 40
         text:
           type: string
-          example: "Вы приняты на мероприятие \"Продажа часов\". Присоединяйтесь к чату: t.me/chatBitrix"
+          example: 'Вы приняты на мероприятие "Продажа часов". Присоединяйтесь к чату: t.me/chatBitrix'
     Message:
       type: object
       properties:
@@ -1466,26 +1452,26 @@ components:
           example: 34
         text:
           type: string
-          example: "Вы приняты на мероприятие \"Продажа часов\". Присоединяйтесь к чату: t.me/chatBitrix"
+          example: 'Вы приняты на мероприятие "Продажа часов". Присоединяйтесь к чату: t.me/chatBitrix'
         messageStatus:
           type: string
           enum:
             - ACCEPTED
             - DECLINED
-          example: "ACCEPTED"
+          example: ACCEPTED
         editDate:
           type: string
           format: date-time
-          example: "2024-11-01T22:00:00+05:00"
+          example: '2024-11-01T22:00:00+05:00'
     EventRequest:
       type: object
       properties:
         title:
           type: string
-          example: "CRM модуль"
+          example: CRM модуль
         descriptionText:
           type: string
-          example: "CRM модуль для мастеров глиняной лепки"
+          example: CRM модуль для мастеров глиняной лепки
         adminId:
           type: integer
           format: int64
@@ -1497,26 +1483,52 @@ components:
         eventStartDate:
           type: string
           format: date-time
-          example: "2025-02-22T22:00:00+05:00"
+          example: '2025-02-22T22:00:00+05:00'
         eventEndDate:
           type: string
           format: date-time
-          example: "2025-05-18T22:00:00+05:00"
+          example: '2025-05-18T22:00:00+05:00'
         enrollmentStartDate:
           type: string
           format: date-time
-          example: "2025-01-01T22:00:00+05:00"
+          example: '2025-01-01T22:00:00+05:00'
         enrollmentEndDate:
           type: string
           format: date-time
-          example: "2025-02-22T22:00:00+05:00"
+          example: '2025-02-22T22:00:00+05:00'
         chatUrl:
           type: string
-          example: "https://t.me/chaturl"
+          example: https://t.me/chaturl
         numberSeatsStudent:
           type: integer
           format: int32
           example: 50
+        hasTest:
+          type: boolean
+          example: false
+        testUrl:
+          type: string
+          example: null
+
+    StudentTestResultRequest:
+      type: object
+      properties:
+        studentId:
+          type: integer
+          format: int64
+          example: 1
+        eventId:
+          type: integer
+          format: int64
+          example: 1
+        passed:
+          type: boolean
+          example: true
+        score:
+          type: integer
+          format: int64
+          example: 100
+
     EventDTO:
       type: object
       properties:
@@ -1535,13 +1547,13 @@ components:
             - FINISHED
             - HIDDEN
             - DELETED
-          example: "REGISTRATION_OPEN"
+          example: REGISTRATION_OPEN
         descriptionText:
           type: string
-          example: "CRM модуль для мастеров глиняной лепки"
+          example: CRM модуль для мастеров глиняной лепки
         title:
           type: string
-          example: "CRM модуль"
+          example: CRM модуль
         adminId:
           type: integer
           format: int64
@@ -1553,26 +1565,29 @@ components:
         eventStartDate:
           type: string
           format: date-time
-          example: "2025-02-22T22:00:00+05:00"
+          example: '2025-02-22T22:00:00+05:00'
         eventEndDate:
           type: string
           format: date-time
-          example: "2025-05-18T22:00:00+05:00"
+          example: '2025-05-18T22:00:00+05:00'
         enrollmentStartDate:
           type: string
           format: date-time
-          example: "2025-01-01T22:00:00+05:00"
+          example: '2025-01-01T22:00:00+05:00'
         enrollmentEndDate:
           type: string
           format: date-time
-          example: "2025-02-22T22:00:00+05:00"
+          example: '2025-02-22T22:00:00+05:00'
         numberSeatsStudent:
           type: integer
           format: int32
           example: 50
         chatUrl:
           type: string
-          example: "https://t.me/chaturl"
+          example: https://t.me/chaturl
+        hasTest:
+          type: boolean
+          example: false
     UserRequest:
       required:
         - email
@@ -1585,25 +1600,25 @@ components:
       properties:
         firstName:
           type: string
-          example: "Николай"
+          example: Николай
         lastName:
           type: string
-          example: "Иванов"
+          example: Иванов
         surname:
           type: string
-          example: "Евгеньевич"
+          example: Евгеньевич
         email:
           type: string
-          example: "mail@mail.ru"
+          example: mail@mail.ru
         sign:
           type: string
-          example: "password"
+          example: password
         telegramUrl:
           type: string
-          example: "https://t.me/kayakto"
+          example: https://t.me/kayakto
         vkUrl:
           type: string
-          example: "https://vk.com/kayakto"
+          example: https://vk.com/kayakto
         role:
           type: string
           enum:
@@ -1611,10 +1626,10 @@ components:
             - CURATOR
             - MANAGER
             - STUDENT
-          example: "STUDENT"
+          example: STUDENT
         competencies:
           type: string
-          example: "Spring Boot, Gradle, git, Java, Docker"
+          example: Spring Boot, Gradle, git, Java, Docker
     UserRequestManager:
       required:
         - email
@@ -1627,34 +1642,34 @@ components:
       properties:
         firstName:
           type: string
-          example: "Николай"
+          example: Николай
         lastName:
           type: string
-          example: "Иванов"
+          example: Иванов
         surname:
           type: string
-          example: "Евгеньевич"
+          example: Евгеньевич
         email:
           type: string
-          example: "mail@mail.ru"
+          example: mail@mail.ru
         sign:
           type: string
-          example: "password"
+          example: password
         telegramUrl:
           type: string
-          example: "https://t.me/kayakto"
+          example: https://t.me/kayakto
         vkUrl:
           type: string
-          example: "https://vk.com/kayakto"
+          example: https://vk.com/kayakto
     LoginRequest:
       type: object
       properties:
         email:
           type: string
-          example: "mail123@mail.ru"
+          example: mail123@mail.ru
         password:
           type: string
-          example: "password"
+          example: password
     NotificationInfo:
       type: object
       properties:
@@ -1664,14 +1679,14 @@ components:
           example: 156
         eventTitle:
           type: string
-          example: "Продажа часов"
+          example: Продажа часов
         messageText:
           type: string
-          example: "Вы приняты на мероприятие \"Продажа часов\""
+          example: Вы приняты на мероприятие "Продажа часов"
         sent_at:
           type: string
           format: date-time
-          example: "2024-11-01T22:00:00+05:00"
+          example: '2024-11-01T22:00:00+05:00'
     EventStudentInfoDTO:
       type: object
       properties:
@@ -1692,34 +1707,34 @@ components:
             - STARTED_EVENT
             - ENDED_EVENT
             - DELETED_FROM_EVENT
-          example: "SENT_PERSONAL_INFO"
+          example: SENT_PERSONAL_INFO
         firstName:
           type: string
-          example: "Николай"
+          example: Николай
         lastName:
           type: string
-          example: "Алексеев"
+          example: Алексеев
         surname:
           type: string
-          example: "Михайлович"
+          example: Михайлович
         competencies:
           type: string
-          example: "Spring Boot, Gradle, git, Java, Docker"
+          example: Spring Boot, Gradle, git, Java, Docker
         telegramUrl:
           type: string
-          example: "https://t.me/kayakto"
+          example: https://t.me/kayakto
         vkUrl:
           type: string
-          example: "https://vk.com/kayakto"
+          example: https://vk.com/kayakto
         curatorFirstName:
           type: string
-          example: "Николай"
+          example: Николай
         curatorLastName:
           type: string
-          example: "Путин"
+          example: Путин
         curatorSurname:
           type: string
-          example: "Евгеньевич"
+          example: Евгеньевич
     EventCuratorInfoDTO:
       type: object
       properties:
@@ -1740,25 +1755,25 @@ components:
             - STARTED_EVENT
             - ENDED_EVENT
             - DELETED_FROM_EVENT
-          example: "REJECTED_FROM_EVENT"
+          example: REJECTED_FROM_EVENT
         firstName:
           type: string
-          example: "Владислав"
+          example: Владислав
         lastName:
           type: string
-          example: "Путин"
+          example: Путин
         surname:
           type: string
-          example: "Николаевич"
+          example: Николаевич
         competencies:
           type: string
-          example: "Spring Boot, Gradle, git, Java, Docker"
+          example: Spring Boot, Gradle, git, Java, Docker
         telegramUrl:
           type: string
-          example: "https://t.me/kayakto"
+          example: https://t.me/kayakto
         vkUrl:
           type: string
-          example: "https://vk.com/kayakto"
+          example: https://vk.com/kayakto
     TokensDTO:
       type: object
       properties:
@@ -1807,8 +1822,7 @@ components:
       properties:
         message:
           type: string
-          example: "User with email email123@gmail.com not found"
-
+          example: User with email email123@gmail.com not found
   securitySchemes:
     BearerAuth:
       type: http

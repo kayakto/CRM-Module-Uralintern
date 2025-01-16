@@ -43,13 +43,15 @@ public class Message {
 
     public enum MessageStatus {
         ACCEPTED,
-        DECLINED
+        DECLINED,
+        SENT
     }
 
     public static MessageStatus parseStatusRequestToMessageStatus(StatusRequest statusRequest) {
         return switch (statusRequest) {
             case ADDED_IN_CHAT -> MessageStatus.ACCEPTED;
             case REJECTED_FROM_EVENT -> MessageStatus.DECLINED;
+            case SENT_PERSONAL_INFO -> MessageStatus.SENT;
             default -> throw new IllegalArgumentException("Unsupported StatusRequest: " + statusRequest);
         };
     }

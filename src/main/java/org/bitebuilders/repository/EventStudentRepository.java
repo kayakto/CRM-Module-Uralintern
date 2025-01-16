@@ -61,7 +61,14 @@ public interface EventStudentRepository extends CrudRepository<EventStudent, Lon
             "FROM events_students es " +
             "JOIN users_info ui ON es.student_id = ui.id " +
             "WHERE es.event_id = :eventId AND es.student_status = 'SENT_PERSONAL_INFO'")
-    List<EventStudentInfo> findWaitingStudentsInfo(Long eventId);
+    List<EventStudentInfo> findSentStudentsInfo(Long eventId);
+
+    @Query("SELECT es.id, es.event_id, es.student_id, es.student_status, ui.competencies, " +
+            "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
+            "FROM events_students es " +
+            "JOIN users_info ui ON es.student_id = ui.id " +
+            "WHERE es.event_id = :eventId AND es.student_status = 'TEST_PASSED'")
+    List<EventStudentInfo> findPassedStudentsInfo(Long eventId);
 
     @Query("SELECT es.id, es.event_id, es.student_id, es.student_status, ui.competencies, " +
             "ui.first_name, ui.last_name, ui.surname, ui.telegram_url, ui.vk_url " +
