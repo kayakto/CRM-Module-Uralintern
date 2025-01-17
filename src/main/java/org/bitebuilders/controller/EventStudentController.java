@@ -231,7 +231,7 @@ public class EventStudentController {
     public ResponseEntity<MessageResponseDTO> changeStudentCurator(
             @PathVariable Long eventId,
             @PathVariable Long studentId,
-            @RequestParam Long newCuratorId
+            @PathVariable Long newCuratorId
     ) {
         if (!eventService.haveManagerAccess(eventId)) {
             return ResponseEntity.badRequest().build();
