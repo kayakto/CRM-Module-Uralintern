@@ -28,6 +28,7 @@ public class SecurityConfig {
             "/swagger-ui/**",  // Swagger UI
             "/v3/api-docs/**", // OpenAPI JSON
             "/auth/register",
+            "/auth/register-with-token",
             "/auth/login",
             "/auth/refresh",
             "/swagger.json", // Разрешаем доступ к custom-swagger.json
