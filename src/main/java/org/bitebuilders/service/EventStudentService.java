@@ -149,7 +149,7 @@ public class EventStudentService {
     @Transactional
     public void changeCurator(Long eventId, Long studentId, Long newCuratorId) {
         // Проверка наличия студента
-        EventStudent student = eventStudentRepository.findById(studentId)
+        EventStudent student = eventStudentRepository.findStudentEvent(studentId, eventId)
                 .orElseThrow(() -> new UserNotFoundException("Student not found with ID: " + studentId));
 
         // Проверка, что студент принадлежит мероприятию
