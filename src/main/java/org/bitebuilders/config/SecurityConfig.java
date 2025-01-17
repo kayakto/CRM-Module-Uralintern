@@ -25,13 +25,19 @@ public class SecurityConfig {
     }
 
     private final String[] allowedPatternsAnon = new String[] {
-            "api/swagger-ui/**",  // Swagger UI
-            "api/v3/api-docs/**", // OpenAPI JSON
-            "api/auth/register",
-            "api/auth/register-with-token",
-            "api/auth/login",
-            "api/auth/refresh",
-            "api/swagger.json" // Разрешаем доступ к custom-swagger.json
+            "/swagger-ui/**",  // Swagger UI
+            "/v3/api-docs/**", // OpenAPI JSON
+            "/auth/register",
+            "/auth/login",
+            "/auth/refresh",
+            "/swagger.json", // Разрешаем доступ к custom-swagger.json
+            "/api/swagger-ui/**",  // Swagger UI
+            "/api/v3/api-docs/**", // OpenAPI JSON
+            "/api/auth/register",
+            "/api/auth/register-with-token",
+            "/api/auth/login",
+            "/api/auth/refresh",
+            "/api/swagger.json" // Разрешаем доступ к custom-swagger.json
     };
 
     @Bean

@@ -50,7 +50,7 @@ public interface EventCuratorRepository extends CrudRepository<EventCurator, Lon
 
     @Query("SELECT ec.id, ec.curator_id, ec.event_id, ec.curator_status " +
             "FROM events_curators ec " +
-            "WHERE ec.event_id = :eventId AND ec.curator_status == 'STARTED_EVENT'")
+            "WHERE ec.event_id = :eventId AND ec.curator_status = 'STARTED_EVENT'")
     List<EventCurator> findStartedEventCurator(Long eventId);
 
     // Метод для поиска куратора по ID куратора и ID события
