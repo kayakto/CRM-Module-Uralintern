@@ -1337,7 +1337,7 @@
           },
           {
             "name": "newCuratorId",
-            "in": "query",
+            "in": "path",
             "description": "идентификатор нового куратора",
             "required": true,
             "schema": {
